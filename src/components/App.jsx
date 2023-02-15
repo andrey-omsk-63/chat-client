@@ -1,5 +1,5 @@
-import React from "react";
-import AppRoutes from "./AppRoutes";
+import React from 'react';
+import AppRoutes from './AppRoutes';
 
 const App = () => (
   <div className="container">
@@ -8,4 +8,4 @@ const App = () => (
 );
 
 export default App;
-//51.12
+//11.52 / 17
