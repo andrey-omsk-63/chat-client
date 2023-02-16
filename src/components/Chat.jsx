@@ -1,49 +1,49 @@
-import React from "react";
-import io from "socket.io-client";
-import { useEffect } from "react";
+import React from 'react';
+import io from 'socket.io-client';
+import { useEffect } from 'react';
 import {
   useLocation,
   //useNavigate
-} from "react-router-dom";
-import { useState } from "react";
-import EmojiPicker from "emoji-picker-react";
+} from 'react-router-dom';
+import { useState } from 'react';
+import EmojiPicker from 'emoji-picker-react';
 
-import icon from "../images/emoji.svg";
-import styles from "../styles/Chat.module.css";
-import Messages from "./Messages";
+import icon from '../images/emoji.svg';
+import styles from '../styles/Chat.module.css';
+import Messages from './Messages';
 
 // const socket = io.connect("https://online-chat-900l.onrender.com");
-const socket = io.connect("http://localhost:5000");
+const socket = io.connect('http://localhost:5000');
 
 const Chat = () => {
   const { search } = useLocation();
   //   const navigate = useNavigate();
-  const [params, setParams] = useState({ room: "", user: "" });
+  const [params, setParams] = useState({ room: '', user: '' });
   const [state, setState] = useState([]);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
   const [isOpen, setOpen] = useState(false);
-  //   const [users, setUsers] = useState(0);
+  const [users, setUsers] = useState(0);
 
   useEffect(() => {
     const searchParams = Object.fromEntries(new URLSearchParams(search));
     setParams(searchParams);
-    socket.emit("join", searchParams);
+    socket.emit('join', searchParams);
   }, [search]);
 
   useEffect(() => {
-    socket.on("message", ({ data }) => {
-      console.log("data:", data, state);
+    socket.on('message', ({ data }) => {
       setState((_state) => [..._state, data]);
     });
   }, []);
 
-  console.log("state:", state);
+  console.log('state:', state);
 
-  //   useEffect(() => {
-  //     socket.on("room", ({ data: { users } }) => {
-  //       setUsers(users.length);
-  //     });
-  //   }, []);
+  useEffect(() => {
+    //socket.on("room", ({ data: { users } }) => {
+    socket.on('joinRoom', ({ data: { users } }) => {
+      setUsers(users.length);
+    });
+  }, []);
 
   const leftRoom = () => {
     // socket.emit("leftRoom", { params });
@@ -57,9 +57,9 @@ const Chat = () => {
 
     if (!message) return;
 
-    socket.emit("sendMessage", { message, params });
+    socket.emit('sendMessage', { message, params });
 
-    setMessage("");
+    setMessage('');
   };
 
   const onEmojiClick = ({ emoji }) => setMessage(`${message} ${emoji}`);
@@ -68,10 +68,9 @@ const Chat = () => {
     <div className={styles.wrap}>
       <div className={styles.header}>
         <div className={styles.title}>{params.room}</div>
-        {/* <div className={styles.users}>{users} users in this room</div> */}
-        <div className={styles.users}>0 users in this room</div>
+        <div className={styles.users}>{users} чел в этой комнате</div>
         <button className={styles.left} onClick={leftRoom}>
-          Left the room
+          Покинуть комнату
         </button>
       </div>
 
@@ -84,7 +83,7 @@ const Chat = () => {
           <input
             type="text"
             name="message"
-            placeholder="What do you want to say?"
+            placeholder="Что вы хотите сказать?"
             value={message}
             onChange={handleChange}
             autoComplete="off"
@@ -102,7 +101,7 @@ const Chat = () => {
         </div>
 
         <div className={styles.button}>
-          <input type="submit" onSubmit={handleSubmit} value="Send a message" />
+          <input type="submit" onSubmit={handleSubmit} value="Отправить сообщение" />
         </div>
       </form>
     </div>

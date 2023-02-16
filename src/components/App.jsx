@@ -8,4 +8,4 @@ const App = () => (
 );
 
 export default App;
-//27.30 / 58.57
+//34.57 / 58.57
