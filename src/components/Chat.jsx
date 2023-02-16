@@ -1,43 +1,43 @@
-import React from 'react';
-import io from 'socket.io-client';
-import { useEffect } from 'react';
+import React from "react";
+import io from "socket.io-client";
+import { useEffect } from "react";
 import {
   useLocation,
   //useNavigate
-} from 'react-router-dom';
-import { useState } from 'react';
-import EmojiPicker from 'emoji-picker-react';
+} from "react-router-dom";
+import { useState } from "react";
+import EmojiPicker from "emoji-picker-react";
 
-import icon from '../images/emoji.svg';
-import styles from '../styles/Chat.module.css';
-// import Messages from "./Messages";
+import icon from "../images/emoji.svg";
+import styles from "../styles/Chat.module.css";
+import Messages from "./Messages";
 
 // const socket = io.connect("https://online-chat-900l.onrender.com");
-const socket = io.connect('http://localhost:5000');
+const socket = io.connect("http://localhost:5000");
 
 const Chat = () => {
   const { search } = useLocation();
   //   const navigate = useNavigate();
-  const [params, setParams] = useState({ room: '', user: '' });
+  const [params, setParams] = useState({ room: "", user: "" });
   const [state, setState] = useState([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isOpen, setOpen] = useState(false);
   //   const [users, setUsers] = useState(0);
 
   useEffect(() => {
     const searchParams = Object.fromEntries(new URLSearchParams(search));
     setParams(searchParams);
-    socket.emit('join', searchParams);
+    socket.emit("join", searchParams);
   }, [search]);
 
   useEffect(() => {
-    socket.on('message', ({ data }) => {
+    socket.on("message", ({ data }) => {
+      console.log("data:", data, state);
       setState((_state) => [..._state, data]);
-      console.log('data:', data);
     });
   }, []);
 
-  console.log('state:', state);
+  console.log("state:", state);
 
   //   useEffect(() => {
   //     socket.on("room", ({ data: { users } }) => {
@@ -52,19 +52,17 @@ const Chat = () => {
 
   const handleChange = ({ target: { value } }) => setMessage(value);
 
-  //   const handleSubmit = (e) => {
-  //     e.preventDefault();
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  //     if (!message) return;
+    if (!message) return;
 
-  //     socket.emit("sendMessage", { message, params });
+    socket.emit("sendMessage", { message, params });
 
-  //     setMessage("");
-  //   };
-  const handleSubmit = () => {};
+    setMessage("");
+  };
 
-  //const onEmojiClick = ({ emoji }) => setMessage(`${message} ${emoji}`);
-  const onEmojiClick = () => setOpen(!isOpen);
+  const onEmojiClick = ({ emoji }) => setMessage(`${message} ${emoji}`);
 
   return (
     <div className={styles.wrap}>
@@ -78,10 +76,7 @@ const Chat = () => {
       </div>
 
       <div className={styles.messages}>
-        {/* <Messages messages={state} name={params.name} /> */}
-        {state.map(({ message }, i) => (
-          <span key={i}>{message}</span>
-        ))}
+        <Messages messages={state} name={params.name} />
       </div>
 
       <form className={styles.form} onSubmit={handleSubmit}>
@@ -97,11 +92,7 @@ const Chat = () => {
           />
         </div>
         <div className={styles.emoji}>
-          <img
-            src={icon}
-            alt=""
-            //onClick={() => setOpen(!isOpen)}
-          />
+          <img src={icon} alt="" onClick={() => setOpen(!isOpen)} />
 
           {isOpen && (
             <div className={styles.emojies}>
