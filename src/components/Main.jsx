@@ -1,18 +1,18 @@
-import React from 'react';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
-import styles from '../styles/Main.module.css';
+import styles from "../styles/Main.module.css";
 
 const FIELDS = {
-  NAME: 'name',
-  ROOM: 'room',
+  NAME: "name",
+  ROOM: "room",
 };
 
 const Main = () => {
   const { NAME, ROOM } = FIELDS;
 
-  const [values, setValues] = useState({ [NAME]: '', [ROOM]: '' });
+  const [values, setValues] = useState({ [NAME]: "", [ROOM]: "" });
 
   const handleChange = ({ target: { value, name } }) => {
     setValues({ ...values, [name]: value });
@@ -24,12 +24,10 @@ const Main = () => {
     if (isDisabled) e.preventDefault();
   };
 
-  console.log('values:', values);
-
   return (
     <div className={styles.wrap}>
       <div className={styles.container}>
-        <h1 className={styles.heading}>Join</h1>
+        <h1 className={styles.heading}>Присоединиться</h1>
 
         <form className={styles.form}>
           <div className={styles.group}>
@@ -37,7 +35,7 @@ const Main = () => {
               type="text"
               name="name"
               value={values[NAME]}
-              placeholder="Username"
+              placeholder="Имя пользователя"
               className={styles.input}
               onChange={handleChange}
               autoComplete="off"
@@ -48,7 +46,7 @@ const Main = () => {
             <input
               type="text"
               name="room"
-              placeholder="Room"
+              placeholder="Комната"
               value={values[ROOM]}
               className={styles.input}
               onChange={handleChange}
@@ -60,9 +58,10 @@ const Main = () => {
           <Link
             className={styles.group}
             onClick={handleClick}
-            to={`/chat?name=${values[NAME]}&room=${values[ROOM]}`}>
+            to={`/chat?name=${values[NAME]}&room=${values[ROOM]}`}
+          >
             <button type="submit" className={styles.button}>
-              Sign In
+              Войти
             </button>
           </Link>
         </form>
