@@ -7,23 +7,25 @@ import EmojiPicker from 'emoji-picker-react';
 
 import icon from '../images/emoji.svg';
 import styles from '../styles/Chat.module.css';
-import Messages from './Messages';
+import Messages from '../../../src/components/Messages';
 
 // const socket = io.connect("https://online-chat-900l.onrender.com");
-let ioo: any = io;
+let ioo = io;
 const socket = ioo.connect('http://localhost:5000');
+
+//let stateGlob = [];
 
 const Chat = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
-  const [params, setParams] = useState({ room: '', user: '' } as any);
-  const [state, setState] = useState<Array<any>>([]);
+  const [params, setParams] = useState({ room: '', user: '' });
+  const [state, setState] = useState([]);
   const [message, setMessage] = useState('');
   const [isOpen, setOpen] = useState(false);
   const [users, setUsers] = useState(0);
 
   useEffect(() => {
-    const searchParams: any = Object.fromEntries(new URLSearchParams(search));
+    const searchParams = Object.fromEntries(new URLSearchParams(search));
     setParams(searchParams);
     socket.emit('join', searchParams);
 
@@ -33,18 +35,17 @@ const Chat = () => {
   }, [search]);
 
   useEffect(() => {
-    socket.on('message', ({ data }) => {
-      //socket.on('message', (event: any) => {
-      setState((_state) => [..._state, data]);
+    //socket.on('message', ({ data }) => {
+    socket.on('message', (event) => {
+      setState((_state) => [..._state, event.data]);
     });
   }, []);
 
-  console.log('state:', state);
+  //console.log('state:', state);
 
   useEffect(() => {
-    //socket.on("room", ({ data: { users } }) => {
-    socket.on('room', (event: any) => {
-      setUsers(event.data.users.length);
+    socket.on('room', ({ data: { users } }) => {
+      setUsers(users.length);
     });
   }, []);
 
@@ -54,11 +55,11 @@ const Chat = () => {
   };
 
   //const handleChange = ({ target: { value } }) => setMessage(value);
-  const handleChange = (event: any) => {
+  const handleChange = (event) => {
     setMessage(event.target.value);
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     if (!message) return;
