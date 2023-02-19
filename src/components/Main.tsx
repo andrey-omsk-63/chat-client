@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-//import Button from '@mui/material/Button';
+import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 
 import { styleMainBox02, styleMainBox03 } from './ComponentsStyle';
 import { styleMainBox04, styleMainBox05 } from './ComponentsStyle';
+import { styleMainBox06 } from './ComponentsStyle';
 
 import styles from '../styles/Main.module.css';
 
@@ -62,13 +63,10 @@ const Main = () => {
             />
           </Box>
 
-          <Link
-            className={styles.group}
-            onClick={handleClick}
-            to={`/chat?name=${values[NAME]}&room=${values[ROOM]}`}>
-            <button type="submit" className={styles.button}>
+          <Link to={`/chat?name=${values[NAME]}&room=${values[ROOM]}`}>
+            <Button sx={styleMainBox06} variant="contained" onClick={handleClick}>
               Войти
-            </button>
+            </Button>
           </Link>
         </Grid>
       </Box>
