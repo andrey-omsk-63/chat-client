@@ -9,6 +9,14 @@ import icon from '../images/emoji.svg';
 import styles from '../styles/Chat.module.css';
 import Messages from './Messages';
 
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+
+import { styleMainChat01, styleMainChat02 } from './ComponentsStyle';
+import { styleMainChat03, styleMainChat04 } from './ComponentsStyle';
+import { styleMainChat05, styleMainChat06 } from './ComponentsStyle';
+
 // const socket = io.connect("https://online-chat-900l.onrender.com");
 let ioo: any = io;
 const socket = ioo.connect('http://localhost:5000');
@@ -34,7 +42,6 @@ const Chat = () => {
 
   useEffect(() => {
     socket.on('message', (event: any) => {
-      //socket.on('message', (event: any) => {
       setState((_state) => [..._state, event.data]);
     });
   }, []);
@@ -42,7 +49,6 @@ const Chat = () => {
   console.log('state:', state);
 
   useEffect(() => {
-    //socket.on("room", ({ data: { users } }) => {
     socket.on('room', (event: any) => {
       setUsers(event.data.users.length);
     });
@@ -53,37 +59,34 @@ const Chat = () => {
     navigate('/');
   };
 
-  //const handleChange = ({ target: { value } }) => setMessage(value);
   const handleChange = (event: any) => {
     setMessage(event.target.value);
   };
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-
     if (!message) return;
-
     socket.emit('sendMessage', { message, params });
-
     setMessage('');
   };
 
   const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
 
   return (
-    <div className={styles.wrap}>
-      <div className={styles.header}>
-        <div className={styles.title}>{params.room}</div>
-        <div className={styles.users}>{users} чел в этой комнате</div>
-        <button className={styles.left} onClick={leftRoom}>
+    <Box sx={styleMainChat01}>
+      <Box sx={styleMainChat02}>
+        <Box sx={styleMainChat03}>{params.room}</Box>
+        <Box>{users} чел в этой комнате</Box>
+        <Button sx={styleMainChat04} variant="contained" onClick={leftRoom}>
           Покинуть комнату
-        </button>
-      </div>
+        </Button>
+      </Box>
 
-      <div className={styles.messages}>
+      <Box sx={styleMainChat05}>
         <Messages messages={state} name={params.name} />
-      </div>
+      </Box>
 
+      {/* <Grid container sx={styleMainChat06}> */}
       <form className={styles.form} onSubmit={handleSubmit}>
         <div className={styles.input}>
           <input
@@ -110,7 +113,8 @@ const Chat = () => {
           <input type="submit" onSubmit={handleSubmit} value="Отправить сообщение" />
         </div>
       </form>
-    </div>
+      {/* </Grid> */}
+    </Box>
   );
 };
 
