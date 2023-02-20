@@ -48,7 +48,8 @@ export const styleMainBox06 = {
 export const styleChat01 = {
   border: 0,
   width: '100%',
-  height: '100%',
+  //height: '100%',
+  height: '96vh',
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
@@ -79,7 +80,7 @@ export const styleChat03 = {
 
 export const styleChat04 = {
   fontSize: 12.9,
-  background: 'rgb(253, 73, 73)',
+  background: '#FF99CC',
   borderRadius: 3,
   color: '#fff',
   padding: '6px',
@@ -97,7 +98,7 @@ export const styleChat05 = {
   paddingRight: '32px',
 };
 
-// export const styleChat06 = {
+// export const styleChat16 = {
 //   color: 'black',
 //   width: '100%',
 //   display: 'flex',
@@ -122,14 +123,14 @@ export const styleChat07 = {
   position: 'absolute',
   left: '50%',
   transform: 'translateX(-50%)',
-  bottom: '100%'
+  bottom: '100%',
 };
 
 export const styleChatInp01 = {
   flexGrow: 1,
   height: '100%',
-  width: 500,
-  color: 'black',
+  // width: 500,
+  // color: 'black',
   marginTop: 3,
 };
 
@@ -139,6 +140,24 @@ export const styleChatInp02 = {
   width: 500,
   color: 'black',
   fontWeight: 500,
-  outline: 'none',
+  //outline: 'none',
+};
+
+export const styleChatInp03 = {
+  textAlign: 'center',
+  marginTop: 0.5,
+};
+
+export const styleChatInp04 = {
+  cursor: 'pointer',
+  color: 'black',
+};
+//=== Messages ===========================================
+export const styleMess01 = {
+  //border: 1,
+  width: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  rowGap: '12px',
 };
 //========================================================
