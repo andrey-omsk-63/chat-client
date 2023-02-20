@@ -1,39 +1,41 @@
-import React from 'react';
-import io from 'socket.io-client';
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import EmojiPicker from 'emoji-picker-react';
+import React from "react";
+import io from "socket.io-client";
+import { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import EmojiPicker from "emoji-picker-react";
 
-import icon from '../images/emoji.svg';
-import styles from '../styles/Chat.module.css';
-import Messages from './Messages';
+import icon from "../images/emoji.svg";
+import styles from "../styles/Chat.module.css";
+import Messages from "./Messages";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+//import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 
-import { styleMainChat01, styleMainChat02 } from './ComponentsStyle';
-import { styleMainChat03, styleMainChat04 } from './ComponentsStyle';
-import { styleMainChat05, styleMainChat06 } from './ComponentsStyle';
+import { styleChat01, styleChat02 } from "./ComponentsStyle";
+import { styleChat03, styleChat04 } from "./ComponentsStyle";
+import { styleChat05, styleChat06, styleChat07 } from "./ComponentsStyle";
+import { styleChatInp01, styleChatInp02 } from "./ComponentsStyle";
 
 // const socket = io.connect("https://online-chat-900l.onrender.com");
 let ioo: any = io;
-const socket = ioo.connect('http://localhost:5000');
+const socket = ioo.connect("http://localhost:5000");
 
 const Chat = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
-  const [params, setParams] = useState({ room: '', user: '' } as any);
+  const [params, setParams] = useState({ room: "", user: "" } as any);
   const [state, setState] = useState<Array<any>>([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isOpen, setOpen] = useState(false);
   const [users, setUsers] = useState(0);
 
   useEffect(() => {
     const searchParams: any = Object.fromEntries(new URLSearchParams(search));
     setParams(searchParams);
-    socket.emit('join', searchParams);
+    socket.emit("join", searchParams);
 
     return () => {
       socket.off();
@@ -41,22 +43,20 @@ const Chat = () => {
   }, [search]);
 
   useEffect(() => {
-    socket.on('message', (event: any) => {
+    socket.on("message", (event: any) => {
       setState((_state) => [..._state, event.data]);
     });
   }, []);
 
-  console.log('state:', state);
-
   useEffect(() => {
-    socket.on('room', (event: any) => {
+    socket.on("room", (event: any) => {
       setUsers(event.data.users.length);
     });
   }, []);
 
   const leftRoom = () => {
-    socket.emit('leftRoom', { params });
-    navigate('/');
+    socket.emit("leftRoom", { params });
+    navigate("/");
   };
 
   const handleChange = (event: any) => {
@@ -66,51 +66,60 @@ const Chat = () => {
   const handleSubmit = (e: any) => {
     e.preventDefault();
     if (!message) return;
-    socket.emit('sendMessage', { message, params });
-    setMessage('');
+    socket.emit("sendMessage", { message, params });
+    setMessage("");
   };
 
   const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
 
+  const handleKey = (event: any) => {
+    if (event.key === "Enter") event.preventDefault();
+  };
+
   return (
-    <Box sx={styleMainChat01}>
-      <Box sx={styleMainChat02}>
-        <Box sx={styleMainChat03}>{params.room}</Box>
+    <Box sx={styleChat01}>
+      <Box sx={styleChat02}>
+        <Box sx={styleChat03}>{params.room}</Box>
         <Box>{users} чел в этой комнате</Box>
-        <Button sx={styleMainChat04} variant="contained" onClick={leftRoom}>
+        <Button sx={styleChat04} variant="contained" onClick={leftRoom}>
           Покинуть комнату
         </Button>
       </Box>
 
-      <Box sx={styleMainChat05}>
-        <Messages messages={state} name={params.name} />
+      <Box sx={styleChat05}>
+        <Box sx={{ overflowX: "auto", height: "88vh" }}>
+          <Messages messages={state} name={params.name} />
+        </Box>
       </Box>
 
       {/* <Grid container sx={styleMainChat06}> */}
       <form className={styles.form} onSubmit={handleSubmit}>
-        <div className={styles.input}>
-          <input
-            type="text"
-            name="message"
+        <Box sx={styleChatInp01}>
+          <TextField
+            size="small"
+            onKeyPress={handleKey} //отключение Enter
             placeholder="Что вы хотите сказать?"
+            InputProps={{ disableUnderline: true, style: styleChatInp02 }}
             value={message}
             onChange={handleChange}
-            autoComplete="off"
-            required
+            variant="standard"
           />
-        </div>
-        <div className={styles.emoji}>
+        </Box>
+        <Box sx={styleChat06}>
           <img src={icon} alt="" onClick={() => setOpen(!isOpen)} />
-
           {isOpen && (
-            <div className={styles.emojies}>
+            <Box sx={styleChat07}>
               <EmojiPicker onEmojiClick={onEmojiClick} />
-            </div>
+            </Box>
           )}
-        </div>
+        </Box>
 
         <div className={styles.button}>
-          <input type="submit" onSubmit={handleSubmit} value="Отправить сообщение" />
+          <input
+            type="submit"
+            onSubmit={handleSubmit}
+            value="Отправить сообщение"
+          />
         </div>
       </form>
       {/* </Grid> */}

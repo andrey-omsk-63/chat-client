@@ -1,0 +1,36 @@
+{
+  "type": "archive",
+  "data": {
+    "archive": {
+      "messages": [
+        {
+          "from": "Admin",
+          "to": "Global",
+          "message": "123",
+          "time": "2023-02-14T12:45:31.419+06:00"
+        },
+        {
+          "from": "Admin",
+          "to": "Global",
+          "message": "5754",
+          "time": "2023-02-14T12:49:59.417+06:00"
+        },
+        {
+          "from": "MMMM",
+          "to": "Global",
+          "message": "334",
+          "time": "2023-02-14T12:56:04.805+06:00"
+        },
+        {
+          "from": "andrey_omsk",
+          "to": "Global",
+          "message": "ssssssss",
+          "time": "2023-02-14T13:03:32.569+06:00"
+        }
+      ],
+      "to": "Global",
+      "timeStart": "2023-02-14T13:03:56.9052293+06:00",
+      "timeEnd": "2023-02-13T13:03:56.9052293+06:00"
+    }
+  }
+}
