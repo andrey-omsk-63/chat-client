@@ -1,41 +1,48 @@
-import React from 'react';
-import io from 'socket.io-client';
-import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import EmojiPicker from 'emoji-picker-react';
+import React from "react";
+import io from "socket.io-client";
+import { useEffect, useLayoutEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import EmojiPicker from "emoji-picker-react";
 
-import icon from '../images/emoji.svg';
-import styles from '../styles/Chat.module.css';
-import Messages from './Messages';
+import icon from "../images/emoji.svg";
+import styles from "../styles/Chat.module.css";
+import Messages from "./Messages";
 
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 
-import { styleChat01, styleChat02 } from './ComponentsStyle';
-import { styleChat03, styleChat04 } from './ComponentsStyle';
-import { styleChat05, styleChat06, styleChat07 } from './ComponentsStyle';
-import { styleChatInp01, styleChatInp02 } from './ComponentsStyle';
-import { styleChatInp03, styleChatInp04 } from './ComponentsStyle';
+import { styleChat01, styleChat02 } from "./ComponentsStyle";
+import { styleChat03, styleChat04, styleChat16 } from "./ComponentsStyle";
+import { styleChat05, styleChat06, styleChat07 } from "./ComponentsStyle";
+import { styleChatInp01, styleChatInp02 } from "./ComponentsStyle";
+import {
+  styleChatInp03,
+  styleChatInp04
+} from "./ComponentsStyle";
 
 let ioo: any = io;
-const socket = ioo.connect('http://localhost:5000');
+const socket = ioo.connect("http://localhost:5000");
+
+//let resStr = [];
+let inputer = 0;
 
 const Chat = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
-  const [params, setParams] = useState({ room: '', user: '' } as any);
+  const [params, setParams] = useState({ room: "", user: "" } as any);
   const [state, setState] = useState<Array<any>>([]);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [isOpen, setOpen] = useState(false);
   const [users, setUsers] = useState(0);
+  const [trigger, setTrigger] = useState(false);
   const divRef: any = React.useRef(null);
 
   useEffect(() => {
     const searchParams: any = Object.fromEntries(new URLSearchParams(search));
     setParams(searchParams);
-    socket.emit('join', searchParams);
+    socket.emit("join", searchParams);
 
     return () => {
       socket.off();
@@ -43,44 +50,62 @@ const Chat = () => {
   }, [search]);
 
   useEffect(() => {
-    socket.on('message', (event: any) => {
+    socket.on("message", (event: any) => {
       setState((_state) => [..._state, event.data]);
     });
   }, []);
 
   useEffect(() => {
-    socket.on('room', (event: any) => {
+    socket.on("room", (event: any) => {
       setUsers(event.data.users.length);
     });
   }, []);
 
   const leftRoom = () => {
-    socket.emit('leftRoom', { params });
-    navigate('/');
+    socket.emit("leftRoom", { params });
+    navigate("/");
   };
 
   const handleChange = (event: any) => {
+    //divRef.current.scrollIntoView({ behavior: "smooth" });
     divRef.current.scrollTop = divRef.current.scrollHeight;
     setMessage(event.target.value);
+    divRef.current.scrollIntoView();
   };
 
-  const Ender = () => {
-    divRef.current.scrollTop = divRef.current.scrollHeight;
-  };
-
-  const handleSubmit = (e: any) => {
-    divRef.current.scrollTop = divRef.current.scrollHeight;
-    e.preventDefault();
+  
+  const handleSubmit = () => {
+    //divRef.current.scrollTop = divRef.current.scrollHeight;
+    //divRef.scrollIntoView({ behavior: "smooth" });
+    divRef.current.scrollIntoView();
+    
+    //e.preventDefault();
     if (!message) return;
-    socket.emit('sendMessage', { message, params });
-    setMessage('');
+    socket.emit("sendMessage", { message, params });
+    setMessage("");
+    //divRef.current.scrollIntoView();
+  };
+
+  const handleSub = () => {
+    handleSubmit();
+    console.log('1-й проход')
+    handleSubmit();
+    console.log('2-й проход')
+    //setTrigger(!trigger)
   };
 
   const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
 
   const handleKey = (event: any) => {
-    if (event.key === 'Enter') event.preventDefault();
+    if (event.key === "Enter") event.preventDefault();
   };
+
+  // useLayoutEffect(() => {
+  //   // 👇️ scroll to bottom every time messages change
+  //   divRef.current.scrollIntoView();
+  // }, []);
+
+  //useEffect(() => window.scrollTo(0, 1000), []);
 
   return (
     <Box sx={styleChat01}>
@@ -93,15 +118,14 @@ const Chat = () => {
       </Box>
 
       <Box sx={styleChat05}>
-        <Box sx={{ overflowX: 'auto', height: '88vh' }} ref={divRef}>
-          <>
-            <Messages messages={state} name={params.name} refer={divRef} />
-            {/* {Ender()}*/}
-          </>
+        <Box sx={{ overflowX: "auto", height: "88vh" }}>
+          <Messages messages={state} name={params.name} />
+          <div ref={divRef} />
         </Box>
       </Box>
 
-      <form className={styles.form} onSubmit={handleSubmit}>
+      {/* <form className={styles.form} onSubmit={handleSubmit}> */}
+      <Box sx={styleChat16}>
         <Box sx={styleChatInp01}>
           <TextField
             size="small"
@@ -123,16 +147,24 @@ const Chat = () => {
         </Box>
 
         <Box sx={styleChatInp03}>
-          <TextField
+          {/* <TextField
             type="submit"
             onKeyPress={handleKey} //отключение Enter
             InputProps={{ disableUnderline: true, style: styleChatInp04 }}
             value="Отправить сообщение"
             onSubmit={handleSubmit}
             variant="standard"
-          />
+          /> */}
+          <Button
+            sx={styleChat04}
+            variant="contained"
+            onClick={handleSub}
+          >
+            Отправить сообщение
+          </Button>
         </Box>
-      </form>
+      </Box>
+      {/* </form> */}
     </Box>
   );
 };
