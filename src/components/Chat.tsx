@@ -25,6 +25,8 @@ const socket = ioo.connect('http://localhost:5000');
 //let resStr = [];
 //let inputer = 0;
 
+//let soob = '';
+
 const Chat = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
@@ -50,11 +52,13 @@ const Chat = () => {
     socket.on('message', (event: any) => {
       setState((_state) => [..._state, event.data]);
     });
+    divRef.current.scrollIntoView();
   }, []);
 
   useEffect(() => {
     socket.on('room', (event: any) => {
       setUsers(event.data.users.length);
+      divRef.current.scrollIntoView();
     });
   }, []);
 
@@ -65,28 +69,34 @@ const Chat = () => {
 
   const handleChange = (event: any) => {
     //divRef.current.scrollIntoView({ behavior: "smooth" });
-    divRef.current.scrollTop = divRef.current.scrollHeight;
     setMessage(event.target.value);
+    //soob = event.target.value;
     divRef.current.scrollIntoView();
   };
 
   const handleSubmit = () => {
     //divRef.current.scrollTop = divRef.current.scrollHeight;
     //divRef.scrollIntoView({ behavior: "smooth" });
-    divRef.current.scrollIntoView();
+    divRef.current.scrollIntoView(true);
 
     //e.preventDefault();
+    //console.log('soob:', soob);
     if (!message) return;
+
     socket.emit('sendMessage', { message, params });
     setMessage('');
+    //window.scrollTo(0, 1000);
+    //soob = '';
     //divRef.current.scrollIntoView();
+    //scrollTo(0, 0);
   };
 
   // const handleSub = () => {
-  //   handleSubmit();
   //   console.log('1-й проход');
   //   handleSubmit();
   //   console.log('2-й проход');
+  //   handleSubmit();
+
   //   //setTrigger(!trigger)
   // };
 
@@ -143,14 +153,6 @@ const Chat = () => {
         </Box>
 
         <Box sx={styleChatInp03}>
-          {/* <TextField
-            type="submit"
-            onKeyPress={handleKey} //отключение Enter
-            InputProps={{ disableUnderline: true, style: styleChatInp04 }}
-            value="Отправить сообщение"
-            onSubmit={handleSubmit}
-            variant="standard"
-          /> */}
           <Button sx={styleChat041} onClick={handleSubmit}>
             Отправить сообщение
           </Button>

@@ -106,6 +106,7 @@ export const styleChat05 = {
   background: '#E5E5E5',
   paddingLeft: '32px',
   paddingRight: '32px',
+  height: '88vh',
 };
 
 export const styleChat16 = {
@@ -171,44 +172,19 @@ export const styleMess01 = {
   rowGap: '12px',
 };
 
-export const styleMeUser = {
-  marginTop: -0.5,
-  fontSize: 14,
+export const styleUserUser = {
+  //marginTop: -0.5,
+  fontSize: '14px',
   color: 'black',
   paddingLeft: '9px',
   //textAlign: 'right',
 };
 
-export const styleUserUser = {
-  marginTop: -0.5,
-  fontSize: 14,
+export const styleMeUser = {
+  //marginTop: -0.5,
+  fontSize: '14px',
   color: 'black',
   paddingRight: '9px',
   textAlign: 'right',
 };
-
-// export const styleMeText = {
-//   border: 2,
-//   height: '36px',
-//   fontSize: 16,
-//   background: '#fafac3', // жёлтый
-//   borderColor: '#fafac3',
-//   borderRadius: 3,
-//   color: 'black',
-//   marginTop: 0.5,
-//   p: '6px',
-//   textAlign: 'right',
-// };
-
-// export const styleUserText = {
-//   border: 2,
-//   height: '36px',
-//   fontSize: 16,
-//   background: '#93E5EE', //зелёный
-//   borderColor: '#93E5EE',
-//   borderRadius: 3,
-//   color: 'black',
-//   marginTop: 0.5,
-//   p: '6px',
-// };
 //========================================================

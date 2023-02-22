@@ -8,8 +8,30 @@ import Box from '@mui/material/Box';
 import { styleMess01, styleMeUser, styleUserUser } from './ComponentsStyle';
 //import { styleMeText, styleUserText } from './ComponentsStyle';
 
+let resStr: any = [];
+
 const Messages = (props: { messages: any; name: string }) => {
-  let resStr: any = [];
+  const MesssgeLength = (text: string, fontSize: number) => {
+    function textWidth(text: string, fontProp: any) {
+      let tag = document.createElement('div');
+      tag.style.position = 'absolute';
+      tag.style.left = '-999em';
+      tag.style.whiteSpace = 'nowrap';
+      tag.style.font = fontProp;
+      tag.innerHTML = text;
+      document.body.appendChild(tag);
+      let result = tag.clientWidth;
+      document.body.removeChild(tag);
+      return result;
+    }
+
+    let theCSSprop = window.getComputedStyle(document.body, null).getPropertyValue('font-family');
+    let bb = 'bold ' + fontSize + 'px ' + theCSSprop;
+    // let aa = textWidth('🐷 🐷', 'bold 13px Segoe UI');
+    // console.log('AA:', aa);
+    return textWidth(text, bb);
+  };
+
   const StrMessages = () => {
     resStr = [];
     for (let i = 0; i < props.messages.length; i++) {
@@ -17,13 +39,14 @@ const Messages = (props: { messages: any; name: string }) => {
       if (props.messages[i].user.name.trim().toLowerCase() === props.name.trim().toLowerCase())
         itsme = true;
 
-      let dlina = props.messages[i].message.length;
+      //let dlina = (props.messages[i].message.length + 3) * 9;
+      let dlina = MesssgeLength(props.messages[i].message, 16) + 14;
 
       const styleMeText = {
-        width: (dlina + 3) * 9,
+        width: dlina,
         border: 2,
         height: '36px',
-        fontSize: 16,
+        fontSize: '16px',
         background: '#fafac3', // жёлтый
         borderColor: '#fafac3',
         borderRadius: 3,
@@ -35,10 +58,10 @@ const Messages = (props: { messages: any; name: string }) => {
       };
 
       const styleUserText = {
-        width: (dlina + 3) * 9,
+        width: dlina,
         border: 2,
         height: '36px',
-        fontSize: 16,
+        fontSize: '16px',
         background: '#93E5EE', //зелёный
         borderColor: '#93E5EE',
         borderRadius: 3,
@@ -49,7 +72,7 @@ const Messages = (props: { messages: any; name: string }) => {
       };
 
       let styleUser: any = styleMeUser;
-      if (itsme) styleUser = styleUserUser;
+      if (!itsme) styleUser = styleUserUser;
       let styleText: any = styleMeText;
       if (!itsme) styleText = styleUserText;
 
@@ -67,9 +90,26 @@ const Messages = (props: { messages: any; name: string }) => {
     return resStr;
   };
 
-  StrMessages();
+  // const scrollToBottom = (id: any) => {
+  //   const element = document.getElementById(id);
 
-  return <Box sx={styleMess01}>{resStr}</Box>;
+  //   if (element) {
+  //     // console.log('111', element.scrollTop, element.scrollHeight);
+  //     // element.scrollTop = element.scrollHeight;
+  //     console.log('222', element.scrollTop, element.scrollHeight);
+  //     element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
+  //   }
+  // };
+
+  //scrollToBottom('sk');
+  //window.scrollTo(0, 1000);
+
+  return (
+    <Box id={'sk'} sx={styleMess01}>
+      {StrMessages()}
+      {/* {scrollToBottom('sk')} */}
+    </Box>
+  );
 };
 
 export default Messages;
