@@ -11,6 +11,8 @@ import { styleMess01, styleMeUser, styleUserUser } from './ComponentsStyle';
 let resStr: any = [];
 
 const Messages = (props: { messages: any; name: string }) => {
+  const divRef: any = React.useRef(null);
+
   const MesssgeLength = (text: string, fontSize: number) => {
     function textWidth(text: string, fontProp: any) {
       let tag = document.createElement('div');
@@ -87,6 +89,7 @@ const Messages = (props: { messages: any; name: string }) => {
         </Grid>,
       );
     }
+    // resStr.push(<Box>{divRef && divRef.current.scrollIntoView()}</Box>);
     return resStr;
   };
 
@@ -101,13 +104,9 @@ const Messages = (props: { messages: any; name: string }) => {
   //   }
   // };
 
-  //scrollToBottom('sk');
-  //window.scrollTo(0, 1000);
-
   return (
-    <Box id={'sk'} sx={styleMess01}>
+    <Box ref={divRef} sx={styleMess01}>
       {StrMessages()}
-      {/* {scrollToBottom('sk')} */}
     </Box>
   );
 };
