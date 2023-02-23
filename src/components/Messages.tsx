@@ -3,16 +3,11 @@ import React from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 
-//import styles from '../styles/Messages.module.css';
-
 import { styleMess01, styleMeUser, styleUserUser } from './ComponentsStyle';
-//import { styleMeText, styleUserText } from './ComponentsStyle';
 
 let resStr: any = [];
 
 const Messages = (props: { messages: any; name: string }) => {
-  const divRef: any = React.useRef(null);
-
   const MesssgeLength = (text: string, fontSize: number) => {
     function textWidth(text: string, fontProp: any) {
       let tag = document.createElement('div');
@@ -89,26 +84,11 @@ const Messages = (props: { messages: any; name: string }) => {
         </Grid>,
       );
     }
-    // resStr.push(<Box>{divRef && divRef.current.scrollIntoView()}</Box>);
+
     return resStr;
   };
 
-  // const scrollToBottom = (id: any) => {
-  //   const element = document.getElementById(id);
-
-  //   if (element) {
-  //     // console.log('111', element.scrollTop, element.scrollHeight);
-  //     // element.scrollTop = element.scrollHeight;
-  //     console.log('222', element.scrollTop, element.scrollHeight);
-  //     element.scroll({ top: element.scrollHeight, behavior: 'smooth' });
-  //   }
-  // };
-
-  return (
-    <Box ref={divRef} sx={styleMess01}>
-      {StrMessages()}
-    </Box>
-  );
+  return <Box sx={styleMess01}>{StrMessages()}</Box>;
 };
 
 export default Messages;

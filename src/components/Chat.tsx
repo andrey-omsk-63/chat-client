@@ -6,7 +6,6 @@ import { useState } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 
 import icon from '../images/emoji.svg';
-//import styles from '../styles/Chat.module.css';
 import Messages from './Messages';
 
 import Box from '@mui/material/Box';
@@ -22,11 +21,6 @@ import { styleChatInp03, styleChat041 } from './ComponentsStyle';
 let ioo: any = io;
 const socket = ioo.connect('http://localhost:5000');
 
-//let resStr = [];
-//let inputer = 0;
-
-//let soob = '';
-
 const Chat = () => {
   const { search } = useLocation();
   const navigate = useNavigate();
@@ -35,7 +29,6 @@ const Chat = () => {
   const [message, setMessage] = useState('');
   const [isOpen, setOpen] = useState(false);
   const [users, setUsers] = useState(0);
-  //const [trigger, setTrigger] = useState(false);
   const divRef: any = React.useRef(null);
 
   useEffect(() => {
@@ -51,14 +44,16 @@ const Chat = () => {
   useEffect(() => {
     socket.on('message', (event: any) => {
       setState((_state) => [..._state, event.data]);
+      setTimeout(() => {
+        divRef.current && divRef.current.scrollIntoView();
+      }, 100);
     });
-    divRef.current.scrollIntoView();
   }, []);
 
   useEffect(() => {
     socket.on('room', (event: any) => {
       setUsers(event.data.users.length);
-      divRef.current.scrollIntoView();
+      divRef.current && divRef.current.scrollIntoView();
     });
   }, []);
 
@@ -68,37 +63,14 @@ const Chat = () => {
   };
 
   const handleChange = (event: any) => {
-    //divRef.current.scrollIntoView({ behavior: "smooth" });
     setMessage(event.target.value);
-    //soob = event.target.value;
-    divRef.current.scrollIntoView();
   };
 
   const handleSubmit = () => {
-    //divRef.current.scrollTop = divRef.current.scrollHeight;
-    //divRef.scrollIntoView({ behavior: "smooth" });
-    divRef.current.scrollIntoView(true);
-
-    //e.preventDefault();
-    //console.log('soob:', soob);
     if (!message) return;
-
     socket.emit('sendMessage', { message, params });
     setMessage('');
-    //window.scrollTo(0, 1000);
-    //soob = '';
-    //divRef.current.scrollIntoView();
-    //scrollTo(0, 0);
   };
-
-  // const handleSub = () => {
-  //   console.log('1-й проход');
-  //   handleSubmit();
-  //   console.log('2-й проход');
-  //   handleSubmit();
-
-  //   //setTrigger(!trigger)
-  // };
 
   const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
 
@@ -106,12 +78,7 @@ const Chat = () => {
     if (event.key === 'Enter') event.preventDefault();
   };
 
-  // useLayoutEffect(() => {
-  //   // 👇️ scroll to bottom every time messages change
-  //   divRef.current.scrollIntoView();
-  // }, []);
-
-  //useEffect(() => window.scrollTo(0, 1000), []);
+  // 👇️ scroll to bottom every time messages change
 
   return (
     <Box sx={styleChat01}>
@@ -130,7 +97,6 @@ const Chat = () => {
         </Box>
       </Box>
 
-      {/* <form className={styles.form} onSubmit={handleSubmit}> */}
       <Box sx={styleChat16}>
         <Box sx={styleChatInp01}>
           <TextField
@@ -143,6 +109,7 @@ const Chat = () => {
             variant="standard"
           />
         </Box>
+
         <Box sx={styleChat06}>
           <img src={icon} alt="" onClick={() => setOpen(!isOpen)} />
           {isOpen && (
@@ -158,7 +125,6 @@ const Chat = () => {
           </Button>
         </Box>
       </Box>
-      {/* </form> */}
     </Box>
   );
 };
