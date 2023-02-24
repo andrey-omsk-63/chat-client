@@ -1,8 +1,6 @@
 import React from 'react';
 import io from 'socket.io-client';
-import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 import EmojiPicker from 'emoji-picker-react';
 
 import icon from '../images/emoji.svg';
@@ -18,20 +16,21 @@ import { styleChat05, styleChat06, styleChat07 } from './ComponentsStyle';
 import { styleChatInp01, styleChatInp02 } from './ComponentsStyle';
 import { styleChatInp03, styleChat041 } from './ComponentsStyle';
 
-let ioo: any = io;
+const ioo: any = io;
 const socket = ioo.connect('http://localhost:5000');
 
 const Chat = () => {
+  const [params, setParams] = React.useState({ room: '', user: '' } as any);
+  const [state, setState] = React.useState<Array<any>>([]);
+  const [message, setMessage] = React.useState('');
+  const [isOpen, setOpen] = React.useState(false);
+  const [users, setUsers] = React.useState(0);
+
   const { search } = useLocation();
   const navigate = useNavigate();
-  const [params, setParams] = useState({ room: '', user: '' } as any);
-  const [state, setState] = useState<Array<any>>([]);
-  const [message, setMessage] = useState('');
-  const [isOpen, setOpen] = useState(false);
-  const [users, setUsers] = useState(0);
   const divRef: any = React.useRef(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const searchParams: any = Object.fromEntries(new URLSearchParams(search));
     setParams(searchParams);
     socket.emit('join', searchParams);
@@ -41,26 +40,26 @@ const Chat = () => {
     };
   }, [search]);
 
-  useEffect(() => {
-    socket.on('message', (event: any) => {
-      setState((_state) => [..._state, event.data]);
-      setTimeout(() => {
-        divRef.current && divRef.current.scrollIntoView();
-      }, 100);
-    });
-  }, []);
-
-  useEffect(() => {
-    socket.on('room', (event: any) => {
-      setUsers(event.data.users.length);
-      divRef.current && divRef.current.scrollIntoView();
-    });
-  }, []);
-
   const leftRoom = () => {
     socket.emit('leftRoom', { params });
     navigate('/');
   };
+
+  React.useEffect(() => {
+    socket.on('message', (event: any) => {
+      setState((_state) => [..._state, event.data]);
+      setTimeout(() => {
+        // 👇️ scroll to bottom every time messages change
+        divRef.current && divRef.current.scrollIntoView();
+      }, 100);
+    });
+
+    socket.on('room', (event: any) => {
+      setUsers(event.data.users.length);
+      // 👇️ scroll to bottom every time messages change
+      divRef.current && divRef.current.scrollIntoView();
+    });
+  }, []);
 
   const handleChange = (event: any) => {
     setMessage(event.target.value);
@@ -78,13 +77,18 @@ const Chat = () => {
     if (event.key === 'Enter') event.preventDefault();
   };
 
-  // 👇️ scroll to bottom every time messages change
+  let chel = 'человек';
+  if (users !== 12 && users !== 13 && users !== 14) {
+    if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel = 'человека';
+  }
 
   return (
     <Box sx={styleChat01}>
       <Box sx={styleChat02}>
         <Box sx={styleChat03}>{params.room}</Box>
-        <Box>{users} чел в этой комнате</Box>
+        <Box>
+          {users} {chel} в этой комнате
+        </Box>
         <Button sx={styleChat04} variant="contained" onClick={leftRoom}>
           Покинуть комнату
         </Button>
