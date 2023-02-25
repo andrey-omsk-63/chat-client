@@ -30,8 +30,11 @@ const Chat = () => {
   const navigate = useNavigate();
   const divRef: any = React.useRef(null);
 
+  console.log('search:', search);
+
   React.useEffect(() => {
     const searchParams: any = Object.fromEntries(new URLSearchParams(search));
+    console.log('searchParams:', searchParams);
     setParams(searchParams);
     socket.emit('join', searchParams);
 
