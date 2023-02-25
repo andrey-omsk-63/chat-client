@@ -46,20 +46,21 @@ export const styleMainBox06 = {
 };
 //=== Chat ===============================================
 export const styleChat01 = {
-  border: 0,
+  //border: 1,
   width: '100%',
-  //height: '100%',
-  height: '96vh',
+  //height: '99%',
+  height: '99.5vh',
   display: 'flex',
-  alignItems: 'center',
+  alignItems: 'left',
   flexDirection: 'column',
-  color: '#fff',
+  //color: '#fff',
   //padding: '15px 0',
 };
 
 export const styleChat02 = {
   border: 0,
   width: '100%',
+  height: '7vh',
   color: 'black',
   background: '#C0C0C0',
   display: 'flex',
@@ -99,25 +100,29 @@ export const styleChat041 = {
 };
 
 export const styleChat05 = {
+  //border: 1,
   fontSize: 11,
   flexGrow: 1,
   width: '100%',
-  color: '#fff',
+  //color: '#fff',
   background: '#E5E5E5',
   paddingLeft: '32px',
   paddingRight: '32px',
-  height: '88vh',
+  height: '86vh',
 };
 
 export const styleChat16 = {
+  //border: 1,
   color: 'black',
   width: '100%',
   display: 'flex',
   alignItems: 'center',
   background: '#C0C0C0',
   justifyContent: 'space-between',
-  height: '80px',
+  //height: '80px',
+  height: '7vh',
   padding: '0 20px',
+  //paddingLeft: '20px',
   borderRadius: 3,
   borderTopLeftRadius: 3,
   borderTopRightRadius: 3,
@@ -138,19 +143,22 @@ export const styleChat07 = {
 };
 
 export const styleChatInp01 = {
+  //border: 1,
   flexGrow: 1,
   height: '100%',
   // width: 500,
   // color: 'black',
-  marginTop: 3,
+  //marginTop: 6,
 };
 
 export const styleChatInp02 = {
-  fontSize: 16,
+  border: 3,
+  // fontSize: 16,
   height: '100%',
   width: 500,
-  color: 'black',
+  // color: 'black',
   fontWeight: 500,
+  marginTop: '2vh',
   //outline: 'none',
 };
 

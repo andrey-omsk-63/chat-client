@@ -64,9 +64,12 @@ li {
 
 .container {
   /* width: 1240px; */
-  width: 900px;
-  margin: 0 auto;
-  min-height: 96vh;
+  width: 800px;
+  /* margin: 0 auto; */
+  position: absolute;
+  right: 0;
+  margin-right: 3px;
+  min-height: 99vh;
 }
 
 ::-webkit-scrollbar-button {

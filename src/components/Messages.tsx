@@ -76,7 +76,7 @@ const Messages = (props: { messages: any; name: string }) => {
       resStr.push(
         <Grid key={i} item container xs={12}>
           <Grid item xs={12} sx={styleUser}>
-            {props.messages[i].user.name}
+            <b>{props.messages[i].user.name}</b>
           </Grid>
           <Grid item xs={12}>
             <Box sx={styleText}>{props.messages[i].message}</Box>

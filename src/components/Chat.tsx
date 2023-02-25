@@ -95,7 +95,7 @@ const Chat = () => {
       </Box>
 
       <Box sx={styleChat05}>
-        <Box sx={{ overflowX: 'auto', height: '88vh' }}>
+        <Box sx={{ overflowX: 'auto', height: '86vh' }}>
           <Messages messages={state} name={params.name} />
           <div ref={divRef} />
         </Box>
@@ -107,7 +107,10 @@ const Chat = () => {
             size="small"
             onKeyPress={handleKey} //отключение Enter
             placeholder="Что вы хотите сказать?"
-            InputProps={{ disableUnderline: true, style: styleChatInp02 }}
+            InputProps={{
+              disableUnderline: true,
+              style: styleChatInp02,
+            }}
             value={message}
             onChange={handleChange}
             variant="standard"
