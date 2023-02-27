@@ -1,43 +1,60 @@
-import React from "react";
-import io from "socket.io-client";
-import { useLocation, useNavigate } from "react-router-dom";
-import EmojiPicker from "emoji-picker-react";
+import React from 'react';
+import io from 'socket.io-client';
+import { useLocation, useNavigate } from 'react-router-dom';
+import EmojiPicker from 'emoji-picker-react';
 
-import icon from "../images/emoji.svg";
-import Messages from "./Messages";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import axios from 'axios';
 
-import { styleChat01, styleChat02, styleChat021 } from "./ComponentsStyle";
-import { styleChat03, styleChat04, styleChat16 } from "./ComponentsStyle";
-import { styleChat05, styleChat06, styleChat07 } from "./ComponentsStyle";
-import { styleChatInp01, styleChatInp02 } from "./ComponentsStyle";
-import { styleChatInp03, styleChat041 } from "./ComponentsStyle";
+import icon from '../images/emoji.svg';
+import Messages from './Messages';
+
+import { styleChat01, styleChat02 } from './ComponentsStyle';
+import { styleChat021, styleChat022 } from './ComponentsStyle';
+import { styleChat03, styleChat04, styleChat16 } from './ComponentsStyle';
+import { styleChat05, styleChat06, styleChat07 } from './ComponentsStyle';
+import { styleChatInp01, styleChatInp02 } from './ComponentsStyle';
+import { styleChatInp03, styleChat041 } from './ComponentsStyle';
 
 const ioo: any = io;
-const socket = ioo.connect("http://localhost:5000");
+const socket = ioo.connect('http://localhost:5000');
 
 let usersRooms: any = [];
+let debug = false;
+let flagOpenDebug = true;
 
-const Chat = () => {
-  const [params, setParams] = React.useState({ room: "", user: "" } as any);
+const Chat = (props: { ws: WebSocket }) => {
+  const [params, setParams] = React.useState({ room: '', user: '' } as any);
   const [state, setState] = React.useState<Array<any>>([]);
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = React.useState('');
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState(0);
-
+  const [sistUsers, setSistUsers] = React.useState<Array<any>>([]);
   const { search } = useLocation();
   const navigate = useNavigate();
   const divRef: any = React.useRef(null);
 
+  let WS = props.ws;
+  if (WS.url.slice(0, 21) === 'wss://localhost:3000/') debug = true;
+
+  //=== инициализация ======================================
+  if (debug && flagOpenDebug) {
+    console.log('РЕЖИМ ОТЛАДКИ!!!');
+    const ipAdress: string = 'http://localhost:3000/otladkaUsers.json';
+    axios.get(ipAdress).then(({ data }) => {
+      setSistUsers(data.data.users);
+    });
+    flagOpenDebug = false;
+  }
+
   React.useEffect(() => {
     const searchParams: any = Object.fromEntries(new URLSearchParams(search));
-    console.log("searchParams:", searchParams);
     setParams(searchParams);
-    socket.emit("join", searchParams);
+    socket.emit('join', searchParams);
 
     return () => {
       socket.off();
@@ -45,12 +62,12 @@ const Chat = () => {
   }, [search]);
 
   const leftRoom = () => {
-    socket.emit("leftRoom", { params });
-    navigate("/");
+    socket.emit('leftRoom', { params });
+    navigate('/');
   };
 
   React.useEffect(() => {
-    socket.on("message", (event: any) => {
+    socket.on('message', (event: any) => {
       setState((_state) => [..._state, event.data]);
       setTimeout(() => {
         // 👇️ scroll to bottom every time messages change
@@ -58,7 +75,7 @@ const Chat = () => {
       }, 100);
     });
 
-    socket.on("room", (event: any) => {
+    socket.on('room', (event: any) => {
       setUsers(event.data.users.length);
       usersRooms = event.data.users;
       // 👇️ scroll to bottom every time messages change
@@ -72,19 +89,19 @@ const Chat = () => {
 
   const handleSubmit = () => {
     if (!message) return;
-    socket.emit("sendMessage", { message, params });
-    setMessage("");
+    socket.emit('sendMessage', { message, params });
+    setMessage('');
   };
 
   const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
 
   const handleKey = (event: any) => {
-    if (event.key === "Enter") event.preventDefault();
+    if (event.key === 'Enter') event.preventDefault();
   };
 
-  let chel = "человек";
+  let chel = 'человек';
   if (users !== 12 && users !== 13 && users !== 14) {
-    if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += "а";
+    if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
   }
 
   const LeftPartChat = () => {
@@ -101,7 +118,7 @@ const Chat = () => {
         </Box>
 
         <Box sx={styleChat05}>
-          <Box sx={{ overflowX: "auto", height: "86vh" }}>
+          <Box sx={{ overflowX: 'auto', height: '86vh' }}>
             <Messages messages={state} name={params.name} />
             <div ref={divRef} />
           </Box>
@@ -145,18 +162,43 @@ const Chat = () => {
   const UsersChat = () => {
     let resStr: any = [];
     for (let i = 0; i < usersRooms.length; i++) {
+      let nameer = usersRooms[i].name;
+      if (nameer.length > 15) nameer = nameer.slice(0, 15);
       resStr.push(
         <Grid key={i} item container xs={12}>
-          <Grid item xs={12} sx={{ fontSize: 14, textAlign: "center" }}>
-            {usersRooms[i].name}
+          <Grid item xs={12} sx={{ fontSize: 12.9, textAlign: 'center', padding: '1vh 0 0 0' }}>
+            <b>{nameer}</b>
           </Grid>
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
   };
 
-  console.log("###:", usersRooms);
+  const UsersSist = () => {
+    let resStr: any = [];
+    for (let i = 0; i < sistUsers.length; i++) {
+      let nameer = sistUsers[i].user;
+      if (nameer.length > 15) nameer = nameer.slice(0, 15);
+      resStr.push(
+        <Grid key={i} item container xs={12}>
+          {sistUsers[i].status === 'online' && (
+            <Grid item xs={12} sx={{ fontSize: 12.9, textAlign: 'center', padding: '1vh 0 0 0' }}>
+              <b>{nameer}</b>
+            </Grid>
+          )}
+          {sistUsers[i].status !== 'online' && (
+            <Grid item xs={12} sx={{ fontSize: 12.9, textAlign: 'center', padding: '1vh 0 0 0' }}>
+              {nameer}
+            </Grid>
+          )}
+        </Grid>,
+      );
+    }
+    return resStr;
+  };
+
+  //console.log('###:', usersRooms, sistUsers);
 
   return (
     <Grid container>
@@ -166,24 +208,24 @@ const Chat = () => {
 
       <Grid item xs={2} sx={styleChat01}>
         <Grid container sx={styleChat021}>
-          <Grid
-            item
-            xs={12}
-            sx={{
-              textAlign: "center",
-              padding: "1vh 0 0 0",
-            }}
-          >
-            Пользователи
+          <Grid item xs={12} sx={styleChat022}>
+            Пользователи в
           </Grid>
-          <Grid item xs={12} sx={{ border: 0, textAlign: "center" }}>
-            в комнате:
+          <Grid item xs={12} sx={{ textAlign: 'center' }}>
+            комнате:
           </Grid>
         </Grid>
+        <Box sx={{ overflowX: 'auto', height: '32vh' }}>{UsersChat()}</Box>
 
-        <Box sx={{ border: 1, height: "32vh" }}>{UsersChat()}</Box>
-        <Box sx={styleChat021}>Пользователи в системе:</Box>
-        <Box sx={{ border: 1, height: "47vh" }}>{UsersChat()}</Box>
+        <Grid container sx={styleChat021}>
+          <Grid item xs={12} sx={styleChat022}>
+            Пользователи в
+          </Grid>
+          <Grid item xs={12} sx={{ textAlign: 'center' }}>
+            системе:
+          </Grid>
+        </Grid>
+        <Box sx={{ overflowX: 'auto', height: '53vh' }}>{UsersSist()}</Box>
       </Grid>
     </Grid>
   );

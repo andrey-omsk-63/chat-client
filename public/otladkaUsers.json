@@ -1,0 +1,51 @@
+{
+  "type": "users",
+  "data": {
+    "users": [
+        {
+            "user": "User",
+            "status": "offline"
+        },
+        {
+            "user": "TechAutomatic",
+            "status": "offline"
+        },
+        {
+            "user": "andrey_omsk",
+            "status": "online"
+        },
+        {
+            "user": "RegAdmin",
+            "status": "offline"
+        },
+        {
+            "user": "MMMM",
+            "status": "online"
+        },
+        {
+            "user": "Viewer",
+            "status": "offline"
+        },
+        {
+            "user": "Rura",
+            "status": "offline"
+        },
+        {
+            "user": "eam32",
+            "status": "offline"
+        },
+        {
+            "user": "Alex_A",
+            "status": "offline"
+        },
+        {
+            "user": "Moscow",
+            "status": "offline"
+        },
+        {
+            "user": "Admin",
+            "status": "offline"
+        }
+    ]
+}
+}
