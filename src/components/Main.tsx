@@ -19,7 +19,7 @@ const FIELDS = {
 const Main = () => {
   const { NAME, ROOM } = FIELDS;
 
-  const [values, setValues] = React.useState({ [NAME]: '', [ROOM]: '' });
+  const [values, setValues] = React.useState({ [NAME]: '', [ROOM]: 'Global' });
 
   const handleChange = (event: any) => {
     setValues({ ...values, [event.target.name]: event.target.value });
