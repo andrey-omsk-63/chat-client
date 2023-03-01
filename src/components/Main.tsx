@@ -27,7 +27,7 @@ const Main = () => {
 
   const handleClick = (e: any) => {
     const isDisabled = Object.values(values).some((v) => !v);
-    //console.log('isDisabled:', isDisabled);
+    console.log('isDisabled:', isDisabled,values);
     if (isDisabled) e.preventDefault();
   };
 

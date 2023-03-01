@@ -1,143 +1,171 @@
-import React from 'react';
-import io from 'socket.io-client';
-import { useLocation, useNavigate } from 'react-router-dom';
-import EmojiPicker from 'emoji-picker-react';
+import React from "react";
+import io from "socket.io-client";
+import { useLocation, useNavigate } from "react-router-dom";
+import EmojiPicker from "emoji-picker-react";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
 
-import axios from 'axios';
+import axios from "axios";
 
-import icon from '../images/emoji.svg';
-import Messages from './Messages';
+import icon from "../images/emoji.svg";
+import Messages from "./Messages";
 
-import { styleChat01, styleChat02 } from './ComponentsStyle';
-import { styleChat021, styleChat022 } from './ComponentsStyle';
-import { styleChat03, styleChat04, styleChat16 } from './ComponentsStyle';
-import { styleChat05, styleChat06, styleChat07 } from './ComponentsStyle';
-import { styleChatInp01, styleChatInp02 } from './ComponentsStyle';
-import { styleChatInp03, styleChat041 } from './ComponentsStyle';
+import { styleChat01, styleChat02, styleChat08 } from "./ComponentsStyle";
+import { styleChat021, styleChat022 } from "./ComponentsStyle";
+import { styleChat03, styleChat04, styleChat16 } from "./ComponentsStyle";
+import { styleChat05, styleChat06, styleChat07 } from "./ComponentsStyle";
+import { styleChatInp01, styleChatInp02 } from "./ComponentsStyle";
+import { styleChatInp03, styleChat041 } from "./ComponentsStyle";
+import { styleChatBut01 } from "./ComponentsStyle";
 
 const ioo: any = io;
-const socket = ioo.connect('http://localhost:5000');
+const socket = ioo.connect("http://localhost:5000");
 
 let usersRooms: any = [];
 let debug = false;
 let flagOpenDebug = true;
+let chatReady = 0;
+let oldName = "oldName";
+let oldRoom = "oldRoom";
 
-let archive: any = null;
+let archive: Array<any> = [];
+let sistUsers: Array<any> = [];
 let maskSoob = {
   user: {
-    name: 'ChatAdmin',
+    name: "ChatAdmin",
   },
-  message: '123, и снова здравствуйте',
+  message: "123, и снова здравствуйте",
   date: new Date(),
 };
 
 const Chat = (props: { ws: WebSocket; nik: any }) => {
-  const [params, setParams] = React.useState({ room: '', user: '' } as any);
+  const [params, setParams] = React.useState({ room: "", user: "" } as any);
   const [state, setState] = React.useState<Array<any>>([]);
-  const [message, setMessage] = React.useState('');
+  const [message, setMessage] = React.useState("");
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState(0);
-  const [sistUsers, setSistUsers] = React.useState<Array<any>>([]);
+  //const [sistUsers, setSistUsers] = React.useState<Array<any>>([]);
+  //const [trigger, setTrigger] = React.useState(false);
+
   const { search } = useLocation();
   const navigate = useNavigate();
   const divRef: any = React.useRef(null);
 
   let WS = props.ws;
-  if (WS.url.slice(0, 21) === 'wss://localhost:3000/') debug = true;
+  if (WS.url.slice(0, 21) === "wss://localhost:3000/") debug = true;
 
-  const PostingArchive = () => {
+  // const PostingArchive = React.useCallback((archive: any) => {
+  const PostingArchive = (archive: any) => {
     for (let i = 0; i < archive.messages.length; i++) {
       maskSoob.user.name = archive.messages[i].from;
       maskSoob.message = archive.messages[i].message;
       maskSoob.date = archive.messages[i].time;
-      state.push(JSON.parse(JSON.stringify(maskSoob)));
-      //setState((_state) => [..._state, JSON.parse(JSON.stringify(maskSoob))]);
+      let mass = JSON.parse(JSON.stringify(maskSoob));
+      setState((_state) => [..._state, mass]);
     }
   };
+  //, []);
 
   //=== инициализация ======================================
   if (debug && flagOpenDebug) {
-    console.log('РЕЖИМ ОТЛАДКИ!!!');
-    let ipAdress: string = 'http://localhost:3000/otladkaUsers.json';
+    console.log("РЕЖИМ ОТЛАДКИ!!!");
+    let ipAdress: string = "http://localhost:3000/otladkaUsers.json";
     axios.get(ipAdress).then(({ data }) => {
-      setSistUsers(data.data.users);
+      //setSistUsers(data.data.users);
+      sistUsers = data.data.users;
+      chatReady++;
     });
-    ipAdress = 'http://localhost:3000/otladkaArchive.json';
+    ipAdress = "http://localhost:3000/otladkaArchive.json";
     axios.get(ipAdress).then(({ data }) => {
       archive = data.data.archive;
-      PostingArchive();
+      chatReady++;
+      PostingArchive(data.data.archive);
     });
     flagOpenDebug = false;
+    //oldName = params.name;
+    //oldRoom = params.room;
+    console.log("0params:", params, oldName, oldRoom);
   }
+  console.log("1params:", params, oldName, oldRoom);
 
+  //========================================================
   React.useEffect(() => {
     WS.onopen = function (event: any) {
-      console.log('WS.current.onopen:', event);
+      //console.log("WS.current.onopen:", event);
     };
     WS.onclose = function (event: any) {
-      console.log('WS.current.onclose:', event);
+      //console.log("WS.current.onclose:", event);
     };
     WS.onerror = function (event: any) {
-      console.log('WS.current.onerror:', event);
+      //console.log("WS.current.onerror:", event);
     };
     WS.onmessage = function (event: any) {
       let allData = JSON.parse(event.data);
       let data = allData.data;
       //console.log("пришло:", data.error, allData.type, data);
       switch (allData.type) {
-        case 'users':
-          setSistUsers(data.users);
+        case "users":
+          //setSistUsers(data.users);
+          sistUsers = data.users;
           break;
-        case 'archive':
+        case "archive":
           archive = data.archive;
-          PostingArchive();
+          PostingArchive(data.archive);
           break;
-        case 'getBindings':
+        case "getBindings":
           break;
-        case 'getAddObjects':
+        case "getAddObjects":
           break;
-        case 'getPhases':
+        case "getPhases":
           break;
-        case 'getSvg':
+        case "getSvg":
           break;
         default:
-          console.log('data_default:', data);
+          console.log("data_default:", data);
       }
     };
-  }, []);
+  }, [WS, PostingArchive]);
 
   //window.localStorage.getItem("login")
   //=== РЕЖИМ ОТЛАДКИ ======================================
   React.useEffect(() => {
     const searchParams: any = Object.fromEntries(new URLSearchParams(search));
     setParams(searchParams);
-    socket.emit('join', searchParams);
-
+    console.log("3params:", searchParams, oldName, oldRoom);
+    if (oldName && oldRoom) {
+      if (oldName !== searchParams.name || oldRoom !== searchParams.room) {
+        console.log("2params:", params, state);
+        PostingArchive(archive);
+        oldName = searchParams.name;
+        oldRoom = searchParams.room;
+      }
+    }
+    socket.emit("join", searchParams);
     return () => {
       socket.off();
     };
-  }, [search]);
+  }, [search, PostingArchive]);
 
   const leftRoom = () => {
-    socket.emit('leftRoom', { params });
-    navigate('/');
+    socket.emit("leftRoom", { params });
+    navigate("/");
   };
 
   React.useEffect(() => {
-    socket.on('message', (event: any) => {
-      console.log('event.data:', event.data);
-      setState((_state) => [..._state, event.data]);
+    socket.on("message", (event: any) => {
+      //console.log("event.data:", event.data);
+      setTimeout(() => {
+        setState((_state) => [..._state, event.data]);
+      }, 100);
       setTimeout(() => {
         // 👇️ scroll to bottom every time messages change
         divRef.current && divRef.current.scrollIntoView();
       }, 100);
     });
-    socket.on('room', (event: any) => {
+    socket.on("room", (event: any) => {
       setUsers(event.data.users.length);
       usersRooms = event.data.users;
       // 👇️ scroll to bottom every time messages change
@@ -152,39 +180,44 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   const handleSubmit = () => {
     if (!message) return;
     let date = new Date().toISOString();
-    //console.log('DATE:', date);
-    socket.emit('sendMessage', { message, params, date });
-    setMessage('');
+    socket.emit("sendMessage", { message, params, date });
+    setMessage("");
   };
 
   const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
 
   const handleKey = (event: any) => {
-    if (event.key === 'Enter') event.preventDefault();
+    if (event.key === "Enter") event.preventDefault();
   };
 
-  let chel = 'человек';
+  let chel = "человек";
   if (users !== 12 && users !== 13 && users !== 14) {
-    if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
+    if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += "а";
   }
 
-  //console.log('@@@@@@',state,params.name)
+  //console.log('1@@@@@@', params, state)
 
   const LeftPartChat = () => {
+    let nameRoom = " в этой комнате";
+    let redKnop = "Покинуть комнату";
+    if (params.room === "Global") {
+      nameRoom = " чате";
+      redKnop = "Выйти из чата";
+    }
     return (
       <>
         <Box sx={styleChat02}>
           <Box sx={styleChat03}>{params.room}</Box>
           <Box>
-            {users} {chel} в этой комнате
+            {users} {chel} {nameRoom}
           </Box>
           <Button sx={styleChat04} variant="contained" onClick={leftRoom}>
-            Покинуть комнату
+            {redKnop}
           </Button>
         </Box>
 
         <Box sx={styleChat05}>
-          <Box sx={{ overflowX: 'auto', height: '86vh' }}>
+          <Box sx={{ overflowX: "auto", height: "86vh" }}>
             <Messages messages={state} name={params.name} />
             <div ref={divRef} />
           </Box>
@@ -232,10 +265,10 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       if (nameer.length > 15) nameer = nameer.slice(0, 15);
       resStr.push(
         <Grid key={i} item container xs={12}>
-          <Grid item xs={12} sx={{ fontSize: 12.9, textAlign: 'center', padding: '1vh 0 0 0' }}>
+          <Grid item xs={12} sx={styleChat08}>
             <b>{nameer}</b>
           </Grid>
-        </Grid>,
+        </Grid>
       );
     }
     return resStr;
@@ -248,28 +281,28 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       if (nameer.length > 15) nameer = nameer.slice(0, 15);
       resStr.push(
         <Grid key={i} item container xs={12}>
-          {sistUsers[i].status === 'online' && (
-            <Grid item xs={12} sx={{ fontSize: 12.9, textAlign: 'center', padding: '1vh 0 0 0' }}>
-              <b>{nameer}</b>
-            </Grid>
-          )}
-          {sistUsers[i].status !== 'online' && (
-            <Grid item xs={12} sx={{ fontSize: 12.9, textAlign: 'center', padding: '1vh 0 0 0' }}>
-              {nameer}
-            </Grid>
-          )}
-        </Grid>,
+          <Grid item xs={12} sx={styleChat08}>
+            <Button
+              variant="contained"
+              sx={styleChatBut01}
+              //onClick={() => ClickKnop3(i)}
+            >
+              {sistUsers[i].status !== "online" && <em>{nameer}</em>}
+              {sistUsers[i].status === "online" && <b>{nameer}</b>}
+            </Button>
+          </Grid>
+        </Grid>
       );
     }
     return resStr;
   };
 
-  //console.log('###:', usersRooms, sistUsers);
+  //console.log("###:", chatReady, state);
 
   return (
     <Grid container>
       <Grid item xs={10} sx={styleChat01}>
-        {LeftPartChat()}
+        {chatReady > 1 && <>{LeftPartChat()}</>}
       </Grid>
 
       <Grid item xs={2} sx={styleChat01}>
@@ -277,21 +310,21 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
           <Grid item xs={12} sx={styleChat022}>
             Пользователи в
           </Grid>
-          <Grid item xs={12} sx={{ textAlign: 'center' }}>
+          <Grid item xs={12} sx={{ textAlign: "center" }}>
             комнате:
           </Grid>
         </Grid>
-        <Box sx={{ overflowX: 'auto', height: '32vh' }}>{UsersChat()}</Box>
+        <Box sx={{ overflowX: "auto", height: "21vh" }}>{UsersChat()}</Box>
 
         <Grid container sx={styleChat021}>
           <Grid item xs={12} sx={styleChat022}>
             Пользователи в
           </Grid>
-          <Grid item xs={12} sx={{ textAlign: 'center' }}>
+          <Grid item xs={12} sx={{ textAlign: "center" }}>
             системе:
           </Grid>
         </Grid>
-        <Box sx={{ overflowX: 'auto', height: '53vh' }}>{UsersSist()}</Box>
+        <Box sx={{ overflowX: "auto", height: "64vh" }}>{UsersSist()}</Box>
       </Grid>
     </Grid>
   );
