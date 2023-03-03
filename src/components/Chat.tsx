@@ -1,53 +1,53 @@
-import React from "react";
-import io from "socket.io-client";
-import { useLocation, useNavigate } from "react-router-dom";
-import EmojiPicker from "emoji-picker-react";
+import React from 'react';
+import io from 'socket.io-client';
+import { useLocation, useNavigate } from 'react-router-dom';
+import EmojiPicker from 'emoji-picker-react';
 
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 
-import axios from "axios";
+import axios from 'axios';
 
-import icon from "../images/emoji.svg";
-import Messages from "./Messages";
+import icon from '../images/emoji.svg';
+import Messages from './Messages';
 
-import { MakeSpisUsers } from "./ChatServiceFunctions";
+import { MakeSpisUsers } from './ChatServiceFunctions';
 
-import { styleChat01, styleChat02, styleChat08 } from "./ComponentsStyle";
-import { styleChat021, styleChat022 } from "./ComponentsStyle";
-import { styleChat03, styleChat04, styleChat16 } from "./ComponentsStyle";
-import { styleChat05, styleChat06, styleChat07 } from "./ComponentsStyle";
-import { styleChatInp01, styleChatInp02 } from "./ComponentsStyle";
-import { styleChatInp03, styleChat041 } from "./ComponentsStyle";
-import { styleChatBut01, styleChat081 } from "./ComponentsStyle";
+import { styleChat01, styleChat02, styleChat08 } from './ComponentsStyle';
+import { styleChat021, styleChat022 } from './ComponentsStyle';
+import { styleChat03, styleChat04, styleChat16 } from './ComponentsStyle';
+import { styleChat05, styleChat06, styleChat07 } from './ComponentsStyle';
+import { styleChatInp01, styleChatInp02 } from './ComponentsStyle';
+import { styleChatInp03, styleChat041 } from './ComponentsStyle';
+import { styleChatBut01, styleChat081 } from './ComponentsStyle';
 
 const ioo: any = io;
-const socket = ioo.connect("http://localhost:5000");
+const socket = ioo.connect('http://localhost:5000');
 
 let usersRooms: any = [];
 let debug = false;
 let flagOpenDebug = true;
 let chatReady = 0;
-let oldName = "oldName";
-let oldRoom = "oldRoom";
-let nameKomu = "Global";
+let oldName = 'oldName';
+let oldRoom = 'oldRoom';
+let nameKomu = 'Global';
 
-let archive: any = [];
+let archive: any = null;
 let sistUsers: Array<any> = [];
 let maskSoob = {
   user: {
-    name: "ChatAdmin",
+    name: 'ChatAdmin',
   },
-  message: "123, и снова здравствуйте",
+  message: '123, и снова здравствуйте',
   date: new Date(),
 };
 
 const Chat = (props: { ws: WebSocket; nik: any }) => {
-  const [params, setParams] = React.useState({ room: "", user: "" } as any);
+  const [params, setParams] = React.useState({ room: '', user: '' } as any);
   const [state, setState] = React.useState<Array<any>>([]);
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = React.useState('');
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState(0);
   //const [sistUsers, setSistUsers] = React.useState<Array<any>>([]);
@@ -58,11 +58,11 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   const divRef: any = React.useRef(null);
 
   let WS = props.ws;
-  if (WS.url.slice(0, 21) === "wss://localhost:3000/") debug = true;
+  if (WS.url.slice(0, 21) === 'wss://localhost:3000/') debug = true;
   //console.log('props:', props, params);
 
   const PostingArchive = React.useCallback((archive: any, room: string) => {
-    console.log("PostingArchive", room, archive);
+    console.log('PostingArchive', room, archive);
     for (let i = 0; i < archive.messages.length; i++) {
       if (
         //archive.messages[i].from === room ||
@@ -79,21 +79,21 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
 
   //=== инициализация ======================================
   if (debug && flagOpenDebug) {
-    console.log("РЕЖИМ ОТЛАДКИ!!!");
-    let ipAdress = "http://localhost:3000/otladkaArchive.json";
+    console.log('РЕЖИМ ОТЛАДКИ!!!');
+    let ipAdress = 'http://localhost:3000/otladkaArchive.json';
     axios.get(ipAdress).then(({ data }) => {
       archive = data.data.archive;
       chatReady++;
-      PostingArchive(data.data.archive, "Global");
+      PostingArchive(data.data.archive, 'Global');
     });
-    ipAdress = "http://localhost:3000/otladkaUsers.json";
+    ipAdress = 'http://localhost:3000/otladkaUsers.json';
     axios.get(ipAdress).then(({ data }) => {
       sistUsers = MakeSpisUsers(data.data.users);
-      console.log("sistUsers", sistUsers);
+      console.log('sistUsers', sistUsers);
       chatReady++;
     });
     flagOpenDebug = false;
-    console.log("1params:", archive, state);
+    console.log('1params:', archive, state);
   }
 
   //========================================================
@@ -112,24 +112,24 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       let data = allData.data;
       //console.log("пришло:", data.error, allData.type, data);
       switch (allData.type) {
-        case "users":
+        case 'users':
           //setSistUsers(data.users);
           sistUsers = MakeSpisUsers(data.users);
           break;
-        case "archive":
+        case 'archive':
           archive = data.archive;
-          PostingArchive(data.archive, "Global");
+          PostingArchive(data.archive, 'Global');
           break;
-        case "getBindings":
+        case 'getBindings':
           break;
-        case "getAddObjects":
+        case 'getAddObjects':
           break;
-        case "getPhases":
+        case 'getPhases':
           break;
-        case "getSvg":
+        case 'getSvg':
           break;
         default:
-          console.log("data_default:", data);
+          console.log('data_default:', data);
       }
     };
   }, [WS, PostingArchive]);
@@ -139,11 +139,11 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   React.useEffect(() => {
     const searchParams: any = Object.fromEntries(new URLSearchParams(search));
     setParams(searchParams);
-    console.log("3params:", searchParams, oldName, oldRoom);
-    if (oldName !== "oldName" && oldRoom !== "oldRoom") {
+    console.log('3params:', searchParams, oldName, oldRoom);
+    if (oldName !== 'oldName' && oldRoom !== 'oldRoom') {
       //console.log('4params:', searchParams, oldName, oldRoom);
       if (oldName !== searchParams.name || oldRoom !== searchParams.room) {
-        console.log("2params:", archive);
+        console.log('2params:', archive);
         PostingArchive(archive, searchParams.room);
         oldName = searchParams.name;
         oldRoom = searchParams.room;
@@ -153,15 +153,16 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       oldRoom = searchParams.room;
     }
     //console.log("4params:", oldName, oldRoom, state);
-    socket.emit("join", searchParams);
+    socket.emit('join', searchParams);
     return () => {
       socket.off();
     };
   }, [search, PostingArchive]);
 
   const leftRoom = () => {
-    if (params.room !== "Global") {
-      nameKomu = "Global";
+    socket.emit('leftRoom', { params });
+    if (params.room !== 'Global') {
+      nameKomu = 'Global';
       let newParams = params;
       newParams.room = nameKomu;
       setParams(newParams);
@@ -169,20 +170,20 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       PostingArchive(archive, nameKomu);
       oldName = newParams.name;
       oldRoom = nameKomu;
-      console.log("Click2:", params, state);
-      socket.emit("join", params, nameKomu);
+      console.log('LeftRoom:', params, newParams);
+      socket.emit('join', params, nameKomu);
       return () => {
         socket.off();
       };
     } else {
-      socket.emit("leftRoom", { params });
-      navigate("/");
+      //socket.emit("leftRoom", { params });
+      navigate('/');
     }
   };
 
   React.useEffect(() => {
-    socket.on("message", (event: any) => {
-      console.log("event.data:", event.data, "::", oldRoom, archive);
+    socket.on('message', (event: any) => {
+      console.log('event.data:', event.data, '::', oldRoom, archive);
       let mask = {
         from: event.data.user.name,
         to: event.data.to,
@@ -190,10 +191,10 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
         time: event.data.date,
         read: false,
       };
-      console.log("ARH:", archive, archive.messages.length);
-      if (archive.messages.length) {
+      //console.log('ARH:', archive);
+      if (archive !== null) {
         archive.messages.push(mask);
-        console.log("HHHHandleSubmit", archive.messages);
+        //console.log('HHHHandleSubmit', archive.messages);
       }
       setTimeout(() => {
         if (event.data.to === oldRoom) {
@@ -205,7 +206,8 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
         divRef.current && divRef.current.scrollIntoView();
       }, 150);
     });
-    socket.on("room", (event: any) => {
+    socket.on('room', (event: any) => {
+      console.log('ROOM:', event);
       setUsers(event.data.users.length);
       usersRooms = event.data.users;
       // 👇️ scroll to bottom every time messages change
@@ -220,33 +222,33 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   const handleSubmit = () => {
     if (!message) return;
     let date = new Date().toISOString();
-    socket.emit("sendMessage", { message, params, date, oldRoom });
+    socket.emit('sendMessage', { message, params, date, oldRoom });
 
-    console.log("HandleSubmiT", message, params, date);
+    console.log('HandleSubmiT', message, params, date);
 
-    setMessage("");
+    setMessage('');
   };
 
   const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
 
   const handleKey = (event: any) => {
-    if (event.key === "Enter") event.preventDefault();
+    if (event.key === 'Enter') event.preventDefault();
   };
 
-  let chel = "человек";
+  let chel = 'человек';
   if (users !== 12 && users !== 13 && users !== 14) {
-    if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += "а";
+    if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
   }
 
   const LeftPartChat = () => {
-    let nameRoom = " комнате";
-    let redKnop = "Покинуть комнату";
-    if (params.room === "Global") {
-      nameRoom = " чате";
-      redKnop = "Выйти из чата";
+    let nameRoom = ' комнате';
+    let redKnop = 'Покинуть комнату';
+    if (params.room === 'Global') {
+      nameRoom = ' чате';
+      redKnop = 'Выйти из чата';
     }
     let roomName = nameKomu;
-    if (nameKomu !== "Global") roomName = nameKomu + "/" + params.name;
+    if (nameKomu !== 'Global') roomName = nameKomu + '/' + params.name;
     return (
       <>
         <Box sx={styleChat02}>
@@ -261,7 +263,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
         </Box>
 
         <Box sx={styleChat05}>
-          <Box sx={{ overflowX: "auto", height: "86vh" }}>
+          <Box sx={{ overflowX: 'auto', height: '86vh' }}>
             <Messages messages={state} name={params.name} />
             <div ref={divRef} />
           </Box>
@@ -312,18 +314,19 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
           <Grid item xs={12} sx={styleChat08}>
             <b>{nameer}</b>
           </Grid>
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
   };
 
   const ClickKnop = (mode: number) => {
-    console.log("Click1:", sistUsers[mode], params, sistUsers);
+    console.log('Click1:', sistUsers[mode], params, sistUsers);
+    socket.emit('leftRoom', { params });
     let newParams = params;
     let id1 = sistUsers[mode].id; // кому
     nameKomu = sistUsers[mode].user;
-    let id2 = "00";
+    let id2 = '00';
     for (let i = 0; i < sistUsers.length; i++) {
       if (sistUsers[i].user === params.name) id2 = sistUsers[i].id; // от кого
     }
@@ -335,8 +338,9 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     PostingArchive(archive, roomer);
     oldName = newParams.name;
     oldRoom = roomer;
-    console.log("Click2:", params, state);
-    socket.emit("join", params, roomer);
+    console.log('ClickKnop:', params, newParams);
+    socket.emit('join', params, roomer);
+    //socket.emit('join', params);
     return () => {
       socket.off();
     };
@@ -354,37 +358,33 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
             •
           </Grid>
           <Grid item xs sx={styleChat08}>
-            {sistUsers[i].user !== params.name &&
-              sistUsers[i].user !== nameKomu && (
-                <Button
-                  variant="contained"
-                  sx={styleChatBut01}
-                  onClick={() => ClickKnop(i)}
-                >
-                  {sistUsers[i].status !== "online" && <em>{nameer}</em>}
-                  {sistUsers[i].status === "online" && <b>{nameer}</b>}
-                </Button>
-              )}
+            {sistUsers[i].user !== params.name && sistUsers[i].user !== nameKomu && (
+              <Button variant="contained" sx={styleChatBut01} onClick={() => ClickKnop(i)}>
+                {sistUsers[i].status !== 'online' && <em>{nameer}</em>}
+                {sistUsers[i].status === 'online' && <b>{nameer}</b>}
+              </Button>
+            )}
             {sistUsers[i].user === params.name && (
-              <Box sx={{ padding: "0.5vh 0 0 0" }}>
+              <Box sx={{ padding: '0.5vh 0 0 0' }}>
                 <b>{nameer}</b>
               </Box>
             )}
             {sistUsers[i].user === nameKomu && (
-              <Box sx={{ padding: "0.5vh 0 0 0" }}>
+              <Box sx={{ padding: '0.5vh 0 0 0' }}>
                 <b>{nameer}</b>
               </Box>
             )}
           </Grid>
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
   };
 
-  //console.log("###:", chatReady, state);
-  let chatRoom = "чате:";
-  if (params.room !== "Global") chatRoom = "комнате:";
+  //console.log('###:', chatReady, state);
+
+  let chatRoom = 'чате:';
+  if (params.room !== 'Global') chatRoom = 'комнате:';
   return (
     <Grid container>
       <Grid item xs={10} sx={styleChat01}>
@@ -392,19 +392,19 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       </Grid>
 
       <Grid item xs sx={styleChat01}>
-        <Box sx={{ background: "#D3D3D3" }}>
+        <Box sx={{ background: '#D3D3D3' }}>
           <Grid container sx={styleChat021}>
             <Grid item xs={12} sx={styleChat022}>
               Пользователи в<Box>{chatRoom}</Box>
             </Grid>
           </Grid>
-          <Box sx={{ overflowX: "auto", height: "6vh" }}>{UsersChat()}</Box>
+          <Box sx={{ overflowX: 'auto', height: '6vh' }}>{UsersChat()}</Box>
           <Grid container sx={styleChat021}>
             <Grid item xs={12} sx={styleChat022}>
               Пользователи в<Box>системе:</Box>
             </Grid>
           </Grid>
-          <Box sx={{ overflowX: "auto", height: "79.5vh" }}>{UsersSist()}</Box>
+          <Box sx={{ overflowX: 'auto', height: '79.5vh' }}>{UsersSist()}</Box>
         </Box>
       </Grid>
     </Grid>
