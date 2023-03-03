@@ -47,7 +47,7 @@ const Messages = (props: { messages: any; name: string }) => {
         width: dlina,
         border: 2,
         height: "36px",
-        fontSize: "14px",
+        fontSize: "13.5px",
         background: "#fafac3", // жёлтый
         borderColor: "#fafac3",
         borderRadius: 3,
@@ -62,7 +62,7 @@ const Messages = (props: { messages: any; name: string }) => {
         width: dlina,
         border: 2,
         height: "36px",
-        fontSize: "14px",
+        fontSize: "13.5px",
         background: "#93E5EE", //зелёный
         borderColor: "#93E5EE",
         borderRadius: 3,

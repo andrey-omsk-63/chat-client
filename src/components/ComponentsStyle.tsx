@@ -59,17 +59,20 @@ export const styleChat02 = {
   width: "100%",
   height: "7vh",
   color: "black",
-  background: "#C0C0C0",
+  background: "#D3D3D3",
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   padding: "0 20px",
-  borderRadius: 3,
-  borderBottomLeftRadius: 3,
-  borderBottomRightRadius: 3,
+  borderTopLeftRadius: 9,
+  //borderRadius: 3,
+  //borderBottomLeftRadius: 0,
+  //borderBottomRightRadius: 0,
+  //borderTopRightRadius: 0,
 };
 
 export const styleChat021 = {
+  border: 0,
   fontSize: 12.9,
   width: "100%",
   height: "7vh",
@@ -79,7 +82,7 @@ export const styleChat021 = {
 
 export const styleChat022 = {
   textAlign: "center",
-  padding: "1.5vh 0 0 0",
+  padding: "3vh 0 0 0",
 };
 
 export const styleChat03 = {
@@ -100,7 +103,7 @@ export const styleChat04 = {
 
 export const styleChat041 = {
   fontSize: 14,
-  background: "#C0C0C0",
+  background: "#D3D3D3",
   marginTop: -0.5,
   color: "black",
   padding: "6px",
@@ -124,13 +127,15 @@ export const styleChat16 = {
   width: "100%",
   display: "flex",
   alignItems: "center",
-  background: "#C0C0C0",
+  background: "#D3D3D3",
   justifyContent: "space-between",
   height: "7vh",
   padding: "0 20px",
-  borderRadius: 3,
-  borderTopLeftRadius: 3,
-  borderTopRightRadius: 3,
+  borderBottomLeftRadius: 9,
+  // borderRadius: 3,
+  // borderTopLeftRadius: 0,
+  // borderTopRightRadius: 0,
+  // borderBottomRightRadius: 0,
 };
 
 export const styleChat06 = {
@@ -148,9 +153,16 @@ export const styleChat07 = {
 };
 
 export const styleChat08 = {
-  fontSize: 12.9,
+  fontSize: 12,
   textAlign: "center",
   padding: "0.5vh 0 0 0",
+};
+
+export const styleChat081 = {
+  fontSize: 21,
+  textAlign: "center",
+  padding: "0.4vh 0 0 0.08vh",
+  color: "blue",
 };
 
 export const styleChatInp01 = {
@@ -178,11 +190,11 @@ export const styleChatInp04 = {
 };
 
 export const styleChatBut01 = {
-  fontSize: 12.9,
+  fontSize: 12,
   //marginTop: 4,
   border: '2px solid #000',
   bgcolor: '#E6F5D6',
-  width: '127px',
+  width: '105px',
   height: '20px',
   borderColor: '#E6F5D6',
   borderRadius: 2,
@@ -199,14 +211,14 @@ export const styleMess01 = {
 
 export const styleUserUser = {
   //marginTop: -0.5,
-  fontSize: "12px",
+  fontSize: "11.5px",
   color: "black",
   paddingLeft: "9px",
 };
 
 export const styleMeUser = {
   //marginTop: -0.5,
-  fontSize: "12px",
+  fontSize: "11.5px",
   color: "black",
   paddingRight: "9px",
   textAlign: "right",
