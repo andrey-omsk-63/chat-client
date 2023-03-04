@@ -51,7 +51,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState(0);
   const [chatReady, setChatReady] = React.useState(0);
-  //const [trigger, setTrigger] = React.useState(false);
+  const [trigger, setTrigger] = React.useState(false);
 
   const { search } = useLocation();
   const navigate = useNavigate();
@@ -71,6 +71,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
         maskSoob.user.name = archive[i].from;
         maskSoob.message = archive[i].message;
         maskSoob.date = archive[i].time;
+        archive[i].read = true;
         let mass = JSON.parse(JSON.stringify(maskSoob));
         setState((_state) => [..._state, mass]);
       }
@@ -210,18 +211,19 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   React.useEffect(() => {
     socket.on('message', (event: any) => {
       console.log('event.data:', event.data, '::', oldRoom, archive);
+      let toTo = true;
+      if (event.data.to !== oldRoom) toTo = false;
       let mask = {
         from: event.data.user.name,
         to: event.data.to,
         message: event.data.message,
         time: event.data.date,
-        read: false,
+        read: toTo,
       };
       console.log('ARH:', archive, archive.length);
-      //setTimeout(() => {
+
       if (archive.length) archive.push(mask);
       console.log('HHHHandleSubmit', archive);
-      //}, 100);
       setTimeout(() => {
         if (event.data.to === oldRoom) {
           setState((_state) => [..._state, event.data]);
@@ -248,9 +250,9 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   const handleSubmit = () => {
     if (!message) return;
     let date = new Date().toISOString();
-    socket.emit('sendMessage', { message, params, date, oldRoom });
+    socket.emit('sendMessage', { message, params, date });
 
-    console.log('HandleSubmiT', message, params, date);
+    console.log('HandleSubmiT', message, params, date, oldRoom);
 
     setMessage('');
   };
@@ -374,14 +376,25 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
 
   const UsersSist = () => {
     let resStr: any = [];
-    //console.log("UsersSist:", nameKomu, params);
+    console.log('pointUsersSist');
     for (let i = 0; i < sistUsers.length; i++) {
       let nameer = sistUsers[i].user;
       if (nameer.length > 15) nameer = nameer.slice(0, 15);
+      let point = ' ';
+      for (let j = 0; j < archive.length; j++) {
+        if (archive[j].from !== 'ChatAdmin' && archive[j].from === sistUsers[i].user) {
+          if (archive[j].to !== 'Global') {
+            if (!archive[j].read) {
+              console.log('Point', sistUsers[i].user, archive[j]);
+              point = '•';
+            }
+          }
+        }
+      }
       resStr.push(
         <Grid key={i} item container xs={12}>
           <Grid item xs={0.5} sx={styleChat081}>
-            •
+            {point}
           </Grid>
           <Grid item xs sx={styleChat08}>
             {sistUsers[i].user !== params.name && sistUsers[i].user !== nameKomu && (
@@ -407,7 +420,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     return resStr;
   };
 
-  console.log('###:', chatReady, state);
+  //console.log('###:', chatReady, state);
 
   let chatRoom = 'чате:';
   if (params.room !== 'Global') chatRoom = 'комнате:';
