@@ -29,12 +29,12 @@ const socket = ioo.connect('http://localhost:5000');
 let usersRooms: any = [];
 let debug = false;
 let flagOpenDebug = true;
-let chatReady = 0;
+//let chatReady = 0;
 let oldName = 'oldName';
 let oldRoom = 'oldRoom';
 let nameKomu = 'Global';
 
-let archive: any = null;
+let archive: any = [];
 let sistUsers: Array<any> = [];
 let maskSoob = {
   user: {
@@ -50,7 +50,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   const [message, setMessage] = React.useState('');
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState(0);
-  //const [sistUsers, setSistUsers] = React.useState<Array<any>>([]);
+  const [chatReady, setChatReady] = React.useState(0);
   //const [trigger, setTrigger] = React.useState(false);
 
   const { search } = useLocation();
@@ -63,14 +63,14 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
 
   const PostingArchive = React.useCallback((archive: any, room: string) => {
     console.log('PostingArchive', room, archive);
-    for (let i = 0; i < archive.messages.length; i++) {
+    for (let i = 0; i < archive.length; i++) {
       if (
         //archive.messages[i].from === room ||
-        archive.messages[i].to === room
+        archive[i].to === room
       ) {
-        maskSoob.user.name = archive.messages[i].from;
-        maskSoob.message = archive.messages[i].message;
-        maskSoob.date = archive.messages[i].time;
+        maskSoob.user.name = archive[i].from;
+        maskSoob.message = archive[i].message;
+        maskSoob.date = archive[i].time;
         let mass = JSON.parse(JSON.stringify(maskSoob));
         setState((_state) => [..._state, mass]);
       }
@@ -82,18 +82,33 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     console.log('РЕЖИМ ОТЛАДКИ!!!');
     let ipAdress = 'http://localhost:3000/otladkaArchive.json';
     axios.get(ipAdress).then(({ data }) => {
-      archive = data.data.archive;
-      chatReady++;
-      PostingArchive(data.data.archive, 'Global');
+      let arch = data.data.archive;
+      for (let i = 0; i < arch.messages.length; i++) {
+        let mask = {
+          from: arch.messages[i].from,
+          to: arch.messages[i].to,
+          message: arch.messages[i].message,
+          time: arch.messages[i].time,
+          read: false,
+        };
+        archive.push(mask);
+      }
+      setState([]);
+      PostingArchive(archive, 'Global');
+      //chatReady++;
+      let ch = chatReady + 1;
+      setChatReady(ch);
     });
     ipAdress = 'http://localhost:3000/otladkaUsers.json';
     axios.get(ipAdress).then(({ data }) => {
       sistUsers = MakeSpisUsers(data.data.users);
       console.log('sistUsers', sistUsers);
-      chatReady++;
+      //chatReady++;
+      let ch = chatReady + 1;
+      setChatReady(ch);
     });
     flagOpenDebug = false;
-    console.log('1params:', archive, state);
+    console.log('1params:', archive, state, chatReady);
   }
 
   //========================================================
@@ -117,8 +132,18 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
           sistUsers = MakeSpisUsers(data.users);
           break;
         case 'archive':
-          archive = data.archive;
-          PostingArchive(data.archive, 'Global');
+          let arch = data.archive;
+          for (let i = 0; i < arch.messages.length; i++) {
+            let mask = {
+              from: arch.messages[i].from,
+              to: arch.messages[i].to,
+              message: arch.messages[i].message,
+              time: arch.messages[i].time,
+              read: false,
+            };
+            archive.push(mask);
+          }
+          PostingArchive(archive, 'Global');
           break;
         case 'getBindings':
           break;
@@ -160,7 +185,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   }, [search, PostingArchive]);
 
   const leftRoom = () => {
-    socket.emit('leftRoom', { params });
+    //socket.emit('leftRoom', { params });
     if (params.room !== 'Global') {
       nameKomu = 'Global';
       let newParams = params;
@@ -171,12 +196,13 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       oldName = newParams.name;
       oldRoom = nameKomu;
       console.log('LeftRoom:', params, newParams);
-      socket.emit('join', params, nameKomu);
+      //socket.emit('join', params, nameKomu);
+      socket.emit('join', params);
       return () => {
         socket.off();
       };
     } else {
-      //socket.emit("leftRoom", { params });
+      socket.emit('leftRoom', { params });
       navigate('/');
     }
   };
@@ -191,20 +217,20 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
         time: event.data.date,
         read: false,
       };
-      //console.log('ARH:', archive);
-      if (archive !== null) {
-        archive.messages.push(mask);
-        //console.log('HHHHandleSubmit', archive.messages);
-      }
+      console.log('ARH:', archive, archive.length);
+      //setTimeout(() => {
+      if (archive.length) archive.push(mask);
+      console.log('HHHHandleSubmit', archive);
+      //}, 100);
       setTimeout(() => {
         if (event.data.to === oldRoom) {
           setState((_state) => [..._state, event.data]);
         }
-      }, 100);
+      }, 200);
       setTimeout(() => {
         // 👇️ scroll to bottom every time messages change
         divRef.current && divRef.current.scrollIntoView();
-      }, 150);
+      }, 250);
     });
     socket.on('room', (event: any) => {
       console.log('ROOM:', event);
@@ -339,8 +365,8 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     oldName = newParams.name;
     oldRoom = roomer;
     console.log('ClickKnop:', params, newParams);
-    socket.emit('join', params, roomer);
-    //socket.emit('join', params);
+    //socket.emit('join', params, roomer);
+    socket.emit('join', params);
     return () => {
       socket.off();
     };
@@ -381,14 +407,15 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     return resStr;
   };
 
-  //console.log('###:', chatReady, state);
+  console.log('###:', chatReady, state);
 
   let chatRoom = 'чате:';
   if (params.room !== 'Global') chatRoom = 'комнате:';
   return (
     <Grid container>
       <Grid item xs={10} sx={styleChat01}>
-        {chatReady > 1 && <>{LeftPartChat()}</>}
+        {/* {chatReady > 1 && <>{LeftPartChat()}</>} */}
+        {LeftPartChat()}
       </Grid>
 
       <Grid item xs sx={styleChat01}>
@@ -398,13 +425,13 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
               Пользователи в<Box>{chatRoom}</Box>
             </Grid>
           </Grid>
-          <Box sx={{ overflowX: 'auto', height: '6vh' }}>{UsersChat()}</Box>
+          <Box sx={{ overflowX: 'auto', height: '7vh' }}>{UsersChat()}</Box>
           <Grid container sx={styleChat021}>
             <Grid item xs={12} sx={styleChat022}>
               Пользователи в<Box>системе:</Box>
             </Grid>
           </Grid>
-          <Box sx={{ overflowX: 'auto', height: '79.5vh' }}>{UsersSist()}</Box>
+          <Box sx={{ overflowX: 'auto', height: '78.5vh' }}>{UsersSist()}</Box>
         </Box>
       </Grid>
     </Grid>
