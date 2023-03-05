@@ -47,11 +47,12 @@ let maskSoob = {
 const Chat = (props: { ws: WebSocket; nik: any }) => {
   const [params, setParams] = React.useState({ room: '', user: '' } as any);
   const [state, setState] = React.useState<Array<any>>([]);
+  const [stateBasket, setStateBasket] = React.useState<Array<any>>([]);
   const [message, setMessage] = React.useState('');
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState(0);
   const [chatReady, setChatReady] = React.useState(0);
-  const [trigger, setTrigger] = React.useState(false);
+  //const [trigger, setTrigger] = React.useState(false);
 
   const { search } = useLocation();
   const navigate = useNavigate();
@@ -64,16 +65,14 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   const PostingArchive = React.useCallback((archive: any, room: string) => {
     console.log('PostingArchive', room, archive);
     for (let i = 0; i < archive.length; i++) {
-      if (
-        //archive.messages[i].from === room ||
-        archive[i].to === room
-      ) {
+      if (archive[i].to === room) {
         maskSoob.user.name = archive[i].from;
         maskSoob.message = archive[i].message;
         maskSoob.date = archive[i].time;
         archive[i].read = true;
         let mass = JSON.parse(JSON.stringify(maskSoob));
         setState((_state) => [..._state, mass]);
+        setStateBasket((_stateBasket) => [..._stateBasket, mass]);
       }
     }
   }, []);
@@ -95,6 +94,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
         archive.push(mask);
       }
       setState([]);
+      setStateBasket([]);
       PostingArchive(archive, 'Global');
       //chatReady++;
       let ch = chatReady + 1;
@@ -167,7 +167,6 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     setParams(searchParams);
     console.log('3params:', searchParams, oldName, oldRoom);
     if (oldName !== 'oldName' && oldRoom !== 'oldRoom') {
-      //console.log('4params:', searchParams, oldName, oldRoom);
       if (oldName !== searchParams.name || oldRoom !== searchParams.room) {
         console.log('2params:', archive);
         PostingArchive(archive, searchParams.room);
@@ -178,7 +177,6 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       oldName = searchParams.name;
       oldRoom = searchParams.room;
     }
-    //console.log("4params:", oldName, oldRoom, state);
     socket.emit('join', searchParams);
     return () => {
       socket.off();
@@ -186,18 +184,16 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   }, [search, PostingArchive]);
 
   const leftRoom = () => {
-    //socket.emit('leftRoom', { params });
     if (params.room !== 'Global') {
       nameKomu = 'Global';
       let newParams = params;
       newParams.room = nameKomu;
       setParams(newParams);
       setState([]);
+      setStateBasket([]);
       PostingArchive(archive, nameKomu);
       oldName = newParams.name;
       oldRoom = nameKomu;
-      console.log('LeftRoom:', params, newParams);
-      //socket.emit('join', params, nameKomu);
       socket.emit('join', params);
       return () => {
         socket.off();
@@ -210,7 +206,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
 
   React.useEffect(() => {
     socket.on('message', (event: any) => {
-      console.log('event.data:', event.data, '::', oldRoom, archive);
+      //console.log('event.data:', event.data, '::', oldRoom, archive);
       let toTo = true;
       if (event.data.to !== oldRoom) toTo = false;
       let mask = {
@@ -220,13 +216,13 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
         time: event.data.date,
         read: toTo,
       };
-      console.log('ARH:', archive, archive.length);
-
       if (archive.length) archive.push(mask);
       console.log('HHHHandleSubmit', archive);
       setTimeout(() => {
         if (event.data.to === oldRoom) {
           setState((_state) => [..._state, event.data]);
+        } else {
+          setStateBasket((_stateBasket) => [..._stateBasket, event.data]);
         }
       }, 200);
       setTimeout(() => {
@@ -251,9 +247,6 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     if (!message) return;
     let date = new Date().toISOString();
     socket.emit('sendMessage', { message, params, date });
-
-    console.log('HandleSubmiT', message, params, date, oldRoom);
-
     setMessage('');
   };
 
@@ -263,24 +256,82 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     if (event.key === 'Enter') event.preventDefault();
   };
 
-  let chel = 'человек';
-  if (users !== 12 && users !== 13 && users !== 14) {
-    if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
-  }
-
-  const LeftPartChat = () => {
+  const TopPartChat = () => {
+    let chel = 'человек';
+    if (users !== 12 && users !== 13 && users !== 14) {
+      if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
+    }
     let nameRoom = ' комнате';
     let redKnop = 'Покинуть комнату';
     if (params.room === 'Global') {
       nameRoom = ' чате';
       redKnop = 'Выйти из чата';
     }
-    let roomName = nameKomu;
+    let roomName = 'Групповой чат';
     if (nameKomu !== 'Global') roomName = nameKomu + '/' + params.name;
     return (
+      <Box sx={styleChat02}>
+        <Box sx={styleChat03}>{roomName}</Box>
+        <Box>
+          {users} {chel} {nameRoom}
+        </Box>
+        <Button sx={styleChat04} variant="contained" onClick={leftRoom}>
+          {redKnop}
+        </Button>
+      </Box>
+    );
+  };
+
+  const BottomPartChat = () => {
+    return (
+      <Box sx={styleChat16}>
+        <Box sx={styleChatInp01}>
+          <TextField
+            size="small"
+            onKeyPress={handleKey} //отключение Enter
+            placeholder="Что вы хотите сказать?"
+            InputProps={{
+              disableUnderline: true,
+              style: styleChatInp02,
+            }}
+            value={message}
+            onChange={handleChange}
+            variant="standard"
+          />
+        </Box>
+        <Box sx={styleChat06}>
+          <img src={icon} alt="" onClick={() => setOpen(!isOpen)} />
+          {isOpen && (
+            <Box sx={styleChat07}>
+              <EmojiPicker onEmojiClick={onEmojiClick} />
+            </Box>
+          )}
+        </Box>
+        <Box sx={styleChatInp03}>
+          <Button sx={styleChat041} onClick={handleSubmit}>
+            Отправить сообщение
+          </Button>
+        </Box>
+      </Box>
+    );
+  };
+
+  const LeftPartChat = () => {
+    // let chel = 'человек';
+    // if (users !== 12 && users !== 13 && users !== 14) {
+    //   if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
+    // }
+    // let nameRoom = ' комнате';
+    // let redKnop = 'Покинуть комнату';
+    // if (params.room === 'Global') {
+    //   nameRoom = ' чате';
+    //   redKnop = 'Выйти из чата';
+    // }
+    // let roomName = 'Групповой чат';
+    // if (nameKomu !== 'Global') roomName = nameKomu + '/' + params.name;
+    return (
       <>
-        <Box sx={styleChat02}>
-          {/* <Box sx={styleChat03}>{params.room}</Box> */}
+        {/* <Box sx={styleChat02}>
           <Box sx={styleChat03}>{roomName}</Box>
           <Box>
             {users} {chel} {nameRoom}
@@ -288,46 +339,15 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
           <Button sx={styleChat04} variant="contained" onClick={leftRoom}>
             {redKnop}
           </Button>
-        </Box>
-
+        </Box> */}
+        {TopPartChat()}
         <Box sx={styleChat05}>
           <Box sx={{ overflowX: 'auto', height: '86vh' }}>
-            <Messages messages={state} name={params.name} />
+            <Messages messages={state} name={params.name} basket={stateBasket} />
             <div ref={divRef} />
           </Box>
         </Box>
-
-        <Box sx={styleChat16}>
-          <Box sx={styleChatInp01}>
-            <TextField
-              size="small"
-              onKeyPress={handleKey} //отключение Enter
-              placeholder="Что вы хотите сказать?"
-              InputProps={{
-                disableUnderline: true,
-                style: styleChatInp02,
-              }}
-              value={message}
-              onChange={handleChange}
-              variant="standard"
-            />
-          </Box>
-
-          <Box sx={styleChat06}>
-            <img src={icon} alt="" onClick={() => setOpen(!isOpen)} />
-            {isOpen && (
-              <Box sx={styleChat07}>
-                <EmojiPicker onEmojiClick={onEmojiClick} />
-              </Box>
-            )}
-          </Box>
-
-          <Box sx={styleChatInp03}>
-            <Button sx={styleChat041} onClick={handleSubmit}>
-              Отправить сообщение
-            </Button>
-          </Box>
-        </Box>
+        {BottomPartChat()}
       </>
     );
   };
@@ -349,7 +369,6 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
   };
 
   const ClickKnop = (mode: number) => {
-    console.log('Click1:', sistUsers[mode], params, sistUsers);
     socket.emit('leftRoom', { params });
     let newParams = params;
     let id1 = sistUsers[mode].id; // кому
@@ -363,11 +382,11 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
     newParams.room = roomer;
     setParams(newParams);
     setState([]);
+    setStateBasket([]);
     PostingArchive(archive, roomer);
     oldName = newParams.name;
     oldRoom = roomer;
     console.log('ClickKnop:', params, newParams);
-    //socket.emit('join', params, roomer);
     socket.emit('join', params);
     return () => {
       socket.off();
@@ -376,7 +395,6 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
 
   const UsersSist = () => {
     let resStr: any = [];
-    console.log('pointUsersSist');
     for (let i = 0; i < sistUsers.length; i++) {
       let nameer = sistUsers[i].user;
       if (nameer.length > 15) nameer = nameer.slice(0, 15);
@@ -384,10 +402,7 @@ const Chat = (props: { ws: WebSocket; nik: any }) => {
       for (let j = 0; j < archive.length; j++) {
         if (archive[j].from !== 'ChatAdmin' && archive[j].from === sistUsers[i].user) {
           if (archive[j].to !== 'Global') {
-            if (!archive[j].read) {
-              console.log('Point', sistUsers[i].user, archive[j]);
-              point = '•';
-            }
+            if (!archive[j].read) point = '•';
           }
         }
       }
