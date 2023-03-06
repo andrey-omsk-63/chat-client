@@ -8,7 +8,7 @@ import { styleMess01, styleMeUser, styleUserUser } from './ComponentsStyle';
 let resStr: any = [];
 
 const Messages = (props: { messages: any; name: string; basket: any }) => {
-  console.log("Messages.props:",props)
+  //console.log("Messages.props:",props)
   const MesssgeLength = (text: string, fontSize: number) => {
     function textWidth(text: string, fontProp: any) {
       let tag = document.createElement('div');
