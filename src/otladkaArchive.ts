@@ -1,0 +1,33 @@
+export const dataArchive = {
+  archive: {
+    messages: [
+      {
+        from: "Admin",
+        to: "Global",
+        message: "11",
+        time: "2023-02-28T10:03:05.79+06:00",
+      },
+      {
+        from: "andrey_omsk",
+        to: "Global",
+        message: "aaa vvv nhnjhjhjh",
+        time: "2023-02-28T10:15:07.394+06:00",
+      },
+      {
+        from: "andrey_omsk",
+        to: "Global",
+        message: "qqqq qqqqqq qqqqq",
+        time: "2023-02-28T10:15:59.602+06:00",
+      },
+      {
+        from: "andrey_omsk",
+        to: "Global",
+        message: "сообщение 2",
+        time: "2023-02-28T10:26:42.315+06:00",
+      },
+    ],
+    to: "Global",
+    timeStart: "2023-02-28T10:26:43.7758973+06:00",
+    timeEnd: "2023-02-27T10:26:43.7758973+06:00",
+  },
+};

@@ -159,9 +159,9 @@ export const styleChat08 = {
 };
 
 export const styleChat081 = {
-  fontSize: 21,
-  textAlign: 'center',
-  padding: '0.4vh 0 0 0.08vh',
+  fontSize: 14,
+  textAlign: 'left',
+  padding: '0.6vh 0 0 0',
   color: 'blue',
 };
 
