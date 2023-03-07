@@ -1,37 +1,39 @@
 //import * as React from "react";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 // import CardMedia from '@mui/material/CardMedia';
 
 // import { Pointer } from '../App';
 // //import { DateMAP } from "./../interfaceMAP.d";
 // import { Tflink, WayPointsArray } from '../interfaceBindings';
 
-import { styleChatInp01, styleChatInp02 } from './ComponentsStyle';
-import { styleChat021, styleChat022 } from './ComponentsStyle';
-import { styleChatInp03, styleChat041 } from './ComponentsStyle';
-import { styleChat08 } from './ComponentsStyle';
+import { styleChatInp01, styleChatInp02 } from "./ComponentsStyle";
+import { styleChat021, styleChat022 } from "./ComponentsStyle";
+import { styleChatInp03, styleChat041 } from "./ComponentsStyle";
+import { styleChat08 } from "./ComponentsStyle";
 
 export const MakeSpisUsers = (mass: any) => {
   let sistUsers: Array<any> = [];
+  let onLine: number = 0;
   for (let i = 0; i < mass.length; i++) {
     let idd = (i + 1).toString();
-    if (i + 1 < 10) idd = '0' + idd;
+    if (i + 1 < 10) idd = "0" + idd;
     let mask = {
       user: mass[i].user,
       id: idd,
       status: mass[i].status,
     };
+    if (mass[i].status === 'online') onLine++;
     sistUsers.push(mask);
   }
-  return sistUsers;
+  return [sistUsers, onLine];
 };
 
 const handleKey = (event: any) => {
-  if (event.key === 'Enter') event.preventDefault();
+  if (event.key === "Enter") event.preventDefault();
 };
 
 export const InputerMessage = (message: string, handleChange: any) => {
@@ -93,10 +95,39 @@ export const UsersChat = (usersRooms: any) => {
         <Grid item xs={12} sx={styleChat08}>
           <b>{nameer}</b>
         </Grid>
-      </Grid>,
+      </Grid>
     );
   }
   return resStr;
+};
+
+export const SendSocketSendMessage = (
+  ws: WebSocket,
+  message: string,
+  params: any,
+  date: any
+) => {
+  console.log("SendMessage:", message,params,date);
+  const handleSendOpen = () => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(
+        JSON.stringify({
+          type: "message",
+          data: {
+            from: params.name,
+            message: message,
+            time: date,
+            to: params.room,
+          },
+        })
+      );
+    } else {
+      setTimeout(() => {
+        handleSendOpen();
+      }, 1000);
+    }
+  };
+  handleSendOpen();
 };
 
 // export const MasskPoint = (debug: boolean, rec: any, imgFaza: string) => {

@@ -53,6 +53,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
         padding: '6px 0px 6px 6px',
         marginLeft: 'auto',
         marginBottom: 1,
+        boxShadow: 2,
       };
 
       const styleUserText = {
@@ -68,6 +69,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
         marginTop: 0.3,
         padding: '6px 0px 6px 6px',
         marginBottom: 1,
+        boxShadow: 2,
       };
 
       let styleUser: any = styleMeUser;
