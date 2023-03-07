@@ -37,7 +37,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
       if (props.messages[i].user.name.trim().toLowerCase() === props.name.trim().toLowerCase())
         itsme = true;
 
-      let dlina = MesssgeLength(props.messages[i].message, 14) + 14;
+      let dlina = MesssgeLength(props.messages[i].message, 13.5) + 14;
 
       const styleMeText = {
         width: dlina,

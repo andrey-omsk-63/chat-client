@@ -102,6 +102,7 @@ export const styleChat04 = {
 };
 
 export const styleChat041 = {
+  //border: 1,
   fontSize: 12.5,
   background: '#D3D3D3',
   marginTop: -0.5,
@@ -130,7 +131,7 @@ export const styleChat16 = {
   background: '#D3D3D3',
   justifyContent: 'space-between',
   height: '7vh',
-  padding: '0 20px',
+  padding: '0 0 0 10px',
   borderBottomLeftRadius: 9,
   // borderRadius: 3,
   // borderTopLeftRadius: 0,
@@ -139,10 +140,15 @@ export const styleChat16 = {
 };
 
 export const styleChat06 = {
+  //border: 1,
   width: '40px',
-  cursor: 'pointer',
+  //cursor: 'pointer',
   position: 'relative',
-  marginTop: 0.5,
+};
+
+export const styleChat061 = {
+  fontSize: 21,
+  padding: '0 2vh 0 0',
 };
 
 export const styleChat07 = {
@@ -166,16 +172,17 @@ export const styleChat081 = {
 };
 
 export const styleChatInp01 = {
+  //border: 1,
   flexGrow: 1,
   height: '100%',
 };
 
 export const styleChatInp02 = {
-  border: 3,
+  //border: 3,
   fontSize: 14,
   height: '100%',
-  width: 415,
-  fontWeight: 415,
+  width: 370,
+  fontWeight: 370,
   marginTop: '2vh',
 };
 
