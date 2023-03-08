@@ -42,7 +42,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
       const styleMeText = {
         width: dlina,
         border: 2,
-        height: '36px',
+        height: '27px',
         fontSize: '13.5px',
         //background: "#fafac3", // жёлтый
         background: '#93E5EE', //зелёный
@@ -50,7 +50,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
         borderRadius: 3,
         color: 'black',
         marginTop: 0.3,
-        padding: '6px 0px 6px 6px',
+        padding: '3px 0px 0 6px',
         marginLeft: 'auto',
         marginBottom: 1,
         boxShadow: 2,
@@ -59,7 +59,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
       const styleUserText = {
         width: dlina,
         border: 2,
-        height: '36px',
+        height: '27px',
         fontSize: '13.5px',
         //background: "#93E5EE", //зелёный
         background: '#fafac3', // жёлтый
@@ -67,7 +67,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
         borderRadius: 3,
         color: 'black',
         marginTop: 0.3,
-        padding: '6px 0px 6px 6px',
+        padding: '3px 0px 0 6px',
         marginBottom: 1,
         boxShadow: 2,
       };
