@@ -26,7 +26,7 @@ export const MakeSpisUsers = (mass: any) => {
       id: idd,
       status: mass[i].status,
     };
-    if (mass[i].status === 'online') onLine++;
+    if (mass[i].status === "online") onLine++;
     sistUsers.push(mask);
   }
   return [sistUsers, onLine];
@@ -107,18 +107,18 @@ export const SendSocketSendMessage = (
   params: any,
   date: any
 ) => {
-  console.log("SendMessage:", message,params,date);
+  console.log("SendMessage:", message, params, date);
   const handleSendOpen = () => {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(
         JSON.stringify({
           type: "message",
-          data: {
-            from: params.name,
-            message: message,
-            time: date,
-            to: params.room,
-          },
+          // data: {
+          from: params.name,
+          message: message,
+          time: date,
+          to: params.room,
+          //},
         })
       );
     } else {
