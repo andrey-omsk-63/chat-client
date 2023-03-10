@@ -3,7 +3,7 @@ import React from 'react';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 
-import { styleMess01, styleMeUser, styleUserUser } from './ComponentsStyle';
+import { styleMess01, styleMeUser } from './ComponentsStyle';
 
 let resStr: any = [];
 
@@ -37,6 +37,9 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
       if (props.messages[i].user.name.trim().toLowerCase() === props.name.trim().toLowerCase())
         itsme = true;
 
+      let coler = 'black';
+      if (!itsme && props.messages[i].user.name === 'ChatAdmin') coler = 'blue';
+
       let dlina = MesssgeLength(props.messages[i].message, 13.5) + 14;
 
       const styleMeText = {
@@ -65,11 +68,17 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
         background: '#fafac3', // жёлтый
         borderColor: '#fafac3',
         borderRadius: 3,
-        color: 'black',
+        color: coler,
         marginTop: 0.3,
         padding: '3px 0px 0 6px',
         marginBottom: 1,
         boxShadow: 2,
+      };
+
+      const styleUserUser = {
+        fontSize: '11.5px',
+        color: coler,
+        paddingLeft: '9px',
       };
 
       let styleUser: any = styleMeUser;
