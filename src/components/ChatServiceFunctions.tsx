@@ -1,39 +1,42 @@
-//import * as React from "react";
+import * as React from "react";
+//import EmojiPicker from "emoji-picker-react";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-// import CardMedia from '@mui/material/CardMedia';
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 
-// import { Pointer } from '../App';
-// //import { DateMAP } from "./../interfaceMAP.d";
-// import { Tflink, WayPointsArray } from '../interfaceBindings';
-
-import { styleChatInp01, styleChatInp02 } from './ComponentsStyle';
-import { styleChat021, styleChat022 } from './ComponentsStyle';
-import { styleChatInp03, styleChat041 } from './ComponentsStyle';
-import { styleChat08 } from './ComponentsStyle';
+import { styleChatInp01, styleChatInp02 } from "./ComponentsStyle";
+import {
+  styleChat021,
+  styleChat022,
+  //styleChat07
+} from "./ComponentsStyle";
+import { styleChatInp03, styleChat041 } from "./ComponentsStyle";
+import {
+  //styleChat06, styleChat061,
+  styleChat08,
+} from "./ComponentsStyle";
 
 export const MakeSpisUsers = (mass: any) => {
   let sistUsers: Array<any> = [];
   let onLine: number = 0;
   for (let i = 0; i < mass.length; i++) {
     let idd = (i + 1).toString();
-    if (i + 1 < 10) idd = '0' + idd;
+    if (i + 1 < 10) idd = "0" + idd;
     let mask = {
       user: mass[i].user,
       id: idd,
       status: mass[i].status,
     };
-    if (mass[i].status === 'online') onLine++;
+    if (mass[i].status === "online") onLine++;
     sistUsers.push(mask);
   }
   return [sistUsers, onLine];
 };
 
 const handleKey = (event: any) => {
-  if (event.key === 'Enter') event.preventDefault();
+  if (event.key === "Enter") event.preventDefault();
 };
 
 export const InputerMessage = (message: string, handleChange: any) => {
@@ -54,6 +57,25 @@ export const InputerMessage = (message: string, handleChange: any) => {
     </Box>
   );
 };
+
+// const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
+
+// export const InputerSmile = (
+//   setOpen: Function,
+//   isOpen: boolean,
+//   onClick: Function,
+// ) => {
+//   <Box sx={styleChat06}>
+//     <Button sx={styleChat061} onClick={() => setOpen(!isOpen)}>
+//       😊
+//     </Button>
+//     {isOpen && (
+//       <Box sx={styleChat07}>
+//         <EmojiPicker onEmojiClick={onEmojiClick} />
+//       </Box>
+//     )}
+//   </Box>;
+// };
 
 export const SendMessage = (handleSubmit: any) => {
   return (
@@ -95,7 +117,7 @@ export const UsersChat = (usersRooms: any) => {
         <Grid item xs={12} sx={styleChat08}>
           <b>{nameer}</b>
         </Grid>
-      </Grid>,
+      </Grid>
     );
   }
   return resStr;
@@ -106,19 +128,19 @@ export const SendSocketSendMessage = (
   message: string,
   params: any,
   nameKomu: string,
-  date: any,
+  date: any
 ) => {
-  console.log('SendMessage:', message, params, nameKomu, date);
+  console.log("SendMessage:", message, params, nameKomu, date);
   const handleSendOpen = () => {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(
         JSON.stringify({
-          type: 'message',
+          type: "message",
           from: params.name,
           message: message,
           time: date,
           to: nameKomu,
-        }),
+        })
       );
     } else {
       setTimeout(() => {
