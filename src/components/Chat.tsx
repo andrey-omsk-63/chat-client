@@ -9,7 +9,6 @@ import Button from '@mui/material/Button';
 import Messages from './Messages';
 
 import { MakeSpisUsers, InputerMessage } from './ChatServiceFunctions';
-//import { InputerSmile } from "./ChatServiceFunctions";
 import { HeaderChat, HeaderSist, UsersChat } from './ChatServiceFunctions';
 import { SendMessage, SendSocketSendMessage } from './ChatServiceFunctions';
 
@@ -86,9 +85,21 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         };
         archive.push(mask);
       }
+      if (!debug) {
+        let mask = {
+          from: 'ChatAdmin',
+          to: 'Global',
+          message: '🙋 Здравствуйте, ' + props.nik,
+          time: new Date().toISOString(),
+          read: false,
+        };
+        archive.push(mask);
+        let mess = '👨' + props.nik + ' присоеденился';
+        SendSocketSendMessage(props.ws, mess, 'ChatAdmin', 'Global');
+      }
       BeginWorkInRoom('Global');
     },
-    [BeginWorkInRoom],
+    [BeginWorkInRoom, props.ws, props.nik],
   );
 
   const Scrooler = () => {
@@ -189,31 +200,33 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
               if (sistUsers[i].status === 'offline') setUsers(users - 1);
             }
           }
-          let mess = ' вышел';
-          if (data.status === 'online') mess = ' присоеденился';
-          let maskSt = {
-            from: 'ChatAdmin',
-            to: 'Global',
-            message: data.user + mess,
-            time: new Date(),
-            read: true,
-          };
-          archive.push(maskSt);
-          setTimeout(() => {
-            let maska = {
-              user: { name: 'ChatAdmin' },
-              message: data.user + mess,
-              date: new Date(),
-              to: 'Global',
-            };
-            if (oldRoom === 'Global') {
-              setState((_state) => [..._state, maska]);
-            } else {
-              setStateBasket((_stateBasket) => [..._stateBasket, maska]);
-            }
-            setTrigger(!trigger);
-          }, 100);
-          Scrooler();
+          setTrigger(!trigger);
+          //let mess = ' вышел';
+          //if (data.status === 'online') mess = ' присоеденился';
+          //SendSocketSendMessage(props.ws, data.user + mess, 'ChatAdmin', 'Global');
+          // let maskSt = {
+          //   from: 'ChatAdmin',
+          //   to: 'Global',
+          //   message: data.user + mess,
+          //   time: new Date().toISOString(),
+          //   read: true,
+          // };
+          // archive.push(maskSt);
+          // setTimeout(() => {
+          //   let maska = {
+          //     user: { name: 'ChatAdmin' },
+          //     message: data.user + mess,
+          //     date: new Date().toISOString(),
+          //     to: 'Global',
+          //   };
+          //   if (oldRoom === 'Global') {
+          //     setState((_state) => [..._state, maska]);
+          //   } else {
+          //     setStateBasket((_stateBasket) => [..._stateBasket, maska]);
+          //   }
+          //   setTrigger(!trigger);
+          // }, 100);
+          // Scrooler();
           break;
         default:
           console.log('data_default:', data);
@@ -294,6 +307,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         socket.emit('leftRoom', { params });
         navigate('/');
       } else {
+        let mess = '🏃' + props.nik + ' вышел';
+        SendSocketSendMessage(props.ws, mess, 'ChatAdmin', 'Global');
         window.close();
       }
     }
@@ -332,7 +347,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     if (debug) {
       socket.emit('sendMessage', { message, params, date });
     } else {
-      SendSocketSendMessage(props.ws, message, params, nameKomu, date);
+      SendSocketSendMessage(props.ws, message, params.name, nameKomu);
     }
     setMessage('');
   };
