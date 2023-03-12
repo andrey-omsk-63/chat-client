@@ -85,16 +85,23 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         };
         archive.push(mask);
       }
-      if (!debug) {
-        let mask = {
-          from: 'ChatAdmin',
-          to: 'Global',
-          message: '🙋 Здравствуйте, ' + props.nik,
-          time: new Date().toISOString(),
-          read: false,
-        };
-        archive.push(mask);
-        let mess = '👨' + props.nik + ' присоеденился';
+      // if (!debug) {
+      // let timer = new Date().toISOString();
+      // let mask = {
+      //   from: 'ChatAdmin',
+      //   to: 'Global',
+      //   message: '🙋 Здравствуйте, ' + props.nik,
+      //   time: timer,
+      //   read: false,
+      // };
+      // archive.push(mask);
+      let mess = '👨 ' + props.nik + ' присоеденился';
+      if (debug) {
+        let message = mess;
+        let params = { name: 'ChatAdmin', room: 'Global' };
+        let date = new Date().toISOString();
+        socket.emit('sendMessage', { message, params, date });
+      } else {
         SendSocketSendMessage(props.ws, mess, 'ChatAdmin', 'Global');
       }
       BeginWorkInRoom('Global');
@@ -303,12 +310,19 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         };
       }
     } else {
+      let parr = params;
       if (debug) {
+        let date = new Date().toISOString();
+        let message = '🏃 ' + parr.name + ' вышел';
+        let params = { name: 'ChatAdmin', room: 'Global' };
+        socket.emit('sendMessage', { message, params, date });
+        params = { name: parr.name, room: 'Global' };
         socket.emit('leftRoom', { params });
+        flagOpenDebug = true;
         navigate('/');
       } else {
-        let mess = '🏃' + props.nik + ' вышел';
-        SendSocketSendMessage(props.ws, mess, 'ChatAdmin', 'Global');
+        let message = '🏃 ' + props.nik + ' вышел';
+        SendSocketSendMessage(props.ws, message, 'ChatAdmin', 'Global');
         window.close();
       }
     }
