@@ -69,7 +69,7 @@ li {
   position: absolute;
   right: 0;
   margin-right: 3px;
-  min-height: 99vh;
+  /* min-height: 99.9vh; */
 }
 
 ::-webkit-scrollbar-button {

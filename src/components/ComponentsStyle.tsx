@@ -1,6 +1,5 @@
 //=== Main ===============================================
 export const styleMainBox02 = {
-  //border: 2,
   width: '100%',
   height: '96vh',
   display: 'flex',
@@ -46,8 +45,9 @@ export const styleMainBox06 = {
 };
 //=== Chat ===============================================
 export const styleChat01 = {
+  //border: 3,
   width: '100%',
-  height: '99.5vh',
+  height: '99.75vh',
   display: 'flex',
   alignItems: 'left',
   flexDirection: 'column',
@@ -65,10 +65,6 @@ export const styleChat02 = {
   justifyContent: 'space-between',
   padding: '0 20px',
   borderTopLeftRadius: 9,
-  //borderRadius: 3,
-  //borderBottomLeftRadius: 0,
-  //borderBottomRightRadius: 0,
-  //borderTopRightRadius: 0,
 };
 
 export const styleChat021 = {
@@ -76,7 +72,6 @@ export const styleChat021 = {
   fontSize: 12.9,
   width: '100%',
   height: '7vh',
-  //color: 'primary.main',
   color: 'blue',
 };
 
@@ -102,7 +97,6 @@ export const styleChat04 = {
 };
 
 export const styleChat041 = {
-  //border: 1,
   fontSize: 12.5,
   background: '#D3D3D3',
   marginTop: -0.5,
@@ -112,7 +106,6 @@ export const styleChat041 = {
 };
 
 export const styleChat05 = {
-  //border: 1,
   fontSize: 11,
   flexGrow: 1,
   width: '100%',
@@ -123,7 +116,6 @@ export const styleChat05 = {
 };
 
 export const styleChat16 = {
-  //border: 1,
   color: 'black',
   width: '100%',
   display: 'flex',
@@ -133,14 +125,9 @@ export const styleChat16 = {
   height: '7vh',
   padding: '0 0 0 10px',
   borderBottomLeftRadius: 9,
-  // borderRadius: 3,
-  // borderTopLeftRadius: 0,
-  // borderTopRightRadius: 0,
-  // borderBottomRightRadius: 0,
 };
 
 export const styleChat06 = {
-  //border: 1,
   width: '40px',
   //cursor: 'pointer',
   position: 'relative',
@@ -172,13 +159,11 @@ export const styleChat081 = {
 };
 
 export const styleChatInp01 = {
-  //border: 1,
   flexGrow: 1,
   height: '100%',
 };
 
 export const styleChatInp02 = {
-  //border: 3,
   fontSize: 14,
   height: '100%',
   width: 370,
@@ -198,7 +183,6 @@ export const styleChatInp04 = {
 
 export const styleChatBut01 = {
   fontSize: 12,
-  //marginTop: 4,
   border: '2px solid #000',
   bgcolor: '#E6F5D6',
   width: '105px',
@@ -217,14 +201,12 @@ export const styleMess01 = {
 };
 
 export const styleUserUser = {
-  //marginTop: -0.5,
   fontSize: '11.5px',
   color: 'black',
   paddingLeft: '9px',
 };
 
 export const styleMeUser = {
-  //marginTop: -0.5,
   fontSize: '11.5px',
   color: 'black',
   paddingRight: '9px',
