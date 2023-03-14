@@ -58,8 +58,10 @@ export const styleChat02 = {
   fontSize: 14,
   width: '100%',
   height: '7vh',
-  color: 'black',
-  background: '#D3D3D3',
+  color: 'blue',
+  //background: '#D3D3D3',
+  //background: '#E5E5E5',
+  background: '#F0F2F5',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -83,7 +85,7 @@ export const styleChat022 = {
 export const styleChat03 = {
   lineHeight: '48px',
   textAlign: 'center',
-  color: 'black',
+  color: 'blue',
 };
 
 export const styleChat04 = {
@@ -98,9 +100,13 @@ export const styleChat04 = {
 
 export const styleChat041 = {
   fontSize: 12.5,
-  background: '#D3D3D3',
+  //background: '#D3D3D3',
+  //background: '#E5E5E5',
+  background: '#F0F2F5',
+  //background: 'linear-gradient(65deg, #ffffff, #f0f0f0)',
+  //background: 'linear-gradient(50deg, #FFC0C0 55%, #0384CF 90%)',
   marginTop: -0.5,
-  color: 'black',
+  color: 'blue',
   padding: '6px',
   textTransform: 'unset !important',
 };
@@ -109,18 +115,21 @@ export const styleChat05 = {
   fontSize: 11,
   flexGrow: 1,
   width: '100%',
-  background: '#E5E5E5',
+  //background: '#E5E5E5',
+  background: 'linear-gradient(125deg, #DCE0AB 30%,#97BB92 52%, #D2D8B7 85%)',
   paddingLeft: '12px',
   paddingRight: '12px',
   height: '86vh',
 };
 
 export const styleChat16 = {
-  color: 'black',
+  color: 'blue',
   width: '100%',
   display: 'flex',
   alignItems: 'center',
-  background: '#D3D3D3',
+  //background: '#D3D3D3',
+  //background: '#E5E5E5',
+  background: '#F0F2F5',
   justifyContent: 'space-between',
   height: '7vh',
   padding: '0 0 0 10px',
@@ -169,6 +178,7 @@ export const styleChatInp02 = {
   width: 370,
   fontWeight: 370,
   marginTop: '2vh',
+  color: 'blue',
 };
 
 export const styleChatInp03 = {
