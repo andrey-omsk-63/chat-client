@@ -348,13 +348,13 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       <Box sx={styleChat02}>
         <Box sx={styleChat03}>{roomName}</Box>
         {debug && (
-          <Box>
-            {users} {chel} {nameRoom}
+          <Box sx={{fontSize: 12.9}}>
+            <b>{users} {chel} {nameRoom}</b>
           </Box>
         )}
         {!debug && params.room === 'Global' && (
-          <Box>
-            {users} {chel} {nameRoom}
+          <Box sx={{fontSize: 12.9}}>
+            <b>{users} {chel} {nameRoom}</b>
           </Box>
         )}
         <Button sx={styleChat04} variant="contained" onClick={leftRoom}>

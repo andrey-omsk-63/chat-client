@@ -93,7 +93,7 @@ export const styleChat04 = {
   background: '#FF99CC',
   borderRadius: 3,
   color: '#fff',
-  padding: '6px',
+  padding: '4px',
   cursor: 'pointer',
   textTransform: 'unset !important',
 };
