@@ -45,7 +45,7 @@ export const InputerMessage = (message: string, handleChange: any) => {
       <TextField
         size="small"
         onKeyPress={handleKey} //отключение Enter
-        placeholder="Что вы хотите сказать?"
+        placeholder="👇️Что вы хотите сказать?"
         InputProps={{
           disableUnderline: true,
           style: styleChatInp02,
@@ -57,25 +57,6 @@ export const InputerMessage = (message: string, handleChange: any) => {
     </Box>
   );
 };
-
-// const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
-
-// export const InputerSmile = (
-//   setOpen: Function,
-//   isOpen: boolean,
-//   onClick: Function,
-// ) => {
-//   <Box sx={styleChat06}>
-//     <Button sx={styleChat061} onClick={() => setOpen(!isOpen)}>
-//       😊
-//     </Button>
-//     {isOpen && (
-//       <Box sx={styleChat07}>
-//         <EmojiPicker onEmojiClick={onEmojiClick} />
-//       </Box>
-//     )}
-//   </Box>;
-// };
 
 export const SendMessage = (handleSubmit: any) => {
   return (

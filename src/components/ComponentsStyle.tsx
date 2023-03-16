@@ -61,7 +61,7 @@ export const styleChat02 = {
   color: 'blue',
   //background: '#D3D3D3',
   //background: '#E5E5E5',
-  background: '#F0F2F5',
+  background: '#CCDCEC',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
@@ -102,7 +102,7 @@ export const styleChat041 = {
   fontSize: 12.5,
   //background: '#D3D3D3',
   //background: '#E5E5E5',
-  background: '#F0F2F5',
+  background: '#CCDCEC',
   //background: 'linear-gradient(65deg, #ffffff, #f0f0f0)',
   //background: 'linear-gradient(50deg, #FFC0C0 55%, #0384CF 90%)',
   marginTop: -0.5,
@@ -129,7 +129,7 @@ export const styleChat16 = {
   alignItems: 'center',
   //background: '#D3D3D3',
   //background: '#E5E5E5',
-  background: '#F0F2F5',
+  background: '#CCDCEC',
   justifyContent: 'space-between',
   height: '7vh',
   padding: '0 0 0 10px',
@@ -191,17 +191,17 @@ export const styleChatInp04 = {
   color: 'black',
 };
 
-export const styleChatBut01 = {
-  fontSize: 12,
-  border: '2px solid #000',
-  bgcolor: '#E6F5D6',
-  width: '105px',
-  height: '20px',
-  borderColor: '#E6F5D6',
-  borderRadius: 2,
-  color: 'black',
-  textTransform: 'unset !important',
-};
+// export const styleChatBut01 = {
+//   fontSize: 12,
+//   border: '2px solid #000',
+//   bgcolor: '#E6F5D6',
+//   width: '105px',
+//   height: '20px',
+//   borderColor: '#E6F5D6',
+//   borderRadius: 2,
+//   //color: 'black',
+//   textTransform: 'unset !important',
+// };
 //=== Messages ===========================================
 export const styleMess01 = {
   width: '100%',
