@@ -19,6 +19,7 @@ import { styleChat081, styleChat061 } from './ComponentsStyle';
 
 import { dataArchive } from './../otladkaArchive';
 import { dataUsers } from './../otladkaUsers';
+import { convertToObject } from 'typescript';
 
 let usersRooms: any = [];
 let debug = false;
@@ -178,6 +179,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             komu = roomer;
           }
           if (komu !== oldRoom) toRead = false;
+
+          console.log('***:', toRead, komu, oldRoom);
+
           let mask = {
             from: data.from,
             to: komu,
