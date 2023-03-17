@@ -41,10 +41,8 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
         props.name.trim().toLowerCase()
       )
         itsme = true;
-
       let coler = "black";
       if (!itsme && props.messages[i].user.name === "ChatAdmin") coler = "blue";
-
       let dlina = MesssgeLength(props.messages[i].message, 13.5) + 14;
 
       const styleMeText = {
@@ -85,13 +83,12 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
         color: coler,
         paddingLeft: "9px",
       };
-      
-      let dat = "";
-      if (
+
+      let dat =
         new Date(props.messages[i].date).toLocaleDateString() !==
         new Date().toLocaleDateString()
-      )
-        dat = new Date(props.messages[i].date).toLocaleDateString();
+          ? new Date(props.messages[i].date).toLocaleDateString()
+          : "";
       let tim = new Date(props.messages[i].date)
         .toLocaleTimeString()
         .slice(0, -3);
