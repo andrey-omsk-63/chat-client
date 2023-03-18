@@ -19,7 +19,6 @@ import { styleChat081, styleChat061 } from './ComponentsStyle';
 
 import { dataArchive } from './../otladkaArchive';
 import { dataUsers } from './../otladkaUsers';
-import { convertToObject } from 'typescript';
 
 let usersRooms: any = [];
 let debug = false;
@@ -38,6 +37,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const [message, setMessage] = React.useState('');
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState<number | any>(-5);
+  const [scroll, setScroll] = React.useState(0);
   const [trigger, setTrigger] = React.useState(false);
   const { search } = useLocation();
   const navigate = useNavigate();
@@ -50,6 +50,20 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       divRef.current && divRef.current.scrollIntoView();
     }, 150);
   };
+
+  const handleScroll = () => {
+    setScroll(window.scrollY);
+  };
+
+  React.useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  React.useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const PostingArchive = React.useCallback((archive: any, room: string, mode: number) => {
     let room1 = room;
@@ -418,6 +432,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
   const UsersSist = () => {
     let resStr: any = [];
+    console.log('archive:', archive);
     for (let i = 0; i < sistUsers.length; i++) {
       let nameer = sistUsers[i].user;
       if (nameer.length > 15) nameer = nameer.slice(0, 15);
@@ -429,7 +444,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           archive[j].from !== params.name &&
           archive[j].from === sistUsers[i].user
         ) {
-          if (archive[j].to !== 'Global' && !archive[j].read) point = '●';
+          if (archive[j].to !== 'Global' && archive[j].to === params.name && !archive[j].read)
+            point = '●';
+          console.log('1archive:', j, archive[j], params.name, sistUsers[i].user);
         }
       }
 
@@ -477,15 +494,19 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     return resStr;
   };
 
+  //console.log('scroll:', scroll);
+
   const ЛеваяЧастьЧата = () => {
     return (
       <>
         {ВерхняяЧастьЧата()}
         <Box sx={styleChat05}>
-          <Box sx={{ overflowX: 'auto', height: '86vh' }}>
-            <Messages messages={state} name={params.name} basket={stateBasket} />
-            <div ref={divRef} />
-          </Box>
+          <>
+            <Box className="scroll" sx={{ overflowX: 'auto', height: '86vh' }}>
+              <Messages messages={state} name={params.name} basket={stateBasket} />
+              <div ref={divRef} />
+            </Box>
+          </>
         </Box>
         {НижняяЧастьЧата()}
       </>
