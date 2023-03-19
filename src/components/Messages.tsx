@@ -99,7 +99,6 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
         </Grid>,
       );
     }
-
     return resStr;
   };
 

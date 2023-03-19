@@ -7,7 +7,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
 import Messages from './Messages';
-import Test from './Test';
+//import Test from './Test';
 
 import { MakeSpisUsers, InputerMessage } from './ChatServiceFunctions';
 import { HeaderChat, HeaderSist, UsersChat } from './ChatServiceFunctions';
@@ -30,6 +30,8 @@ let nameKomu = 'Global';
 let archive: any = [];
 let sistUsers: any = [];
 
+//let scrollHeight: any;
+
 const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   let socket = props.Socket;
   const [params, setParams] = React.useState({ name: '', room: '' } as any);
@@ -38,12 +40,12 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const [message, setMessage] = React.useState('');
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState<number | any>(-5);
-  //const [scroll, setScroll] = React.useState(0);
   const [trigger, setTrigger] = React.useState(false);
-  const [tester, setTester] = React.useState(false);
+  //const [tester, setTester] = React.useState(false);
   const { search } = useLocation();
   const navigate = useNavigate();
   const divRef: any = React.useRef(null);
+  const scRef: any = React.useRef(null);
   const WS = props.ws;
 
   const Scrooler = () => {
@@ -52,20 +54,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       divRef.current && divRef.current.scrollIntoView();
     }, 150);
   };
-
-  // const handleScroll = () => {
-  //   setScroll(window.scrollY);
-  // };
-
-  // React.useEffect(() => {
-  //   window.addEventListener('scroll', handleScroll);
-  //   return () => window.removeEventListener('scroll', handleScroll);
-  // }, []);
-
-  // React.useEffect(() => {
-  //   window.addEventListener('scroll', handleScroll);
-  //   return () => window.removeEventListener('scroll', handleScroll);
-  // }, []);
 
   const PostingArchive = React.useCallback((archive: any, room: string, mode: number) => {
     let room1 = room;
@@ -325,8 +313,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         //params = { name: parr.name, room: 'Global' };
         socket.emit('leftRoom', { params });
         flagOpenDebug = true;
-        setTester(true);
-        //navigate('/');
+        //setTester(true);
+        navigate('/');
       } else {
         //let message = '🏃 ' + props.nik + ' вышел';
         //SendSocketSendMessage(props.ws, message, 'ChatAdmin', 'Global');
@@ -494,36 +482,35 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     return resStr;
   };
 
-  const [scrollPosition, setScrollPosition] = React.useState(0);
-  const handleScroll = () => {
-    const position = window.pageYOffset;
-    console.log('position:', position);
-    setScrollPosition(position);
-  };
-
-  React.useEffect(() => {
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  //console.log('scroll:', scrollPosition);
-
   const ЛеваяЧастьЧата = () => {
+    const [scrollPosition, setScrollPosition] = React.useState(0);
+    const handleScroll = () => {
+      const position = scRef.current.scrollTop;
+      console.log('position:', position);
+      if (!position) console.log('ОТПРАВИТЬ', position);
+      setScrollPosition(position);
+    };
+
+    React.useEffect(() => {
+      scRef.current.addEventListener('scroll', handleScroll, { passive: true });
+
+      return () => {
+        scRef.current.removeEventListener('scroll', handleScroll);
+      };
+    }, []);
+
+    //const scrollY = divRef.current ? scRef.current.scrollTop : null;
+
+    //console.log('GLscroll:', scrollPosition);
     return (
       <>
         {ВерхняяЧастьЧата()}
         <Box sx={styleChat05}>
-          <Box sx={{ overflowX: 'auto', height: '86vh' }}>
+          <Box ref={scRef} sx={{ overflowX: 'auto', height: '86vh' }}>
             <Messages messages={state} name={params.name} basket={stateBasket} />
-            {tester && <Test messages={state} name={params.name} basket={stateBasket} />}
             <div ref={divRef} />
           </Box>
-          {/* <Test messages={state} name={params.name} basket={stateBasket} /> */}
         </Box>
-
         {НижняяЧастьЧата()}
       </>
     );
