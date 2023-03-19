@@ -7,6 +7,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 
 import Messages from './Messages';
+import Test from './Test';
 
 import { MakeSpisUsers, InputerMessage } from './ChatServiceFunctions';
 import { HeaderChat, HeaderSist, UsersChat } from './ChatServiceFunctions';
@@ -39,6 +40,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const [users, setUsers] = React.useState<number | any>(-5);
   //const [scroll, setScroll] = React.useState(0);
   const [trigger, setTrigger] = React.useState(false);
+  const [tester, setTester] = React.useState(false);
   const { search } = useLocation();
   const navigate = useNavigate();
   const divRef: any = React.useRef(null);
@@ -323,7 +325,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         //params = { name: parr.name, room: 'Global' };
         socket.emit('leftRoom', { params });
         flagOpenDebug = true;
-        navigate('/');
+        setTester(true);
+        //navigate('/');
       } else {
         //let message = '🏃 ' + props.nik + ' вышел';
         //SendSocketSendMessage(props.ws, message, 'ChatAdmin', 'Global');
@@ -348,7 +351,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     BeginWorkInRoom(roomer, 1);
     oldName = newParams.name; // от кого
     oldRoom = roomer;
-
     if (debug) {
       socket.emit('join', params);
       return () => {
@@ -507,20 +509,21 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     };
   }, []);
 
-  console.log('scroll:', scrollPosition);
+  //console.log('scroll:', scrollPosition);
 
   const ЛеваяЧастьЧата = () => {
     return (
       <>
         {ВерхняяЧастьЧата()}
         <Box sx={styleChat05}>
-          <div className="App">
-            <Box sx={{ overflowX: 'auto', height: '86vh' }}>
-              <Messages messages={state} name={params.name} basket={stateBasket} />
-              <div ref={divRef} />
-            </Box>
-          </div>
+          <Box sx={{ overflowX: 'auto', height: '86vh' }}>
+            <Messages messages={state} name={params.name} basket={stateBasket} />
+            {tester && <Test messages={state} name={params.name} basket={stateBasket} />}
+            <div ref={divRef} />
+          </Box>
+          {/* <Test messages={state} name={params.name} basket={stateBasket} /> */}
         </Box>
+
         {НижняяЧастьЧата()}
       </>
     );
