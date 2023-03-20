@@ -1,32 +1,32 @@
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import EmojiPicker from 'emoji-picker-react';
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import EmojiPicker from "emoji-picker-react";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
-import Messages from './Messages';
+import Messages from "./Messages";
 //import Test from './Test';
 
-import { MakeSpisUsers, InputerMessage } from './ChatServiceFunctions';
-import { HeaderChat, HeaderSist, UsersChat } from './ChatServiceFunctions';
-import { SendMessage, SendSocketSendMessage } from './ChatServiceFunctions';
+import { MakeSpisUsers, InputerMessage } from "./ChatServiceFunctions";
+import { HeaderChat, HeaderSist, UsersChat } from "./ChatServiceFunctions";
+import { SendMessage, SendSocketSendMessage } from "./ChatServiceFunctions";
 
-import { styleChat01, styleChat02, styleChat08 } from './ComponentsStyle';
-import { styleChat03, styleChat04, styleChat16 } from './ComponentsStyle';
-import { styleChat05, styleChat06, styleChat07 } from './ComponentsStyle';
-import { styleChat081, styleChat061 } from './ComponentsStyle';
+import { styleChat01, styleChat02, styleChat08 } from "./ComponentsStyle";
+import { styleChat03, styleChat04, styleChat16 } from "./ComponentsStyle";
+import { styleChat05, styleChat06, styleChat07 } from "./ComponentsStyle";
+import { styleChat081, styleChat061 } from "./ComponentsStyle";
 
-import { dataArchive } from './../otladkaArchive';
-import { dataUsers } from './../otladkaUsers';
+import { dataArchive } from "./../otladkaArchive";
+import { dataUsers } from "./../otladkaUsers";
 
 let usersRooms: any = [];
 let debug = false;
 let flagOpenDebug = true;
-let oldName = 'oldName';
-let oldRoom = 'oldRoom';
-let nameKomu = 'Global';
+let oldName = "oldName";
+let oldRoom = "oldRoom";
+let nameKomu = "Global";
 let archive: any = [];
 let sistUsers: any = [];
 
@@ -34,12 +34,13 @@ let sistUsers: any = [];
 
 const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   let socket = props.Socket;
-  const [params, setParams] = React.useState({ name: '', room: '' } as any);
+  const [params, setParams] = React.useState({ name: "", room: "" } as any);
   const [state, setState] = React.useState<Array<any>>([]);
   const [stateBasket, setStateBasket] = React.useState<Array<any>>([]);
-  const [message, setMessage] = React.useState('');
+  const [message, setMessage] = React.useState("");
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState<number | any>(-5);
+  const [scrollPosition, setScrollPosition] = React.useState(0);
   const [trigger, setTrigger] = React.useState(false);
   //const [tester, setTester] = React.useState(false);
   const { search } = useLocation();
@@ -55,36 +56,39 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     }, 150);
   };
 
-  const PostingArchive = React.useCallback((archive: any, room: string, mode: number) => {
-    let room1 = room;
-    let room2 = room;
-    if (mode) {
-      room1 = sistUsers[Number(room.slice(0, 2)) - 1].user;
-      room2 = sistUsers[Number(room.slice(2, 4)) - 1].user;
-    }
-    //console.log('PostingArchive', mode, room, room1, room2, archive);
-    if (archive) {
-      for (let i = 0; i < archive.length; i++) {
-        let iffer = archive[i].to === room;
-        if (mode)
-          iffer =
-            (archive[i].from === room1 || archive[i].from === room2) &&
-            (archive[i].to === room2 || archive[i].to === room1);
-        //console.log("###:", iffer, archive[i].from, archive[i].to);
-        if (iffer) {
-          let maskSoob = {
-            user: { name: archive[i].from },
-            message: archive[i].message,
-            date: archive[i].time,
-          };
-          archive[i].read = true;
-          setState((_state) => [..._state, maskSoob]);
-          setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
-        }
+  const PostingArchive = React.useCallback(
+    (archive: any, room: string, mode: number) => {
+      let room1 = room;
+      let room2 = room;
+      if (mode) {
+        room1 = sistUsers[Number(room.slice(0, 2)) - 1].user;
+        room2 = sistUsers[Number(room.slice(2, 4)) - 1].user;
       }
-      Scrooler();
-    }
-  }, []);
+      //console.log('PostingArchive', mode, room, room1, room2, archive);
+      if (archive) {
+        for (let i = 0; i < archive.length; i++) {
+          let iffer = archive[i].to === room;
+          if (mode)
+            iffer =
+              (archive[i].from === room1 || archive[i].from === room2) &&
+              (archive[i].to === room2 || archive[i].to === room1);
+          //console.log("###:", iffer, archive[i].from, archive[i].to);
+          if (iffer) {
+            let maskSoob = {
+              user: { name: archive[i].from },
+              message: archive[i].message,
+              date: archive[i].time,
+            };
+            archive[i].read = true;
+            setState((_state) => [..._state, maskSoob]);
+            setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
+          }
+        }
+        Scrooler();
+      }
+    },
+    []
+  );
 
   const BeginWorkInRoom = React.useCallback(
     (room: string, mode: number) => {
@@ -93,21 +97,24 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       setStateBasket([]);
       PostingArchive(archive, room, mode);
     },
-    [PostingArchive],
+    [PostingArchive]
   );
 
   const BeginWork = React.useCallback(
     (arch: any) => {
+      console.log("ARCH:", arch);
       if (arch) {
-        for (let i = 0; i < arch.messages.length; i++) {
-          let mask = {
-            from: arch.messages[i].from,
-            to: arch.messages[i].to,
-            message: arch.messages[i].message,
-            time: arch.messages[i].time,
-            read: false,
-          };
-          archive.push(mask);
+        if (arch.messages) {
+          for (let i = 0; i < arch.messages.length; i++) {
+            let mask = {
+              from: arch.messages[i].from,
+              to: arch.messages[i].to,
+              message: arch.messages[i].message,
+              time: arch.messages[i].time,
+              read: false,
+            };
+            archive.push(mask);
+          }
         }
       }
       // let mess = '🙋‍♂️ ' + props.nik + ' присоеденился';
@@ -119,16 +126,20 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       // } else {
       //   SendSocketSendMessage(props.ws, mess, 'ChatAdmin', 'Global');
       // }
-      BeginWorkInRoom('Global', 0);
+      BeginWorkInRoom("Global", 0);
     },
-    [BeginWorkInRoom],
+    [BeginWorkInRoom]
   );
+
+  const SendReguest = () => {
+    console.log("0*ОТПРАВИТЬ ЗАПРОС", archive);
+  };
 
   //=== инициализация ======================================
   if (flagOpenDebug) {
-    if (WS.url.slice(0, 21) === 'wss://localhost:3000/') debug = true;
+    if (WS.url.slice(0, 21) === "wss://localhost:3000/") debug = true;
     if (debug) {
-      console.log('РЕЖИМ ОТЛАДКИ!!!');
+      console.log("РЕЖИМ ОТЛАДКИ!!!");
       setTimeout(() => {
         BeginWork(dataArchive.archive);
         let aa = MakeSpisUsers(dataUsers.users);
@@ -136,103 +147,161 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       }, 100);
       Scrooler();
     } else {
-      setParams({ name: props.nik, room: 'Global' });
+      setParams({ name: props.nik, room: "Global" });
       oldName = props.nik;
-      oldRoom = 'Global';
+      oldRoom = "Global";
     }
+    //console.log('InScroll:', scrollPosition);
     flagOpenDebug = false;
   }
   //=== работа на сервере ==================================
+  const MessageProcess = React.useCallback(
+    (data: any) => {
+      let toRead = true;
+      let komu = data.to;
+      if (komu !== "Global") {
+        let id1 = "00";
+        let id2 = "00";
+        for (let i = 0; i < sistUsers.length; i++) {
+          if (sistUsers[i].user === komu) id1 = sistUsers[i].id; // кому
+          if (sistUsers[i].user === data.from) id2 = sistUsers[i].id; // от кого
+        }
+        let roomer = id1 + id2;
+        if (Number(id2) < Number(id1)) roomer = id2 + id1;
+        komu = roomer;
+      }
+      if (komu !== oldRoom) toRead = false;
+      let mask = {
+        from: data.from,
+        to: data.to,
+        message: data.message,
+        time: data.time,
+        read: toRead,
+      };
+      archive.push(mask);
+      //console.log("*archive:", archive);
+      setTimeout(() => {
+        let maska = {
+          user: { name: data.from, room: data.to },
+          message: data.message,
+          date: data.time,
+          to: komu,
+        };
+        if (oldRoom === komu) {
+          setState((_state) => [..._state, maska]);
+        } else {
+          setStateBasket((_stateBasket) => [..._stateBasket, maska]);
+        }
+        setTrigger(!trigger);
+      }, 100);
+      Scrooler();
+    },
+    [trigger]
+  );
+
   React.useEffect(() => {
     WS.onopen = function (event: any) {
-      console.log('WS.current.onopen:', event);
+      console.log("WS.current.onopen:", event);
     };
     WS.onclose = function (event: any) {
-      console.log('WS.current.onclose:', event);
+      console.log("WS.current.onclose:", event);
     };
     WS.onerror = function (event: any) {
-      console.log('WS.current.onerror:', event);
+      console.log("WS.current.onerror:", event);
     };
     WS.onmessage = function (event: any) {
       let allData = JSON.parse(event.data);
       let data = allData.data;
-      console.log('пришло:', allData.type, data);
+      console.log("пришло:", allData.type, data);
       switch (allData.type) {
-        case 'users':
+        case "users":
           let aa = MakeSpisUsers(data.users);
           sistUsers = aa[0];
           setUsers(aa[1]);
           break;
-        case 'archive':
-          setTimeout(() => {
-            BeginWork(data.archive);
-          }, 100);
-          break;
-        case 'message':
-          let toRead = true;
-          let komu = data.to;
-          if (komu !== 'Global') {
-            let id1 = '00';
-            let id2 = '00';
-            for (let i = 0; i < sistUsers.length; i++) {
-              if (sistUsers[i].user === komu) id1 = sistUsers[i].id; // кому
-              if (sistUsers[i].user === data.from) id2 = sistUsers[i].id; // от кого
-            }
-            let roomer = id1 + id2;
-            if (Number(id2) < Number(id1)) roomer = id2 + id1;
-            komu = roomer;
+        case "archive":
+          if (!data.archive.messages) {
+            SendReguest();
+            console.log("1*ОТПРАВИТЬ ЗАПРОС", data.archive.messages);
+          } else {
+            setTimeout(() => {
+              BeginWork(data.archive);
+            }, 100);
+            if (!scrollPosition) SendReguest();
           }
-          if (komu !== oldRoom) toRead = false;
-
-          console.log('***:', toRead, komu, oldRoom);
-
-          let mask = {
-            from: data.from,
-            to: komu,
-            message: data.message,
-            time: data.time,
-            read: toRead,
-          };
-          archive.push(mask);
-          setTimeout(() => {
-            let maska = {
-              user: { name: data.from, room: data.to },
-              message: data.message,
-              date: data.time,
-              to: komu,
-            };
-            if (oldRoom === komu) {
-              setState((_state) => [..._state, maska]);
-            } else {
-              setStateBasket((_stateBasket) => [..._stateBasket, maska]);
-            }
-            setTrigger(!trigger);
-          }, 100);
-          Scrooler();
           break;
-        case 'status':
+        case "message":
+          MessageProcess(data);
+          // let toRead = true;
+          // let komu = data.to;
+          // if (komu !== "Global") {
+          //   let id1 = "00";
+          //   let id2 = "00";
+          //   for (let i = 0; i < sistUsers.length; i++) {
+          //     if (sistUsers[i].user === komu) id1 = sistUsers[i].id; // кому
+          //     if (sistUsers[i].user === data.from) id2 = sistUsers[i].id; // от кого
+          //   }
+          //   let roomer = id1 + id2;
+          //   if (Number(id2) < Number(id1)) roomer = id2 + id1;
+          //   komu = roomer;
+          // }
+          // if (komu !== oldRoom) toRead = false;
+          // let mask = {
+          //   from: data.from,
+          //   to: data.to,
+          //   message: data.message,
+          //   time: data.time,
+          //   read: toRead,
+          // };
+          // archive.push(mask);
+          // //console.log("*archive:", archive);
+          // setTimeout(() => {
+          //   let maska = {
+          //     user: { name: data.from, room: data.to },
+          //     message: data.message,
+          //     date: data.time,
+          //     to: komu,
+          //   };
+          //   if (oldRoom === komu) {
+          //     setState((_state) => [..._state, maska]);
+          //   } else {
+          //     setStateBasket((_stateBasket) => [..._stateBasket, maska]);
+          //   }
+          //   setTrigger(!trigger);
+          // }, 100);
+          // Scrooler();
+          break;
+        case "status":
           for (let i = 0; i < sistUsers.length; i++) {
             if (sistUsers[i].user === data.user) {
               sistUsers[i].status = data.status;
-              if (sistUsers[i].status === 'online') setUsers(users + 1);
-              if (sistUsers[i].status === 'offline') setUsers(users - 1);
+              if (sistUsers[i].status === "online") setUsers(users + 1);
+              if (sistUsers[i].status === "offline") setUsers(users - 1);
             }
           }
           setTrigger(!trigger);
           break;
         default:
-          console.log('data_default:', data);
+          console.log("data_default:", data);
       }
     };
-  }, [WS, PostingArchive, BeginWork, trigger, users]);
+  }, [
+    WS,
+    PostingArchive,
+    BeginWork,
+    trigger,
+    users,
+    scrollPosition,
+    MessageProcess,
+  ]);
   //=== РЕЖИМ ОТЛАДКИ ======================================
   React.useEffect(() => {
     if (debug) {
       const searchParams: any = Object.fromEntries(new URLSearchParams(search));
       setParams(searchParams);
-      if (oldName !== 'oldName' && oldRoom !== 'oldRoom') {
+      if (oldName !== "oldName" && oldRoom !== "oldRoom") {
         if (oldName !== searchParams.name || oldRoom !== searchParams.room) {
-          console.log('2params:', archive);
+          console.log("2params:", archive);
           PostingArchive(archive, searchParams.room, 0);
           oldName = searchParams.name;
           oldRoom = searchParams.room;
@@ -241,7 +310,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         oldName = searchParams.name;
         oldRoom = searchParams.room;
       }
-      socket.emit('join', searchParams);
+      socket.emit("join", searchParams);
       return () => {
         socket.off();
       };
@@ -252,8 +321,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
   React.useEffect(() => {
     if (debug) {
-      socket.on('message', (event: any) => {
-        console.log('Event:', event);
+      socket.on("message", (event: any) => {
+        console.log("Event:", event);
         let toTo = true;
         if (event.data.to !== oldRoom) toTo = false;
         let roomTo = event.data.to;
@@ -280,7 +349,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         }, 100);
         Scrooler();
       });
-      socket.on('room', (event: any) => {
+      socket.on("room", (event: any) => {
         setUsers(event.data.users.length);
         usersRooms = event.data.users;
         divRef.current && divRef.current.scrollIntoView();
@@ -289,8 +358,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   }, [socket]);
   //========================================================
   const leftRoom = () => {
-    if (params.room !== 'Global') {
-      nameKomu = 'Global';
+    if (params.room !== "Global") {
+      nameKomu = "Global";
       let newParams = params;
       newParams.room = nameKomu;
       setParams(newParams);
@@ -298,7 +367,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       oldName = newParams.name;
       oldRoom = nameKomu;
       if (debug) {
-        socket.emit('join', params);
+        socket.emit("join", params);
         return () => {
           socket.off();
         };
@@ -311,10 +380,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         //let params = { name: 'ChatAdmin', room: 'Global' };
         //socket.emit('sendMessage', { message, params, date });
         //params = { name: parr.name, room: 'Global' };
-        socket.emit('leftRoom', { params });
+        socket.emit("leftRoom", { params });
         flagOpenDebug = true;
-        //setTester(true);
-        navigate('/');
+        navigate("/");
       } else {
         //let message = '🏃 ' + props.nik + ' вышел';
         //SendSocketSendMessage(props.ws, message, 'ChatAdmin', 'Global');
@@ -324,11 +392,11 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   };
 
   const ClickKnop = (mode: number) => {
-    if (debug) socket.emit('leftRoom', { params });
+    if (debug) socket.emit("leftRoom", { params });
     let newParams = params;
     let id1 = sistUsers[mode].id; // кому
     nameKomu = sistUsers[mode].user;
-    let id2 = '00';
+    let id2 = "00";
     for (let i = 0; i < sistUsers.length; i++) {
       if (sistUsers[i].user === params.name) id2 = sistUsers[i].id; // от кого
     }
@@ -340,7 +408,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     oldName = newParams.name; // от кого
     oldRoom = roomer;
     if (debug) {
-      socket.emit('join', params);
+      socket.emit("join", params);
       return () => {
         socket.off();
       };
@@ -353,27 +421,27 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     if (!message) return;
     let date = new Date().toISOString();
     if (debug) {
-      console.log('handleSubmit:', params, nameKomu, message);
-      socket.emit('sendMessage', { message, params, date });
+      console.log("handleSubmit:", params, nameKomu, message);
+      socket.emit("sendMessage", { message, params, date });
     } else {
       SendSocketSendMessage(props.ws, message, params.name, nameKomu);
     }
-    setMessage('');
+    setMessage("");
   };
 
-  const ВерхняяЧастьЧата = () => {
-    let chel = 'человек';
+  const TopPartChat = () => {
+    let chel = "человек";
     if (users !== 12 && users !== 13 && users !== 14) {
-      if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
+      if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += "а";
     }
-    let nameRoom = ' комнате';
-    let redKnop = 'Покинуть комнату';
-    if (params.room === 'Global') {
-      nameRoom = ' чате';
-      redKnop = 'Выйти из чата';
+    let nameRoom = " комнате";
+    let redKnop = "Покинуть комнату";
+    if (params.room === "Global") {
+      nameRoom = " чате";
+      redKnop = "Выйти из чата";
     }
-    let roomName = 'Групповой чат';
-    if (nameKomu !== 'Global') roomName = nameKomu + '/' + params.name;
+    let roomName = "Групповой чат";
+    if (nameKomu !== "Global") roomName = nameKomu + "/" + params.name;
 
     return (
       <Box sx={styleChat02}>
@@ -385,7 +453,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             </b>
           </Box>
         )}
-        {!debug && params.room === 'Global' && (
+        {!debug && params.room === "Global" && (
           <Box sx={{ fontSize: 12.9 }}>
             <b>
               {users} {chel} {nameRoom}
@@ -401,7 +469,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
   const onEmojiClick = (event: any) => setMessage(`${message} ${event.emoji}`);
 
-  const НижняяЧастьЧата = () => {
+  const BootomPartChat = () => {
     return (
       <Box sx={styleChat16}>
         {InputerMessage(message, handleChange)}
@@ -425,29 +493,33 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     for (let i = 0; i < sistUsers.length; i++) {
       let nameer = sistUsers[i].user;
       if (nameer.length > 15) nameer = nameer.slice(0, 15);
-      let coler = sistUsers[i].status !== 'online' ? 'black' : 'blue';
-      let point = ' ';
+      let coler = sistUsers[i].status !== "online" ? "black" : "blue";
+      let point = " ";
       for (let j = 0; j < archive.length; j++) {
         if (
-          archive[j].from !== 'ChatAdmin' &&
+          archive[j].from !== "ChatAdmin" &&
           archive[j].from !== params.name &&
           archive[j].from === sistUsers[i].user
         ) {
-          if (archive[j].to !== 'Global' && archive[j].to === params.name && !archive[j].read)
-            point = '●';
+          if (
+            archive[j].to !== "Global" &&
+            archive[j].to === params.name &&
+            !archive[j].read
+          )
+            point = "●";
         }
       }
 
       const styleChatBut01 = {
         fontSize: 12,
-        border: '2px solid #000',
-        bgcolor: '#E6F5D6',
-        width: '105px',
-        height: '20px',
-        borderColor: '#E6F5D6',
+        border: "2px solid #000",
+        bgcolor: "#E6F5D6",
+        width: "105px",
+        height: "20px",
+        borderColor: "#E6F5D6",
         borderRadius: 2,
         color: coler,
-        textTransform: 'unset !important',
+        textTransform: "unset !important",
       };
 
       resStr.push(
@@ -457,61 +529,65 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           </Grid>
           <Grid item xs sx={styleChat08}>
             <Box sx={{ color: coler }}>
-              {sistUsers[i].user !== params.name && sistUsers[i].user !== nameKomu && (
-                <Button variant="contained" sx={styleChatBut01} onClick={() => ClickKnop(i)}>
-                  {sistUsers[i].status !== 'online' && <em>{nameer}</em>}
-                  {sistUsers[i].status === 'online' && <b>{nameer}</b>}
-                </Button>
-              )}
+              {sistUsers[i].user !== params.name &&
+                sistUsers[i].user !== nameKomu && (
+                  <Button
+                    variant="contained"
+                    sx={styleChatBut01}
+                    onClick={() => ClickKnop(i)}
+                  >
+                    {sistUsers[i].status !== "online" && <em>{nameer}</em>}
+                    {sistUsers[i].status === "online" && <b>{nameer}</b>}
+                  </Button>
+                )}
               {sistUsers[i].user === params.name && (
-                <Box sx={{ padding: '0.5vh 0 0 0' }}>
+                <Box sx={{ padding: "0.5vh 0 0 0" }}>
                   <b>{nameer}</b>
                 </Box>
               )}
               {sistUsers[i].user === nameKomu && (
-                <Box sx={{ padding: '0.5vh 0 0 0' }}>
-                  {sistUsers[i].status !== 'online' && <em>{nameer}</em>}
-                  {sistUsers[i].status === 'online' && <b>{nameer}</b>}
+                <Box sx={{ padding: "0.5vh 0 0 0" }}>
+                  {sistUsers[i].status !== "online" && <em>{nameer}</em>}
+                  {sistUsers[i].status === "online" && <b>{nameer}</b>}
                 </Box>
               )}
             </Box>
           </Grid>
-        </Grid>,
+        </Grid>
       );
     }
     return resStr;
   };
 
-  const ЛеваяЧастьЧата = () => {
-    const [scrollPosition, setScrollPosition] = React.useState(0);
+  const LeftPartChat = () => {
     const handleScroll = () => {
       const position = scRef.current.scrollTop;
-      console.log('position:', position);
-      if (!position) console.log('ОТПРАВИТЬ', position);
+      console.log("position:", position);
+      if (!position) SendReguest();
       setScrollPosition(position);
     };
 
     React.useEffect(() => {
-      scRef.current.addEventListener('scroll', handleScroll, { passive: true });
-
+      scRef.current.addEventListener("scroll", handleScroll, { passive: true });
       return () => {
-        scRef.current.removeEventListener('scroll', handleScroll);
+        scRef.current.removeEventListener("scroll", handleScroll);
       };
     }, []);
 
-    //const scrollY = divRef.current ? scRef.current.scrollTop : null;
-
-    //console.log('GLscroll:', scrollPosition);
     return (
       <>
-        {ВерхняяЧастьЧата()}
+        {TopPartChat()}
         <Box sx={styleChat05}>
-          <Box ref={scRef} sx={{ overflowX: 'auto', height: '86vh' }}>
-            <Messages messages={state} name={params.name} basket={stateBasket} />
+          <Box ref={scRef} sx={{ overflowX: "auto", height: "86vh" }}>
+            <Messages
+              messages={state}
+              name={params.name}
+              basket={stateBasket}
+            />
             <div ref={divRef} />
           </Box>
         </Box>
-        {НижняяЧастьЧата()}
+        {BootomPartChat()}
       </>
     );
   };
@@ -519,19 +595,21 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   return (
     <Grid container>
       <Grid item xs={10} sx={styleChat01}>
-        {ЛеваяЧастьЧата()}
+        {LeftPartChat()}
       </Grid>
       <Grid item xs sx={styleChat01}>
-        <Box sx={{ background: '#CCDCEC' }}>
+        <Box sx={{ background: "#CCDCEC" }}>
           {debug && (
             <>
-              {HeaderChat(params.room !== 'Global' ? 'комнате:' : 'чате:')}
-              <Box sx={{ overflowX: 'auto', height: '7vh' }}>{UsersChat(usersRooms)}</Box>
+              {HeaderChat(params.room !== "Global" ? "комнате:" : "чате:")}
+              <Box sx={{ overflowX: "auto", height: "7vh" }}>
+                {UsersChat(usersRooms)}
+              </Box>
             </>
           )}
           {HeaderSist()}
-          <Box sx={{ overflowX: 'auto', height: '78.75vh' }}>{UsersSist()}</Box>
-          {!debug && <Grid container sx={{ height: '14vh' }}></Grid>}
+          <Box sx={{ overflowX: "auto", height: "78.75vh" }}>{UsersSist()}</Box>
+          {!debug && <Grid container sx={{ height: "14vh" }}></Grid>}
         </Box>
       </Grid>
     </Grid>
