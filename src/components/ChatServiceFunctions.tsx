@@ -96,6 +96,12 @@ export const UsersChat = (usersRooms: any) => {
   return resStr;
 };
 
+export const MakeOldDate = (dt: string, cutDays: number) => {
+  let date = new Date(dt);
+  date.setDate(date.getDate() - cutDays);
+  return date.toISOString();
+};
+
 export const SendSocketSendMessage = (
   ws: WebSocket,
   message: string,
@@ -112,6 +118,32 @@ export const SendSocketSendMessage = (
           message: message,
           time: new Date().toISOString(),
           to: nameKomu,
+        })
+      );
+    } else {
+      setTimeout(() => {
+        handleSendOpen();
+      }, 1000);
+    }
+  };
+  handleSendOpen();
+};
+
+export const SendSocketHistory = (
+  ws: WebSocket,
+  dStart: string,
+  dEnd: string
+) => {
+  console.log("SendHistory:", dStart, dEnd);
+  const handleSendOpen = () => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(
+        JSON.stringify({
+          type: "history",
+          data: {
+            timeEnd: dEnd,
+            timeStart: dStart,
+          },
         })
       );
     } else {

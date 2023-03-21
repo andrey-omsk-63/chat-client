@@ -7,11 +7,11 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 
 import Messages from "./Messages";
-//import Test from './Test';
 
 import { MakeSpisUsers, InputerMessage } from "./ChatServiceFunctions";
 import { HeaderChat, HeaderSist, UsersChat } from "./ChatServiceFunctions";
 import { SendMessage, SendSocketSendMessage } from "./ChatServiceFunctions";
+import { MakeOldDate, SendSocketHistory } from "./ChatServiceFunctions";
 
 import { styleChat01, styleChat02, styleChat08 } from "./ComponentsStyle";
 import { styleChat03, styleChat04, styleChat16 } from "./ComponentsStyle";
@@ -19,6 +19,7 @@ import { styleChat05, styleChat06, styleChat07 } from "./ComponentsStyle";
 import { styleChat081, styleChat061 } from "./ComponentsStyle";
 
 import { dataArchive } from "./../otladkaArchive";
+import { dataHistory } from "./../otladkaHistory";
 import { dataUsers } from "./../otladkaUsers";
 
 let usersRooms: any = [];
@@ -28,9 +29,9 @@ let oldName = "oldName";
 let oldRoom = "oldRoom";
 let nameKomu = "Global";
 let archive: any = [];
+let archiveTemp: any = [];
 let sistUsers: any = [];
-
-//let scrollHeight: any;
+let dStart = new Date().toISOString();
 
 const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   let socket = props.Socket;
@@ -42,7 +43,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const [users, setUsers] = React.useState<number | any>(-5);
   const [scrollPosition, setScrollPosition] = React.useState(0);
   const [trigger, setTrigger] = React.useState(false);
-  //const [tester, setTester] = React.useState(false);
   const { search } = useLocation();
   const navigate = useNavigate();
   const divRef: any = React.useRef(null);
@@ -64,7 +64,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         room1 = sistUsers[Number(room.slice(0, 2)) - 1].user;
         room2 = sistUsers[Number(room.slice(2, 4)) - 1].user;
       }
-      //console.log('PostingArchive', mode, room, room1, room2, archive);
       if (archive) {
         for (let i = 0; i < archive.length; i++) {
           let iffer = archive[i].to === room;
@@ -72,7 +71,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             iffer =
               (archive[i].from === room1 || archive[i].from === room2) &&
               (archive[i].to === room2 || archive[i].to === room1);
-          //console.log("###:", iffer, archive[i].from, archive[i].to);
           if (iffer) {
             let maskSoob = {
               user: { name: archive[i].from },
@@ -92,7 +90,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
   const BeginWorkInRoom = React.useCallback(
     (room: string, mode: number) => {
-      //console.log('BeginWorkInRoom:', room);
       setState([]);
       setStateBasket([]);
       PostingArchive(archive, room, mode);
@@ -101,8 +98,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   );
 
   const BeginWork = React.useCallback(
-    (arch: any) => {
-      console.log("ARCH:", arch);
+    (arch: any, mode: number) => {
+      console.log("ARCH:", mode, arch);
       if (arch) {
         if (arch.messages) {
           for (let i = 0; i < arch.messages.length; i++) {
@@ -113,7 +110,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
               time: arch.messages[i].time,
               read: false,
             };
-            archive.push(mask);
+            mode && archiveTemp.push(mask);
+            !mode && archive.push(mask);
           }
         }
       }
@@ -131,9 +129,21 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     [BeginWorkInRoom]
   );
 
-  const SendReguest = () => {
-    console.log("0*ОТПРАВИТЬ ЗАПРОС", archive);
-  };
+  const SendReguest = React.useCallback(() => {
+    console.log("0*ОТПРАВИТЬ ЗАПРОС", dStart, MakeOldDate(dStart, 1), archive);
+    SendSocketHistory(WS, MakeOldDate(dStart, 2), dStart);
+    if (debug) {
+      archiveTemp = [];
+      BeginWork(dataHistory.archive, 1);
+      console.log("1archiveTemp:", archiveTemp);
+      for (let i = 0; i < archive.length; i++) {
+        archiveTemp.push(archive[i]);
+      }
+      console.log("2archiveTemp:", archiveTemp);
+      archive = archiveTemp;
+      console.log("archive:", archive);
+    }
+  }, [WS, BeginWork]);
 
   //=== инициализация ======================================
   if (flagOpenDebug) {
@@ -141,7 +151,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     if (debug) {
       console.log("РЕЖИМ ОТЛАДКИ!!!");
       setTimeout(() => {
-        BeginWork(dataArchive.archive);
+        BeginWork(dataArchive.archive, 0);
         let aa = MakeSpisUsers(dataUsers.users);
         sistUsers = aa[0];
       }, 100);
@@ -151,7 +161,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       oldName = props.nik;
       oldRoom = "Global";
     }
-    //console.log('InScroll:', scrollPosition);
     flagOpenDebug = false;
   }
   //=== работа на сервере ==================================
@@ -179,7 +188,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         read: toRead,
       };
       archive.push(mask);
-      //console.log("*archive:", archive);
       setTimeout(() => {
         let maska = {
           user: { name: data.from, room: data.to },
@@ -220,56 +228,22 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           setUsers(aa[1]);
           break;
         case "archive":
+          dStart = data.archive.timeStart;
           if (!data.archive.messages) {
             SendReguest();
             console.log("1*ОТПРАВИТЬ ЗАПРОС", data.archive.messages);
           } else {
             setTimeout(() => {
-              BeginWork(data.archive);
+              BeginWork(data.archive, 0);
             }, 100);
-            if (!scrollPosition) SendReguest();
+            if (!scrollPosition) {
+              console.log("3*ОТПРАВИТЬ ЗАПРОС", scrollPosition);
+              SendReguest();
+            }
           }
           break;
         case "message":
           MessageProcess(data);
-          // let toRead = true;
-          // let komu = data.to;
-          // if (komu !== "Global") {
-          //   let id1 = "00";
-          //   let id2 = "00";
-          //   for (let i = 0; i < sistUsers.length; i++) {
-          //     if (sistUsers[i].user === komu) id1 = sistUsers[i].id; // кому
-          //     if (sistUsers[i].user === data.from) id2 = sistUsers[i].id; // от кого
-          //   }
-          //   let roomer = id1 + id2;
-          //   if (Number(id2) < Number(id1)) roomer = id2 + id1;
-          //   komu = roomer;
-          // }
-          // if (komu !== oldRoom) toRead = false;
-          // let mask = {
-          //   from: data.from,
-          //   to: data.to,
-          //   message: data.message,
-          //   time: data.time,
-          //   read: toRead,
-          // };
-          // archive.push(mask);
-          // //console.log("*archive:", archive);
-          // setTimeout(() => {
-          //   let maska = {
-          //     user: { name: data.from, room: data.to },
-          //     message: data.message,
-          //     date: data.time,
-          //     to: komu,
-          //   };
-          //   if (oldRoom === komu) {
-          //     setState((_state) => [..._state, maska]);
-          //   } else {
-          //     setStateBasket((_stateBasket) => [..._stateBasket, maska]);
-          //   }
-          //   setTrigger(!trigger);
-          // }, 100);
-          // Scrooler();
           break;
         case "status":
           for (let i = 0; i < sistUsers.length; i++) {
@@ -293,6 +267,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     users,
     scrollPosition,
     MessageProcess,
+    SendReguest,
   ]);
   //=== РЕЖИМ ОТЛАДКИ ======================================
   React.useEffect(() => {
@@ -563,7 +538,10 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     const handleScroll = () => {
       const position = scRef.current.scrollTop;
       console.log("position:", position);
-      if (!position) SendReguest();
+      if (!position) {
+        console.log("2*ОТПРАВИТЬ ЗАПРОС", position);
+        SendReguest();
+      }
       setScrollPosition(position);
     };
 
@@ -574,16 +552,13 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       };
     }, []);
 
+    let pn = params.name;
     return (
       <>
         {TopPartChat()}
         <Box sx={styleChat05}>
           <Box ref={scRef} sx={{ overflowX: "auto", height: "86vh" }}>
-            <Messages
-              messages={state}
-              name={params.name}
-              basket={stateBasket}
-            />
+            <Messages messages={state} name={pn} basket={stateBasket} />
             <div ref={divRef} />
           </Box>
         </Box>
