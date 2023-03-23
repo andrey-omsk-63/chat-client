@@ -12,6 +12,7 @@ import { styleChat08 } from './ComponentsStyle';
 
 export const isNumeric = (n: number) => !isNaN(n);
 
+//=== Chat =========================================
 export const Pipip = () => {
   function beep() {
     let snd = new Audio(
@@ -163,3 +164,40 @@ export const SendSocketHistory = (ws: WebSocket, dStart: string, dEnd: string) =
   };
   handleSendOpen();
 };
+//=== Messages =====================================
+export const MesssgeLength = (text: string, fontSize: number) => {
+  function textWidth(text: string, fontProp: any) {
+    let tag = document.createElement('div');
+    tag.style.position = 'absolute';
+    tag.style.left = '-999em';
+    tag.style.whiteSpace = 'nowrap';
+    tag.style.font = fontProp;
+    tag.innerHTML = text;
+    document.body.appendChild(tag);
+    let result = tag.clientWidth;
+    document.body.removeChild(tag);
+    return result;
+  }
+
+  let theCSSprop = window.getComputedStyle(document.body, null).getPropertyValue('font-family');
+  let bb = 'bold ' + fontSize + 'px ' + theCSSprop;
+  // let aa = textWidth('🐷🤡🐷', 'bold 13px Segoe UI');
+  // console.log('AA:', aa);
+  return textWidth(text, bb);
+};
+
+export const Splitter = (str: string, l: number) => {
+  let strs = [];
+  while (str.length > l) {
+    var pos = str.substring(0, l).lastIndexOf(' ');
+    pos = pos <= 0 ? l : pos;
+    strs.push(str.substring(0, pos));
+    var i = str.indexOf(' ', pos) + 1;
+    if (i < pos || i > pos + l) i = pos;
+    str = str.substring(i);
+  }
+  strs.push(str);
+  return strs;
+};
+
+//==================================================
