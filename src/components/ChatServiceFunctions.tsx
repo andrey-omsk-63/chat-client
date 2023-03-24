@@ -189,10 +189,10 @@ export const MesssgeLength = (text: string, fontSize: number) => {
 export const Splitter = (str: string, l: number) => {
   let strs = [];
   while (str.length > l) {
-    var pos = str.substring(0, l).lastIndexOf(' ');
+    let pos = str.substring(0, l).lastIndexOf(' ');
     pos = pos <= 0 ? l : pos;
     strs.push(str.substring(0, pos));
-    var i = str.indexOf(' ', pos) + 1;
+    let i = str.indexOf(' ', pos) + 1;
     if (i < pos || i > pos + l) i = pos;
     str = str.substring(i);
   }
