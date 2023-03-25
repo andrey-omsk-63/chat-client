@@ -331,6 +331,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         if (event.data.to !== oldRoom) {
           toTo = false;
           Pipip(); // уведомление
+          if (event.data.to === 'Global') metka = true;
+          console.log('1111получено сообщение', event.data.to, oldRoom);
         }
         let roomTo = event.data.to;
         if (isNumeric(event.data.to)) {
@@ -353,19 +355,21 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             setStateBasket((_stateBasket) => [..._stateBasket, event.data]);
           }
         }, 100);
-        console.log('POZZZ1:', event.data.from, event.data.user.name, params.name, oldRoom);
-        if (event.data.user.name === params.name) {
+        console.log('от кого:', event.data.user.name, 'кому', event.data.to);
+        console.log('oldName:', oldName, 'oldRoom:', oldRoom);
+        if (isNumeric(Number(oldRoom)) && isNumeric(Number(oldRoom))) Scrooler();
+        if (event.data.user.name === oldName) {
           Scrooler();
         } else {
-          if (event.data.to === oldRoom) {
+          if (event.data.to === oldRoom && oldRoom === 'Global') {
             if (maxPosition - scRef.current.scrollTop < 300) {
               Scrooler();
             } else {
-              if (isNumeric(Number(oldRoom))) {
-                console.log('получено сообщение', event.data.to, oldRoom);
-                metka = true;
-                Pipip();
-              }
+              //if (isNumeric(Number(oldRoom))) {
+              console.log('получено сообщение', event.data.to, oldRoom);
+              metka = true;
+              Pipip();
+              //}
             }
           }
         }
@@ -388,6 +392,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       oldRoom = nameKomu;
       setTimeout(() => {
         scRef.current.scrollTo(0, afterRoomPosition); // встать на прежнее место
+        afterRoomPosition = 0;
       }, 400);
       if (debug) {
         socket.emit('join', params);
@@ -449,10 +454,10 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     if (users !== 12 && users !== 13 && users !== 14) {
       if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
     }
-    let nameRoom = ' комнате';
+    let nameRoom = 'в комнате';
     let redKnop = 'Покинуть комнату';
     if (params.room === 'Global') {
-      nameRoom = ' чате';
+      nameRoom = 'в чате';
       redKnop = 'Выйти из чата';
     }
     let roomName = 'Групповой чат';
@@ -573,7 +578,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         setScrollPosition(position);
         //console.log("position", position);
         if (position > maxPosition && params.room === 'Global') maxPosition = position;
-        if (maxPosition === position && !tempPosition) metka = false;
+        if (maxPosition === position && !afterRoomPosition) metka = false;
         if (tempPosition) {
           console.log('position:', position, maxPosition, tempPosition);
           let poz = maxPosition - tempPosition;
@@ -610,7 +615,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
   const GoToBottom = () => {
     metka = false;
-    Scrooler();
+    console.log('GoToBottom', afterRoomPosition);
+    !afterRoomPosition && Scrooler();
   };
 
   let pointt = metka ? '●' : ' ';
