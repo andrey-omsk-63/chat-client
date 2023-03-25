@@ -10,9 +10,9 @@ import { styleChat021, styleChat022 } from './ComponentsStyle';
 import { styleChatInp03, styleChat041 } from './ComponentsStyle';
 import { styleChat08 } from './ComponentsStyle';
 
+//=== Chat =========================================
 export const isNumeric = (n: number) => !isNaN(n);
 
-//=== Chat =========================================
 export const Pipip = () => {
   function beep() {
     let snd = new Audio(
@@ -93,7 +93,7 @@ export const HeaderSist = () => {
     </Grid>
   );
 };
-
+//isNumeric
 export const UsersChat = (usersRooms: any) => {
   let resStr: any = [];
   for (let i = 0; i < usersRooms.length; i++) {
@@ -199,5 +199,4 @@ export const Splitter = (str: string, l: number) => {
   strs.push(str);
   return strs;
 };
-
 //==================================================

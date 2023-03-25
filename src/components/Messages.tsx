@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 
-import { MesssgeLength, Splitter } from "./ChatServiceFunctions";
+import { MesssgeLength, Splitter } from './ChatServiceFunctions';
 
-import { styleMess01, styleMeUser } from "./ComponentsStyle";
+import { styleMess01, styleMeUser } from './ComponentsStyle';
 
 let resStr: any = [];
 
@@ -28,13 +28,10 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
     resStr = [];
     for (let i = 0; i < props.messages.length; i++) {
       let itsme = false;
-      if (
-        props.messages[i].user.name.trim().toLowerCase() ===
-        props.name.trim().toLowerCase()
-      )
+      if (props.messages[i].user.name.trim().toLowerCase() === props.name.trim().toLowerCase())
         itsme = true;
-      let coler = "black";
-      if (!itsme && props.messages[i].user.name === "ChatAdmin") coler = "blue";
+      let coler = 'black';
+      if (!itsme && props.messages[i].user.name === 'ChatAdmin') coler = 'blue';
       let dlina = MesssgeLength(props.messages[i].message, 13.5) + 14;
       let mass: string[] = [props.messages[i].message];
 
@@ -49,26 +46,22 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
       }
 
       const styleUserUser = {
-        fontSize: "11.5px",
+        fontSize: '11.5px',
         color: coler,
-        paddingLeft: "9px",
+        paddingLeft: '9px',
       };
 
       let dat =
-        new Date(props.messages[i].date).toLocaleDateString() !==
-        new Date().toLocaleDateString()
+        new Date(props.messages[i].date).toLocaleDateString() !== new Date().toLocaleDateString()
           ? new Date(props.messages[i].date).toLocaleDateString()
-          : "";
-      let tim = new Date(props.messages[i].date)
-        .toLocaleTimeString()
-        .slice(0, -3);
+          : '';
+      let tim = new Date(props.messages[i].date).toLocaleTimeString().slice(0, -3);
 
       const MassMessages = () => {
         let resSt = [];
         for (let j = 0; j < mass.length; j++) {
           let mb = 1;
           let mt = 0.3;
-          //let br = 3;
           let bs = 2;
           let ht = 27;
           let btlr = 9;
@@ -101,17 +94,20 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
             btrr = 9;
           }
 
+          if (!itsme) btlr = 0;
+          if (itsme) btrr = 0;
+
           const styleMeText = {
             width: dlina,
             border: 2,
             height: ht,
-            fontSize: "13.5px",
-            background: "#93E5EE", //зелёный
-            borderColor: "#93E5EE",
-            color: "black",
+            fontSize: '13.5px',
+            background: '#93E5EE', //зелёный
+            borderColor: '#93E5EE',
+            color: 'black',
             marginTop: mt,
-            padding: "3px 0px 0 6px",
-            marginLeft: "auto",
+            padding: '3px 0px 0 6px',
+            marginLeft: 'auto',
             marginBottom: mb,
             boxShadow: bs,
             borderTopLeftRadius: btlr,
@@ -124,12 +120,12 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
             width: dlina,
             border: 2,
             height: ht,
-            fontSize: "13.5px",
-            background: "#fafac3", // жёлтый
-            borderColor: "#fafac3",
+            fontSize: '13.5px',
+            background: '#fafac3', // жёлтый
+            borderColor: '#fafac3',
             color: coler,
             marginTop: mt,
-            padding: "2px 0px 0 6px",
+            padding: '2px 0px 0 6px',
             marginBottom: mb,
             boxShadow: bs,
             borderTopLeftRadius: btlr,
@@ -140,7 +136,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
           resSt.push(
             <Grid key={j} item xs={12} sx={{ border: 0 }}>
               <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>
-            </Grid>
+            </Grid>,
           );
         }
         return resSt;
@@ -155,7 +151,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
             </em>
           </Grid>
           {MassMessages()}
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
