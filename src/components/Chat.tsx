@@ -208,7 +208,23 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         }
         setTrigger(!trigger);
       }, 100);
-      komu === oldRoom && Scrooler();
+      //komu === oldRoom && Scrooler();
+      console.log('от кого:', data.from, 'кому', komu, data.to);
+      console.log('oldName:', oldName, 'oldRoom:', oldRoom);
+      if (isNumeric(Number(oldRoom))) Scrooler();
+      if (data.from === oldName) {
+        Scrooler();
+      } else {
+        if (komu === oldRoom && oldRoom === 'Global') {
+          if (maxPosition - scRef.current.scrollTop < 300) {
+            Scrooler();
+          } else {
+            console.log('получено сообщение', komu, oldRoom);
+            metka = true;
+            Pipip();
+          }
+        }
+      }
     },
     [trigger],
   );
@@ -357,7 +373,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         }, 100);
         console.log('от кого:', event.data.user.name, 'кому', event.data.to);
         console.log('oldName:', oldName, 'oldRoom:', oldRoom);
-        if (isNumeric(Number(oldRoom)) && isNumeric(Number(oldRoom))) Scrooler();
+        if (isNumeric(Number(oldRoom))) Scrooler();
         if (event.data.user.name === oldName) {
           Scrooler();
         } else {
@@ -365,11 +381,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             if (maxPosition - scRef.current.scrollTop < 300) {
               Scrooler();
             } else {
-              //if (isNumeric(Number(oldRoom))) {
               console.log('получено сообщение', event.data.to, oldRoom);
               metka = true;
               Pipip();
-              //}
             }
           }
         }
