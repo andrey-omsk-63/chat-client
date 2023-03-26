@@ -18,6 +18,7 @@ import { styleChat01, styleChat02, styleChat08 } from './ComponentsStyle';
 import { styleChat03, styleChat04, styleChat16 } from './ComponentsStyle';
 import { styleChat05, styleChat06, styleChat07 } from './ComponentsStyle';
 import { styleChat081, styleChat061, styleChatBut01 } from './ComponentsStyle';
+import { styleChatBut02 } from './ComponentsStyle';
 
 import { dataArchive } from './../otladkaArchive';
 import { dataHistory } from './../otladkaHistory';
@@ -38,6 +39,7 @@ let afterRoomPosition = 0;
 let dStart = new Date().toISOString();
 let chDays = 1;
 let metka = false;
+let turnOn = true;
 
 const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   let socket = props.Socket;
@@ -49,6 +51,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const [users, setUsers] = React.useState<number | any>(-5);
   const [scrollPosition, setScrollPosition] = React.useState(0);
   const [trigger, setTrigger] = React.useState(false);
+  //const [turnOn, setTurnOn] = React.useState(true);
   const { search } = useLocation();
   const navigate = useNavigate();
   const divRef: any = React.useRef(null);
@@ -184,7 +187,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       }
       if (komu !== oldRoom) {
         toRead = false;
-        Pipip(); // уведомление
+        turnOn && Pipip(); // уведомление
       }
       let mask = {
         from: data.from,
@@ -221,7 +224,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           } else {
             console.log('получено сообщение', komu, oldRoom);
             metka = true;
-            Pipip();
+            turnOn && Pipip();
           }
         }
       }
@@ -346,7 +349,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         let toTo = true;
         if (event.data.to !== oldRoom) {
           toTo = false;
-          Pipip(); // уведомление
+          turnOn && Pipip(); // уведомление
           if (event.data.to === 'Global') metka = true;
           console.log('1111получено сообщение', event.data.to, oldRoom);
         }
@@ -381,9 +384,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             if (maxPosition - scRef.current.scrollTop < 300) {
               Scrooler();
             } else {
-              console.log('получено сообщение', event.data.to, oldRoom);
+              console.log('получено сообщение', turnOn, event.data.to, oldRoom);
               metka = true;
-              Pipip();
+              turnOn && Pipip();
             }
           }
         }
@@ -633,7 +636,13 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     !afterRoomPosition && Scrooler();
   };
 
+  const TurnOn = () => {
+    turnOn = !turnOn;
+    setTrigger(!trigger);
+  };
+
   let pointt = metka ? '●' : ' ';
+  let sound = turnOn ? '🔇 Выкл' : '🔊 Вкл';
 
   return (
     <Grid container>
@@ -652,15 +661,19 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           <Box sx={{ overflowX: 'auto', height: '69.25vh' }}>{UsersSist()}</Box>
           {!debug && <Grid container sx={{ height: '14vh' }}></Grid>}
           <Grid container sx={{ border: 0, height: '9.5vh' }}>
-            <Grid
-              item
-              xs={0.8}
-              sx={{ fontSize: 14, textAlign: 'left', padding: '1vh 0 0 0', color: 'blue' }}>
+            <Grid item xs={0.8} sx={styleChat081}>
               {pointt}
             </Grid>
             <Grid item xs={3} sx={{ border: 0 }}>
-              <Button sx={styleChatBut01} onClick={GoToBottom}>
-                🔽
+              {params.room === 'Global' && (
+                <Button sx={styleChatBut01} onClick={GoToBottom}>
+                  🔽
+                </Button>
+              )}
+            </Grid>
+            <Grid item xs sx={{ border: 0 }}>
+              <Button sx={styleChatBut02} onClick={TurnOn}>
+                {sound}
               </Button>
             </Grid>
           </Grid>
