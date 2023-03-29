@@ -1,6 +1,5 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import EmojiPicker from "emoji-picker-react";
 
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -11,21 +10,19 @@ import Messages from "./Messages";
 import { isNumeric, Pipip, UsersSist } from "./ChatServiceFunctions";
 import { ChatServisKnop, HeaderChel } from "./ChatServiceFunctions";
 import { MakeSpisUsers, InputerMessage } from "./ChatServiceFunctions";
-import { HeaderChat, HeaderSist, UsersChat } from "./ChatServiceFunctions";
+import { DebugRigtPartChat, HeaderSist } from "./ChatServiceFunctions";
 import { SendMessage, SendSocketSendMessage } from "./ChatServiceFunctions";
-import { SendSocketMarkAsRead } from "./ChatServiceFunctions";
+import { SendSocketMarkAsRead, ChatEmojiPicker } from "./ChatServiceFunctions";
 import { MakeOldDate, SendSocketHistory } from "./ChatServiceFunctions";
 
-import { styleChat01, styleChat02, styleChat061 } from "./ComponentsStyle";
+import { styleChat01, styleChat02, styleChat05 } from "./ComponentsStyle";
 import { styleChat03, styleChat04, styleChat16 } from "./ComponentsStyle";
-import { styleChat05, styleChat06, styleChat07 } from "./ComponentsStyle";
 
 import { dataArchive } from "./../otladkaArchive";
 import { dataHistory } from "./../otladkaHistory";
 import { dataUsers } from "./../otladkaUsers";
 
 let usersRooms: any = [];
-let debug = false;
 let flagOpenDebug = true;
 let oldName = "oldName";
 let oldRoom = "oldRoom";
@@ -57,6 +54,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const divRef: any = React.useRef(null);
   const scRef: any = React.useRef(null);
   const WS = props.ws;
+  const debug = WS.url.slice(0, 21) === "wss://localhost:3000/" ? true : false;
 
   const Scrooler = () => {
     setTimeout(() => {
@@ -66,17 +64,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   };
 
   const PostingArchive = React.useCallback(
-    (
-      //archive: any,
-      room: string,
-      mode: number
-    ) => {
-      let room1 = room;
-      let room2 = room;
-      if (mode) {
-        room1 = sistUsers[Number(room.slice(0, 2)) - 1].user;
-        room2 = sistUsers[Number(room.slice(2, 4)) - 1].user;
-      }
+    (room: string, mode: number) => {
+      let room1 = !mode ? room : sistUsers[Number(room.slice(0, 2)) - 1].user;
+      let room2 = !mode ? room : sistUsers[Number(room.slice(2, 4)) - 1].user;
       if (archive) {
         for (let i = 0; i < archive.length; i++) {
           let iffer = archive[i].to === room;
@@ -92,8 +82,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             };
             if (!archive[i].read) {
               archive[i].read = true;
-              if (archive[i].to !== "Global" && archive[i].from !== "Global") {
-                console.log("!!!Archive:", archive[i]);
+              if (archive[i].to !== "Global" && archive[i].from !== "Global")
                 SendSocketMarkAsRead(
                   WS,
                   archive[i].from,
@@ -101,13 +90,11 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
                   archive[i].message,
                   archive[i].time
                 );
-              }
             }
             setState((_state) => [..._state, maskSoob]);
             setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
           }
         }
-        console.log("Archive:", archive);
         Scrooler();
       }
     },
@@ -118,11 +105,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     (room: string, mode: number) => {
       setState([]);
       setStateBasket([]);
-      PostingArchive(
-        //archive,
-        room,
-        mode
-      );
+      PostingArchive(room, mode);
     },
     [PostingArchive]
   );
@@ -169,21 +152,18 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         archive = JSON.parse(JSON.stringify(archiveTemp));
         tempPosition = JSON.parse(JSON.stringify(maxPosition));
         BeginWorkInRoom("Global", 0);
-        console.log("SendReguest:", tempPosition, maxPosition);
       }
       chDays++;
     }
-  }, [WS, BeginWork, BeginWorkInRoom]);
+  }, [WS, BeginWork, BeginWorkInRoom, debug]);
 
   //=== инициализация ======================================
   if (flagOpenDebug) {
-    if (WS.url.slice(0, 21) === "wss://localhost:3000/") debug = true;
     if (debug) {
       console.log("РЕЖИМ ОТЛАДКИ!!!", dataArchive);
       setTimeout(() => {
         BeginWork(dataArchive.archive, 0);
-        let aa = MakeSpisUsers(dataUsers.users);
-        sistUsers = aa[0];
+        sistUsers = MakeSpisUsers(dataUsers.users)[0];
       }, 100);
       Scrooler();
     } else {
@@ -213,10 +193,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         toRead = false;
         turnOn && Pipip(); // уведомление
       } else {
-        if (data.to !== "Global" && data.from !== "Global") {
-          console.log("???Archive:", data);
+        if (data.to === props.nik && data.from !== "Global")
           SendSocketMarkAsRead(WS, data.from, data.to, data.message, data.time);
-        }
       }
       let mask = {
         from: data.from,
@@ -246,7 +224,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       if (data.from === oldName) {
         Scrooler();
       } else {
-        // if (komu === oldRoom && oldRoom === "Global") {
         if (komu === data.to && data.to === "Global") {
           if (maxPosition - scRef.current.scrollTop < 300) {
             Scrooler();
@@ -258,7 +235,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         }
       }
     },
-    [WS, trigger]
+    [WS, trigger, props.nik]
   );
 
   React.useEffect(() => {
@@ -284,23 +261,16 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         case "archive":
           dStart = data.archive.timeStart;
           if (!data.archive.messages) {
-            console.log("1*ОТПРАВИТЬ ЗАПРОС", data.archive.messages);
             SendReguest();
           } else {
             BeginWork(data.archive, 0);
             setTimeout(() => {
-              console.log("POZarh:", scRef.current.scrollTop);
-              if (!scRef.current.scrollTop) {
-                console.log("3*ОТПРАВИТЬ ЗАПРОС", scrollPosition);
-                SendReguest();
-              }
+              if (!scRef.current.scrollTop) SendReguest();
             }, 500);
           }
           break;
         case "history":
-          console.log("!!!", data.history);
           if (!data.history.messages) {
-            console.log("7*ОТПРАВИТЬ ЗАПРОС", data.history.messages);
             SendReguest();
           } else {
             archiveTemp = [];
@@ -310,14 +280,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             }
             archive = JSON.parse(JSON.stringify(archiveTemp));
             tempPosition = JSON.parse(JSON.stringify(maxPosition));
-            //console.log("HISTORY:", tempPosition, maxPosition, archive);
             BeginWorkInRoom("Global", 0);
             setTimeout(() => {
-              console.log("POZhis:", scRef.current.scrollTop);
-              if (!scRef.current.scrollTop) {
-                console.log("8*ОТПРАВИТЬ ЗАПРОС", scrollPosition);
-                SendReguest();
-              }
+              if (!scRef.current.scrollTop) SendReguest();
             }, 500);
           }
           break;
@@ -335,7 +300,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           setTrigger(!trigger);
           break;
         default:
-          console.log("data_default:", data);
+        //console.log("data_default:", data);
       }
     };
   }, [
@@ -357,11 +322,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       if (oldName !== "oldName" && oldRoom !== "oldRoom") {
         if (oldName !== searchParams.name || oldRoom !== searchParams.room) {
           console.log("2params:", archive);
-          PostingArchive(
-            //archive,
-            searchParams.room,
-            0
-          );
+          PostingArchive(searchParams.room, 0);
           oldName = searchParams.name;
           oldRoom = searchParams.room;
         }
@@ -370,11 +331,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         oldRoom = searchParams.room;
       }
       socket.emit("join", searchParams);
-      return () => {
-        socket.off();
-      };
+      return () => socket.off();
     }
-  }, [socket, search, PostingArchive]);
+  }, [socket, search, PostingArchive, debug]);
 
   React.useEffect(() => {
     if (debug) {
@@ -385,7 +344,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           toTo = false;
           turnOn && Pipip(); // уведомление
           if (event.data.to === "Global") metka = true;
-          console.log("1111получено сообщение", event.data.to, oldRoom);
         }
         let roomTo = event.data.to;
         if (isNumeric(event.data.to)) {
@@ -418,7 +376,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             if (maxPosition - scRef.current.scrollTop < 300) {
               Scrooler();
             } else {
-              console.log("получено сообщение", turnOn, event.data.to, oldRoom);
               metka = true;
               turnOn && Pipip();
             }
@@ -430,7 +387,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         usersRooms = event.data.users;
       });
     }
-  }, [socket]);
+  }, [socket,debug]);
   //========================================================
   const leftRoom = () => {
     if (params.room !== "Global") {
@@ -452,9 +409,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       }, 400);
       if (debug) {
         socket.emit("join", params);
-        return () => {
-          socket.off();
-        };
+        return () => socket.off();
       }
     } else {
       if (debug) {
@@ -469,7 +424,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
   const ClickKnop = (mode: number) => {
     afterRoomPosition = JSON.parse(JSON.stringify(scrollPosition));
-    console.log("ПОЗИЦИЯ:", maxPosition, afterRoomPosition);
     if (maxPosition === afterRoomPosition) afterRoomPosition = -1;
     if (debug) socket.emit("leftRoom", { params });
     let newParams = params;
@@ -488,9 +442,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     oldRoom = roomer;
     if (debug) {
       socket.emit("join", params);
-      return () => {
-        socket.off();
-      };
+      return () => socket.off();
     }
   };
 
@@ -512,12 +464,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     if (users !== 12 && users !== 13 && users !== 14) {
       if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += "а";
     }
-    let nameRoom = "в комнате";
-    let redKnop = "Покинуть комнату";
-    if (params.room === "Global") {
-      nameRoom = "в чате";
-      redKnop = "Выйти из чата";
-    }
+    let nameRoom = params.room === "Global" ? "в комнате" : "в чате";
+    let redKnop =
+      params.room === "Global" ? "Покинуть комнату" : "Выйти из чата";
     let roomName = "Групповой чат";
     if (nameKomu !== "Global") roomName = nameKomu + "/" + params.name;
 
@@ -541,16 +490,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     return (
       <Box sx={styleChat16}>
         {InputerMessage(message, handleChange)}
-        <Box sx={styleChat06}>
-          <Button sx={styleChat061} onClick={() => setOpen(!isOpen)}>
-            😎
-          </Button>
-          {isOpen && (
-            <Box sx={styleChat07}>
-              <EmojiPicker onEmojiClick={onEmojiClick} />
-            </Box>
-          )}
-        </Box>
+        {ChatEmojiPicker(isOpen, setOpen, onEmojiClick)}
         {SendMessage(handleSubmit)}
       </Box>
     );
@@ -561,26 +501,22 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       const handleScroll = () => {
         const position = scRef.current.scrollTop;
         setScrollPosition(position);
-        //console.log("position", position);
         if (position > maxPosition && params.room === "Global")
           maxPosition = position;
         if (maxPosition === position && !afterRoomPosition) metka = false;
         if (tempPosition) {
-          console.log("position:", position, maxPosition, tempPosition);
           let poz = maxPosition - tempPosition;
-          console.log("ВСТАТЬ НА", poz);
           scRef.current.scrollTo(0, poz - 69); // встать на Якорь
           tempPosition = 0;
         }
-        if (!position && params.room === "Global" && chDays < maxDays) {
-          console.log("handleScroll*ОТПРАВИТЬ ЗАПРОС", position);
+        if (!position && params.room === "Global" && chDays < maxDays)
           SendReguest();
-        }
       };
 
       scRef.current.addEventListener("scroll", handleScroll, { passive: true });
       return () => {
-        scRef.current.removeEventListener("scroll", handleScroll);
+        scRef.current &&
+          scRef.current.removeEventListener("scroll", handleScroll);
       };
     });
 
@@ -616,14 +552,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       </Grid>
       <Grid item xs sx={styleChat01}>
         <Box sx={{ background: "#CCDCEC" }}>
-          {debug && (
-            <>
-              {HeaderChat(params.room !== "Global" ? "комнате:" : "чате:")}
-              <Box sx={{ overflowX: "auto", height: "7vh" }}>
-                {UsersChat(usersRooms)}
-              </Box>
-            </>
-          )}
+          {debug && DebugRigtPartChat(params.room, usersRooms)}
           {HeaderSist()}
           <Box sx={{ overflowX: "auto", height: "69.25vh" }}>
             {UsersSist(sistUsers, archive, params.name, nameKomu, ClickKnop)}

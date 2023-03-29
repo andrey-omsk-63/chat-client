@@ -108,6 +108,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
             marginTop: mt,
             padding: '3px 0px 0 6px',
             marginLeft: 'auto',
+            marginRight: 0.4,
             marginBottom: mb,
             boxShadow: bs,
             borderTopLeftRadius: btlr,
