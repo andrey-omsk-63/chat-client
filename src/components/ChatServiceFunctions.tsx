@@ -214,7 +214,8 @@ export const UsersSist = (
       </Grid>
     );
   }
-  return resStr;
+  // return resStr;
+  return <Box sx={{ overflowX: "auto", height: "69.25vh" }}>{resStr}</Box>;
 };
 
 export const ChatServisKnop = (

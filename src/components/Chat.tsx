@@ -35,7 +35,7 @@ let tempPosition = 0;
 let afterRoomPosition = 0;
 let dStart = new Date().toISOString();
 let chDays = 1;
-let maxDays = 12;
+let maxDays = 33;
 let metka = false;
 let turnOn = true;
 
@@ -134,7 +134,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
   const SendReguest = React.useCallback(() => {
     if (chDays < maxDays) {
-      console.log("Отправка ЗАПРОСа", chDays);
+      console.log("ЗАПРОС на чтение архива №", chDays);
       if (!debug) {
         let datOt = MakeOldDate(dStart, chDays + 1);
         let datDo = MakeOldDate(dStart, chDays);
@@ -211,11 +211,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           date: data.time,
           to: komu,
         };
-        if (oldRoom === komu) {
-          setState((_state) => [..._state, maska]);
-        } else {
+        oldRoom === komu && setState((_state) => [..._state, maska]);
+        oldRoom !== komu &&
           setStateBasket((_stateBasket) => [..._stateBasket, maska]);
-        }
         setTrigger(!trigger);
       }, 100);
       console.log("от кого:", data.from, "кому", komu, data.to);
@@ -228,7 +226,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           if (maxPosition - scRef.current.scrollTop < 300) {
             Scrooler();
           } else {
-            console.log("получено сообщение", komu, oldRoom);
             metka = true;
             turnOn && Pipip();
           }
@@ -360,11 +357,10 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         };
         archive.push(mask);
         setTimeout(() => {
-          if (event.data.to === oldRoom) {
+          event.data.to === oldRoom &&
             setState((_state) => [..._state, event.data]);
-          } else {
+          event.data.to !== oldRoom &&
             setStateBasket((_stateBasket) => [..._stateBasket, event.data]);
-          }
         }, 100);
         console.log("от кого:", event.data.user.name, "кому", event.data.to);
         console.log("oldName:", oldName, "oldRoom:", oldRoom);
@@ -387,7 +383,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         usersRooms = event.data.users;
       });
     }
-  }, [socket,debug]);
+  }, [socket, debug]);
   //========================================================
   const leftRoom = () => {
     if (params.room !== "Global") {
@@ -451,11 +447,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const handleSubmit = () => {
     if (!message) return;
     let date = new Date().toISOString();
-    if (debug) {
-      socket.emit("sendMessage", { message, params, date });
-    } else {
-      SendSocketSendMessage(props.ws, message, params.name, nameKomu);
-    }
+    debug && socket.emit("sendMessage", { message, params, date });
+    !debug && SendSocketSendMessage(props.ws, message, params.name, nameKomu);
     setMessage("");
   };
 
@@ -464,9 +457,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     if (users !== 12 && users !== 13 && users !== 14) {
       if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += "а";
     }
-    let nameRoom = params.room === "Global" ? "в комнате" : "в чате";
+    let nameRoom = params.room !== "Global" ? "в комнате" : "в чате";
     let redKnop =
-      params.room === "Global" ? "Покинуть комнату" : "Выйти из чата";
+      params.room !== "Global" ? "Покинуть комнату" : "Выйти из чата";
     let roomName = "Групповой чат";
     if (nameKomu !== "Global") roomName = nameKomu + "/" + params.name;
 
@@ -554,9 +547,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         <Box sx={{ background: "#CCDCEC" }}>
           {debug && DebugRigtPartChat(params.room, usersRooms)}
           {HeaderSist()}
-          <Box sx={{ overflowX: "auto", height: "69.25vh" }}>
-            {UsersSist(sistUsers, archive, params.name, nameKomu, ClickKnop)}
-          </Box>
+          {UsersSist(sistUsers, archive, params.name, nameKomu, ClickKnop)}
           {!debug && <Grid container sx={{ height: "14vh" }}></Grid>}
           {ChatServisKnop(
             metka,
