@@ -58,6 +58,7 @@ export const InputerMessage = (message: string, handleChange: any) => {
     <Box sx={styleChatInp01}>
       <TextField
         size="small"
+        // type="file"
         onKeyPress={handleKey} //отключение Enter
         placeholder="👇️Что вы хотите сказать?"
         InputProps={{
@@ -394,3 +395,5 @@ export const Splitter = (str: string, l: number) => {
   return strs;
 };
 //==================================================
+//https://stackoverflow.com/questions/73659207/react-js-upload-image-wh
+//en-user-pastes-an-image

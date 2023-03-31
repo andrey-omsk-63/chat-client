@@ -120,7 +120,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
               to: arch.messages[i].to,
               message: arch.messages[i].message,
               time: arch.messages[i].time,
-              read: false,
+              read: arch.messages[i].read,
             };
             mode && archiveTemp.push(mask);
             !mode && archive.push(mask);
@@ -216,8 +216,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           setStateBasket((_stateBasket) => [..._stateBasket, maska]);
         setTrigger(!trigger);
       }, 100);
-      console.log("от кого:", data.from, "кому", komu, data.to);
-      console.log("oldName:", oldName, "oldRoom:", oldRoom);
       if (isNumeric(Number(oldRoom))) Scrooler();
       if (data.from === oldName) {
         Scrooler();
@@ -318,7 +316,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       setParams(searchParams);
       if (oldName !== "oldName" && oldRoom !== "oldRoom") {
         if (oldName !== searchParams.name || oldRoom !== searchParams.room) {
-          console.log("2params:", archive);
           PostingArchive(searchParams.room, 0);
           oldName = searchParams.name;
           oldRoom = searchParams.room;
@@ -335,7 +332,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   React.useEffect(() => {
     if (debug) {
       socket.on("message", (event: any) => {
-        console.log("Event:", oldRoom, event);
         let toTo = true;
         if (event.data.to !== oldRoom) {
           toTo = false;
@@ -362,8 +358,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           event.data.to !== oldRoom &&
             setStateBasket((_stateBasket) => [..._stateBasket, event.data]);
         }, 100);
-        console.log("от кого:", event.data.user.name, "кому", event.data.to);
-        console.log("oldName:", oldName, "oldRoom:", oldRoom);
         if (isNumeric(Number(oldRoom))) Scrooler();
         if (event.data.user.name === oldName) {
           Scrooler();
@@ -454,9 +448,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
   const TopPartChat = () => {
     let chel = "человек";
-    if (users !== 12 && users !== 13 && users !== 14) {
+    if (users !== 12 && users !== 13 && users !== 14)
       if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += "а";
-    }
     let nameRoom = params.room !== "Global" ? "в комнате" : "в чате";
     let redKnop =
       params.room !== "Global" ? "Покинуть комнату" : "Выйти из чата";

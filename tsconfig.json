@@ -16,5 +16,5 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src", "basket/src/components/ChatJs.jsx"]
+  "include": ["src", "basket/src/components/ChatJs.jsx", "basket/Test.tsx"]
 }
