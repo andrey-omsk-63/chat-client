@@ -534,38 +534,38 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   // };
 
   const Test = () => {
-    const handleCh = (evt: any) => {
-      document.addEventListener('DOMContentLoaded', function () {
-        document.addEventListener('paste', function (evt: any) {
-          const clipboardItems: any = evt.clipboardData.items;
-          const items: any = [].slice.call(clipboardItems).filter(function (item: any) {
-            // Filter the image items only
-            return /^image\//.test(item.type);
-          });
-          if (items.length === 0) {
-            return;
-          }
-
-          const item: any = items[0];
-          const blob: any = item.getAsFile();
-
-          const imageEle: any = document.getElementById('preview');
-          imageEle.src = URL.createObjectURL(blob);
-          let file: any = new File(
-            [blob],
-            'file name',
-            { type: 'image/jpeg', lastModified: new Date().getTime() },
-            //'utf-8',
-          );
-          let container: any = new DataTransfer();
-          container.items.add(file);
-          console.log('££££££', container.files);
-          if (document.querySelector('#file_input')) {
-            //document.querySelector('#file_input').files = container.files;
-          }
+    // const handleCh = (evt: any) => {
+    document.addEventListener('DOMContentLoaded', function () {
+      document.addEventListener('paste', function (evt: any) {
+        const clipboardItems: any = evt.clipboardData.items;
+        const items: any = [].slice.call(clipboardItems).filter(function (item: any) {
+          // Filter the image items only
+          return /^image\//.test(item.type);
         });
+        if (items.length === 0) {
+          return;
+        }
+
+        const item: any = items[0];
+        const blob: any = item.getAsFile();
+
+        const imageEle: any = document.getElementById('preview');
+        imageEle.src = URL.createObjectURL(blob);
+        let file: any = new File(
+          [blob],
+          'file name',
+          { type: 'image/jpeg', lastModified: new Date().getTime() },
+          //'utf-8',
+        );
+        let container: any = new DataTransfer();
+        container.items.add(file);
+        console.log('££££££', container.files);
+        let aa: any = document.querySelector('#file_input');
+        aa.files = container.files;
+        //document.querySelector('#file_input').files = container.files;
       });
-    };
+    });
+    // };
 
     return (
       <div className="container">
@@ -573,7 +573,11 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           <kbd className="key">Ctrl</kbd> + <kbd className="key">V</kbd> in this window.
         </div>
         <img className="preview" id="preview" />
-        <input id="file_input" type="file" onChange={handleCh} />
+        <input
+          id="file_input"
+          type="file"
+          //onChange={handleCh}
+        />
         {/* <input type="file" onChange={handleCh} />
         <img src={file} /> */}
       </div>
