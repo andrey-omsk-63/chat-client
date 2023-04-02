@@ -536,6 +536,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const Test = () => {
     // const handleCh = (evt: any) => {
     document.addEventListener('DOMContentLoaded', function () {
+      console.log('111££££££');
       document.addEventListener('paste', function (evt: any) {
         const clipboardItems: any = evt.clipboardData.items;
         const items: any = [].slice.call(clipboardItems).filter(function (item: any) {
@@ -568,16 +569,22 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     // };
 
     return (
-      <div className="container">
-        <div>
-          <kbd className="key">Ctrl</kbd> + <kbd className="key">V</kbd> in this window.
-        </div>
-        <img className="preview" id="preview" />
-        <input
-          id="file_input"
-          type="file"
-          //onChange={handleCh}
-        />
+      <div className={styles.container}>
+        <Box>
+          <kbd className={styles.key}>Ctrl</kbd> + <kbd className={styles.key}>V</kbd> in this
+          window.
+        </Box>
+        <br />
+        <Box>
+          <img className={styles.preview} id={'preview'} />
+        </Box>
+        <Box>
+          <input
+            id={'file_input'}
+            type="file"
+            //onChange={handleCh}
+          />
+        </Box>
         {/* <input type="file" onChange={handleCh} />
         <img src={file} /> */}
       </div>
