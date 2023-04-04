@@ -1,11 +1,11 @@
-import React from "react";
+import React from 'react';
 
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
 
-import { MesssgeLength, Splitter } from "./ChatServiceFunctions";
+import { MesssgeLength, Splitter } from './ChatServiceFunctions';
 
-import { styleMess01, styleMeUser } from "./ComponentsStyle";
+import { styleMess01, styleMeUser } from './ComponentsStyle';
 
 let resStr: any = [];
 
@@ -13,23 +13,18 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
   //console.log ('Пришло:',props.messages[0].message.slice(0, 21))
   let aa = props.messages.length;
   props.messages[0] &&
-    console.log(
-      "Пришло:",
-      props.messages[aa - 1].message.slice(0, 21),
-      props.messages
-    );
+    console.log('Пришло:', props.messages[aa - 1].message.slice(0, 21), props.messages);
 
   const OutputImg = (img: any) => {
-    console.log('IMG',img)
+    console.log('IMG', img);
     let widthHeight = 60;
     if (!img) widthHeight = 30;
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
-        style={{ width: widthHeight, height: widthHeight }}
-      >
-        <image width={"100%"} height={"100%"} xlinkHref={img} />
+        style={{ width: widthHeight, height: widthHeight }}>
+        <image width={'100%'} height={'100%'} xlinkHref={img} />
       </svg>
     );
   };
@@ -40,26 +35,21 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
       let itsme = false;
       let pict = false;
       let image: any = null;
-      if (
-        props.messages[i].user.name.trim().toLowerCase() ===
-        props.name.trim().toLowerCase()
-      )
+      if (props.messages[i].user.name.trim().toLowerCase() === props.name.trim().toLowerCase())
         itsme = true;
-      let coler = "black";
-      if (!itsme && props.messages[i].user.name === "ChatAdmin") coler = "blue";
+      let coler = 'black';
+      if (!itsme && props.messages[i].user.name === 'ChatAdmin') coler = 'blue';
       let dlina = MesssgeLength(props.messages[i].message, 13.5) + 14;
       let mass: string[] = [props.messages[i].message];
 
       if (props.messages[i].message.length > 50) {
-        if (
-          props.messages[i].message.slice(0, 21) === "data:image/png;base64"
-        ) {
+        if (props.messages[i].message.slice(0, 21) === 'data:image/png;base64') {
           dlina = 100;
-          mass[0] = "PICTURE";
+          mass[0] = 'PICTURE';
           image = new Image();
           image.src = props.messages[i].message;
           //document.body.appendChild(image);
-          console.log("КАРТИНКА", image);
+          console.log('КАРТИНКА', image);
           pict = true;
         } else {
           mass = Splitter(props.messages[i].message, 69);
@@ -72,19 +62,16 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
       }
 
       const styleUserUser = {
-        fontSize: "11.5px",
+        fontSize: '11.5px',
         color: coler,
-        paddingLeft: "9px",
+        paddingLeft: '9px',
       };
 
       let dat =
-        new Date(props.messages[i].date).toLocaleDateString() !==
-        new Date().toLocaleDateString()
+        new Date(props.messages[i].date).toLocaleDateString() !== new Date().toLocaleDateString()
           ? new Date(props.messages[i].date).toLocaleDateString()
-          : "";
-      let tim = new Date(props.messages[i].date)
-        .toLocaleTimeString()
-        .slice(0, -3);
+          : '';
+      let tim = new Date(props.messages[i].date).toLocaleTimeString().slice(0, -3);
 
       const MassMessages = () => {
         let resSt = [];
@@ -131,13 +118,13 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
             width: dlina,
             border: 2,
             height: ht,
-            fontSize: "13.5px",
-            background: "#93E5EE", //зелёный
-            borderColor: "#93E5EE",
-            color: "black",
+            fontSize: '13.5px',
+            background: '#93E5EE', //зелёный
+            borderColor: '#93E5EE',
+            color: 'black',
             marginTop: mt,
-            padding: "3px 0px 0 6px",
-            marginLeft: "auto",
+            padding: '3px 0px 0 6px',
+            marginLeft: 'auto',
             marginRight: 0.4,
             marginBottom: mb,
             boxShadow: bs,
@@ -151,12 +138,12 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
             width: dlina,
             border: 2,
             height: ht,
-            fontSize: "13.5px",
-            background: "#fafac3", // жёлтый
-            borderColor: "#fafac3",
+            fontSize: '13.5px',
+            background: '#fafac3', // жёлтый
+            borderColor: '#fafac3',
             color: coler,
             marginTop: mt,
-            padding: "2px 0px 0 6px",
+            padding: '2px 0px 0 6px',
             marginBottom: mb,
             boxShadow: bs,
             borderTopLeftRadius: btlr,
@@ -168,8 +155,8 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
             <Grid key={j} item xs={12} sx={{ border: 0 }}>
               <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>
               {/* {pict && OutputImg(props.messages[i].message)} */}
-              {pict && image[0]}
-            </Grid>
+              {pict && <img src={props.messages[i].message} alt="PICT" />}
+            </Grid>,
           );
         }
         return resSt;
@@ -184,7 +171,7 @@ const Messages = (props: { messages: any; name: string; basket: any }) => {
             </em>
           </Grid>
           {MassMessages()}
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
