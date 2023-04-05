@@ -230,4 +230,20 @@ export const styleMeUser = {
   paddingRight: "9px",
   textAlign: "right",
 };
+
+export const styleMePict = {
+  //border: 1,
+  padding: "3px 0px 3px 6px",
+  marginLeft: "auto",
+  marginRight: 0.4,
+  width: "77%",
+  height: "100%",
+};
+
+export const styleUserPict = {
+  //border: 1,
+  padding: "0 0px 3px 0",
+  width: "77%",
+  height: "100%",
+};
 //========================================================

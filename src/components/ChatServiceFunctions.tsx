@@ -275,11 +275,11 @@ export const ChatEmojiPicker = (
 
 export const SendSocketSendMessage = (
   ws: WebSocket,
-  message: string,
+  message: any,
   otKogo: string,
   nameKomu: string
 ) => {
-  console.log("SendMessage:", message, otKogo, nameKomu);
+  //console.log("SendMessage:", message, otKogo, nameKomu);
   const handleSendOpen = () => {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(
