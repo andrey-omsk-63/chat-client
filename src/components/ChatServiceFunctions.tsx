@@ -49,17 +49,18 @@ export const MakeSpisUsers = (mass: any) => {
   return [sistUsers, onLine];
 };
 
-const handleKey = (event: any) => {
-  if (event.key === 'Enter') event.preventDefault();
-};
 
-export const InputerMessage = (message: string, handleChange: any) => {
+
+export const InputerMessage = (message: string, handleChange: any, handleSubmit: any) => {
+  const handleKey = (event: any) => {
+    event.key === 'Enter' && handleSubmit();
+  };
+  
   return (
     <Box sx={styleChatInp01}>
       <TextField
         size="small"
-        // type="file"
-        onKeyPress={handleKey} //отключение Enter
+        onKeyPress={handleKey} 
         placeholder="👇️Что вы хотите сказать?"
         InputProps={{
           disableUnderline: true,
@@ -392,3 +393,5 @@ export const Splitter = (str: string, l: number) => {
 // let image = new Image();
 // image.src = "data:image/png;base64,iVBORw0K...";
 // document.body.appendChild(image);
+// image.width
+// image.height

@@ -246,32 +246,32 @@ export const styleUserPict = {
   height: '100%',
 };
 
-export const styleSetSelect = {
-  position: 'absolute',
-  left: '50%',
-  top: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: window.screen.width - 169,
-  height: window.screen.height - 169,
-  bgcolor: 'background.paper',
-  p: 0.5,
-};
+// export const styleSetSelect = {
+//   position: 'absolute',
+//   left: '50%',
+//   top: '50%',
+//   transform: 'translate(-50%, -50%)',
+//   width: window.screen.width - 169,
+//   height: window.screen.height - 169,
+//   bgcolor: 'background.paper',
+//   p: 0.5,
+// };
 
 export const styleModalEnd = {
   position: 'absolute',
   top: '0%',
   left: 'auto',
-  right: '-0.5%',
+  right: '-1px',
   height: '21px',
   maxWidth: '2%',
   minWidth: '2%',
   color: 'black',
 };
 
-export const styleModalOverflow = {
-  overflowX: 'auto',
-  //overflowY: 'auto',
-  width: window.screen.width - 188,
-  height: window.screen.height - 177,
-};
+// export const styleModalOverflow = {
+//   overflowX: 'auto',
+//   //overflowY: 'auto',
+//   width: window.screen.width - 190,
+//   height: window.screen.height - 177,
+// };
 //========================================================
