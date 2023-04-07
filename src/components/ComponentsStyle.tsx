@@ -261,7 +261,7 @@ export const styleModalEnd = {
   position: 'absolute',
   top: '0%',
   left: 'auto',
-  right: '-1px',
+  right: '-2px',
   height: '21px',
   maxWidth: '2%',
   minWidth: '2%',
