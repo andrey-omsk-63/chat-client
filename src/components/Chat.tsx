@@ -99,9 +99,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           }
         }
         scrool && Scrooler();
-        setTimeout(() => {
-          console.log('oтработал', room, state, stateBasket);
-        }, 1000);
       }
     },
     [WS],
@@ -139,9 +136,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   );
 
   const DelRec = (time: string) => {
-    // archiveRab = JSON.parse(JSON.stringify(archive));
     let archiveRab: any = [];
-    console.log('1DelRec:', nameKomu, params, time, 'archive:', archive);
     for (let i = 0; i < archive.length; i++) {
       if (archive[i].time !== time) {
         archiveRab.push(archive[i]);
@@ -149,11 +144,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         console.log('Запрос на удаление:', archive[i]);
       }
     }
-    console.log('2DelRec:', archiveRab);
     archive = JSON.parse(JSON.stringify(archiveRab));
-    //tempPosition = JSON.parse(JSON.stringify(maxPosition));
-    BeginWorkInRoom(params.room, 0, false);
-    setTrigger(!trigger);
+    let mode = params.room === 'Global' ? 0 : 1;
+    BeginWorkInRoom(params.room, mode, false);
   };
 
   const SendReguest = React.useCallback(() => {
@@ -498,16 +491,16 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       const items: any = [].slice.call(clipboardItems).filter(function (item: any) {
         return item.type.indexOf('image') !== -1; // Фильтровать только элементы изображения
       });
-      if (items.length === 0) {
-        return;
-      }
+      if (!items.length) return;
       const item = items[0];
+      console.log('ITEM:', item);
       const blob: any = item.getAsFile(); // Получить блок изображения
       let reader = new FileReader();
       reader.readAsDataURL(blob);
       setTimeout(() => {
         let date = new Date().toISOString();
         let pict: any = reader.result;
+        //console.log('PICT:', pict);
         if (reader.result) {
           if (pict.length > 2000000) {
             soobErr = 'Размер картинки превышает лимит в 2Мбайта';

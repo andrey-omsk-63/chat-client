@@ -246,17 +246,6 @@ export const styleUserPict = {
   height: '100%',
 };
 
-// export const styleSetSelect = {
-//   position: 'absolute',
-//   left: '50%',
-//   top: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   width: window.screen.width - 169,
-//   height: window.screen.height - 169,
-//   bgcolor: 'background.paper',
-//   p: 0.5,
-// };
-
 export const styleModalEnd = {
   position: 'absolute',
   top: '0%',
@@ -267,6 +256,24 @@ export const styleModalEnd = {
   minWidth: '2%',
   color: 'black',
 };
+
+export const styleDelete = {
+  fontSize: 10,
+  height: '21px',
+  maxWidth: '2%',
+  minWidth: '2%',
+};
+
+// export const styleSetSelect = {
+//   position: 'absolute',
+//   left: '50%',
+//   top: '50%',
+//   transform: 'translate(-50%, -50%)',
+//   width: window.screen.width - 169,
+//   height: window.screen.height - 169,
+//   bgcolor: 'background.paper',
+//   p: 0.5,
+// };
 
 // export const styleModalOverflow = {
 //   overflowX: 'auto',

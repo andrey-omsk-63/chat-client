@@ -9,7 +9,7 @@ import { MesssgeLength, Splitter } from './ChatServiceFunctions';
 
 import { styleMess01, styleMeUser } from './ComponentsStyle';
 import { styleMePict, styleUserPict } from './ComponentsStyle';
-import { styleModalEnd } from './ComponentsStyle';
+import { styleModalEnd, styleDelete } from './ComponentsStyle';
 //import { styleSetSelect, styleModalOverflow } from "./ComponentsStyle";
 
 let resStr: any = [];
@@ -18,27 +18,21 @@ let imageWidth = 0;
 let imageHeight = 0;
 let overFlow = 'auto';
 
-//let ch = 0;
+let ch = 0;
 
 const Messages = (props: { messages: any; name: string; basket: any; funcDel: Function }) => {
-  // const Ch = () => {
-  //   ch++;
-  //   console.log("Ch:", ch);
-  // };
+  //console.log('Пришло:', props.messages);
+  let FuncDel = props.funcDel;
+  const Ch = () => {
+    ch++;
+    console.log('Ch:', ch);
+  };
 
   const [openSetMode, setOpenSetMode] = React.useState(false);
 
   const handleCloseSetEnd = () => {
     setOpenSetMode(false);
   };
-
-  const handleDel = React.useCallback(
-    (num: number) => {
-      console.log('handleDel:', num, props.messages[num].date, props.messages[num].message);
-      props.funcDel(props.messages[num].date);
-    },
-    [props],
-  );
 
   const handleClickPict = React.useCallback((pict: any) => {
     picture = pict;
@@ -80,7 +74,6 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
   };
 
   const StrMessages = React.useCallback(() => {
-    //console.log("Пришло:", props.messages);
     resStr = [];
     for (let i = 0; i < props.messages.length; i++) {
       let itsme = false;
@@ -92,9 +85,10 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
       let dlina = MesssgeLength(props.messages[i].message, 13.5) + 14;
       let mass: string[] = [props.messages[i].message];
       if (props.messages[i].message.length > 50) {
-        if (props.messages[i].message.slice(0, 21) === 'data:image/png;base64') {
+        // if (props.messages[i].message.slice(0, 21) === 'data:image/png;base64') {
+        if (props.messages[i].message.slice(0, 11) === 'data:image/') {
           pict = true;
-          //Ch();
+          Ch();
         } else {
           mass = Splitter(props.messages[i].message, 69);
           dlina = 0;
@@ -202,11 +196,7 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
                 <Box sx={!itsme ? styleUserPict : styleMePict}>
                   <img
                     src={props.messages[i].message}
-                    style={{
-                      // width: '77%',
-                      // height: '100%',
-                      float: itsme ? 'right' : 'left',
-                    }}
+                    style={{ float: itsme ? 'right' : 'left' }}
                     alt="PICT"
                     onClick={() => handleClickPict(props.messages[i].message)}
                   />
@@ -218,16 +208,15 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
         return resSt;
       };
 
-      const styleDelete = {
-        fontSize: 10,
-        // position: 'absolute',
-        // top: '0%',
-        // left: 'auto',
-        // right: '-2px',
-        height: '21px',
-        maxWidth: '2%',
-        minWidth: '2%',
-        // color: 'black',
+      // const styleDelete = {
+      //   fontSize: 10,
+      //   height: '21px',
+      //   maxWidth: '2%',
+      //   minWidth: '2%',
+      // };
+
+      const handleDel = (num: number) => {
+        FuncDel(props.messages[num].date);
       };
 
       resStr.push(
@@ -248,9 +237,17 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
       );
     }
     return resStr;
-  }, [props.messages, props.name, handleClickPict, handleDel]);
+  }, [props.messages, props.name, handleClickPict]);
 
   React.useMemo(() => {
+    console.log('MeMo');
+    // const handleDel = React.useCallback(
+    //   (num: number) => {
+    //     console.log('handleDel:', num);
+    //     //props.funcDel(props.messages[num].date);
+    //   },
+    //   [props],
+    // );
     StrMessages();
   }, [StrMessages]);
 
