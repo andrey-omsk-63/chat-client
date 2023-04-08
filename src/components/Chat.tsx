@@ -67,7 +67,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   };
 
   const PostingArchive = React.useCallback(
-    (room: string, mode: number) => {
+    (room: string, mode: number, scrool: boolean) => {
       let room1 = !mode ? room : sistUsers[Number(room.slice(0, 2)) - 1].user;
       let room2 = !mode ? room : sistUsers[Number(room.slice(2, 4)) - 1].user;
       if (archive) {
@@ -98,17 +98,20 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
           }
         }
-        Scrooler();
+        scrool && Scrooler();
+        setTimeout(() => {
+          console.log('oтработал', room, state, stateBasket);
+        }, 1000);
       }
     },
     [WS],
   );
 
   const BeginWorkInRoom = React.useCallback(
-    (room: string, mode: number) => {
+    (room: string, mode: number, scrool: boolean) => {
       setState([]);
       setStateBasket([]);
-      PostingArchive(room, mode);
+      PostingArchive(room, mode, scrool);
     },
     [PostingArchive],
   );
@@ -130,10 +133,28 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           }
         }
       }
-      !mode && BeginWorkInRoom('Global', 0);
+      !mode && BeginWorkInRoom('Global', 0, true);
     },
     [BeginWorkInRoom],
   );
+
+  const DelRec = (time: string) => {
+    // archiveRab = JSON.parse(JSON.stringify(archive));
+    let archiveRab: any = [];
+    console.log('1DelRec:', nameKomu, params, time, 'archive:', archive);
+    for (let i = 0; i < archive.length; i++) {
+      if (archive[i].time !== time) {
+        archiveRab.push(archive[i]);
+      } else {
+        console.log('Запрос на удаление:', archive[i]);
+      }
+    }
+    console.log('2DelRec:', archiveRab);
+    archive = JSON.parse(JSON.stringify(archiveRab));
+    //tempPosition = JSON.parse(JSON.stringify(maxPosition));
+    BeginWorkInRoom(params.room, 0, false);
+    setTrigger(!trigger);
+  };
 
   const SendReguest = React.useCallback(() => {
     if (chDays < maxDays) {
@@ -154,7 +175,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         }
         archive = JSON.parse(JSON.stringify(archiveTemp));
         tempPosition = JSON.parse(JSON.stringify(maxPosition));
-        BeginWorkInRoom('Global', 0);
+        BeginWorkInRoom('Global', 0, true);
       }
       chDays++;
     }
@@ -277,7 +298,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             }
             archive = JSON.parse(JSON.stringify(archiveTemp));
             tempPosition = JSON.parse(JSON.stringify(maxPosition));
-            BeginWorkInRoom('Global', 0);
+            BeginWorkInRoom('Global', 0, true);
             setTimeout(() => {
               if (!scRef.current.scrollTop) SendReguest();
             }, 600);
@@ -318,7 +339,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       setParams(searchParams);
       if (oldName !== 'oldName' && oldRoom !== 'oldRoom') {
         if (oldName !== searchParams.name || oldRoom !== searchParams.room) {
-          PostingArchive(searchParams.room, 0);
+          PostingArchive(searchParams.room, 0, true);
           oldName = searchParams.name;
           oldRoom = searchParams.room;
         }
@@ -387,7 +408,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       let newParams = params;
       newParams.room = nameKomu;
       setParams(newParams);
-      BeginWorkInRoom(nameKomu, 0);
+      BeginWorkInRoom(nameKomu, 0, true);
       oldName = newParams.name;
       oldRoom = nameKomu;
       setTimeout(() => {
@@ -429,7 +450,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     if (Number(id2) < Number(id1)) roomer = id2 + id1;
     newParams.room = roomer;
     setParams(newParams);
-    BeginWorkInRoom(roomer, 1);
+    BeginWorkInRoom(roomer, 1, true);
     oldName = newParams.name; // от кого
     oldRoom = roomer;
     if (debug) {
@@ -515,11 +536,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         {SendMessage(handleSubmit)}
       </Box>
     );
-  };
-
-  const DelRec = (time: string) => {
-    //let archiveRab: any = [];
-    console.log('DelRec:', time, 'archive:', archive);
   };
 
   const LeftPartChat = () => {
