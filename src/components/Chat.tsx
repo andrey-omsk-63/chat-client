@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import imageCompression from 'browser-image-compression';
 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -40,6 +41,7 @@ let maxDays = 33;
 let metka = false;
 let turnOn = true;
 let soobErr = '';
+//let item: any = null;
 
 const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   let socket = props.Socket;
@@ -66,6 +68,21 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     }, 150);
   };
 
+  // async function handleImageUpload(event: any) {
+  //   const imageFile = event.target.files[0];
+
+  //   const options = {
+  //     maxSizeMB: 1,
+  //     maxWidthOrHeight: 1920,
+  //   };
+  //   try {
+  //     const compressedFile = await imageCompression(imageFile, options);
+  //     console.log(compressedFile.size / 1024 / 1024);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
   const PostingArchive = React.useCallback(
     (room: string, mode: number, scrool: boolean) => {
       let room1 = !mode ? room : sistUsers[Number(room.slice(0, 2)) - 1].user;
@@ -78,6 +95,19 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
               (archive[i].from === room1 || archive[i].from === room2) &&
               (archive[i].to === room2 || archive[i].to === room1);
           if (iffer) {
+            // let compressedFile: any = null;
+            // console.log('0compressedFile:', archive[i].message.slice(0, 11));
+            // if (archive[i].message.slice(0, 11) === 'data:image/') {
+            //   let imageFile = archive[i].message;
+            //   let options = {
+            //     maxSizeMB: 1,
+            //     maxWidthOrHeight: 400,
+            //   };
+            //   compressedFile = imageCompression(imageFile, options);
+            //   console.log('1compressedFile:', compressedFile);
+            // }
+            // setTimeout(() => {
+            //   console.log('2compressedFile:', compressedFile);
             let maskSoob = {
               user: { name: archive[i].from },
               message: archive[i].message,
@@ -96,6 +126,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             }
             setState((_state) => [..._state, maskSoob]);
             setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
+            //}, 500);
           }
         }
         scrool && Scrooler();
@@ -213,6 +244,19 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         if (data.to === props.nik && data.from !== 'Global')
           SendSocketMarkAsRead(WS, data.from, data.to, data.message, data.time);
       }
+      // let compressedFile: any = null;
+      // console.log('7compressedFile:', data.message.slice(0, 11));
+      // if (data.message.slice(0, 11) === 'data:image/') {
+      //   let imageFile = data.message;
+      //   let options = {
+      //     maxSizeMB: 1,
+      //     maxWidthOrHeight: 400,
+      //   };
+      //   compressedFile = imageCompression(imageFile, options);
+      //   setTimeout(() => {
+      //     console.log('8compressedFile:', compressedFile);
+      //   }, 100);
+      // }
       let mask = {
         from: data.from,
         to: data.to,
@@ -360,6 +404,29 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           if (roomTo === event.data.user.name)
             roomTo = sistUsers[Number(event.data.to.slice(2, 4)) - 1].user;
         }
+        if (event.data.message.slice(0, 11) === 'data:image/') {
+          let blob: any = new Blob([event.data.message], { type: 'image/png' });
+          console.log('2BLOB:', blob);
+          let compressedFile: any = null;
+          const handleImageUpload = async () => {
+            let options = {
+              maxSizeMB: 1,
+              maxWidthOrHeight: 333,
+              useWebWorker: true,
+            };
+
+            try {
+              const compressedFile = await imageCompression(blob, options);
+              console.log(compressedFile.size / 1024 / 1024);
+            } catch (error) {
+              console.log(error);
+            }
+          };
+          handleImageUpload();
+          setTimeout(() => {
+            console.log('CompressedFile:', compressedFile, blob);
+          }, 5000);
+        }
         let mask = {
           from: event.data.user.name,
           to: roomTo,
@@ -488,6 +555,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const handleClipBoard = React.useCallback(
     (evt: any) => {
       const clipboardItems: any = evt.clipboardData.items; // Получить данные буфера обмена
+      console.log('%%%:', clipboardItems);
       const items: any = [].slice.call(clipboardItems).filter(function (item: any) {
         return item.type.indexOf('image') !== -1; // Фильтровать только элементы изображения
       });
@@ -495,12 +563,27 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       const item = items[0];
       console.log('ITEM:', item);
       const blob: any = item.getAsFile(); // Получить блок изображения
-      let reader = new FileReader();
+      console.log('1BLOB:', blob);
+      // let compressedFile: any = null;
+      // const handleImageUpload = async () => {
+      //   let options = {
+      //     maxSizeMB: 1,
+      //     maxWidthOrHeight: 333,
+      //     useWebWorker: true,
+      //   };
+      //   compressedFile = await imageCompression(blob, options);
+      // };
+      //handleImageUpload();
+      //setTimeout(() => {
+      //console.log('8compressedFile:', compressedFile, blob);
+
+      let reader: any = new FileReader();
       reader.readAsDataURL(blob);
+      //reader.readAsDataURL(compressedFile);
       setTimeout(() => {
         let date = new Date().toISOString();
         let pict: any = reader.result;
-        //console.log('PICT:', pict);
+
         if (reader.result) {
           if (pict.length > 2000000) {
             soobErr = 'Размер картинки превышает лимит в 2Мбайта';
@@ -510,8 +593,11 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             debug && socket.emit('sendMessage', { message, params, date });
             !debug && SendSocketSendMessage(WS, message, params.name, nameKomu);
           }
+          //let filep = new Blob([reader.result], { type: 'image/png' });
+          //console.log('filep:', filep);
         }
       }, 100);
+      //}, 1000);
     },
     [WS, debug, params, socket],
   );

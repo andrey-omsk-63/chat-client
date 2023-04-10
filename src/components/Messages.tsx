@@ -1,36 +1,31 @@
-import React from "react";
+import React from 'react';
 
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Modal from '@mui/material/Modal';
 
-import { MesssgeLength, Splitter } from "./ChatServiceFunctions";
+import { MesssgeLength, Splitter } from './ChatServiceFunctions';
 
-import { styleMess01, styleMeUser } from "./ComponentsStyle";
-import { styleMePict, styleUserPict } from "./ComponentsStyle";
-import { styleModalEnd, styleDelete } from "./ComponentsStyle";
+import { styleMess01, styleMeUser } from './ComponentsStyle';
+import { styleMePict, styleUserPict } from './ComponentsStyle';
+import { styleModalEnd, styleDelete } from './ComponentsStyle';
 
 let resStr: any = [];
 let picture: any = null;
 let imageWidth = 0;
 let imageHeight = 0;
-let overFlow = "auto";
+let overFlow = 'auto';
 //let propsMessages: any = [];
 
 let ch = 0;
 
-const Messages = (props: {
-  messages: any;
-  name: string;
-  basket: any;
-  funcDel: Function;
-}) => {
+const Messages = (props: { messages: any; name: string; basket: any; funcDel: Function }) => {
   //console.log('Пришло:', props.messages);
   let FuncDel = props.funcDel;
   const Ch = () => {
     ch++;
-    console.log("Ch:", ch);
+    console.log('Ch:', ch);
   };
 
   const [openSetMode, setOpenSetMode] = React.useState(false);
@@ -44,30 +39,26 @@ const Messages = (props: {
     let image = new Image();
     image.src = picture;
     imageWidth = window.screen.width - 169;
-    let proporsia = image.width / imageWidth;
+    //let proporsia = image.width / imageWidth;
     if (image.width < imageWidth) imageWidth = image.width;
-    imageHeight = window.screen.height - 169;
-    overFlow = "auto";
-    if (proporsia > 1) {
-      imageHeight = image.height / proporsia;
-      overFlow = "hidden";
-    }
+    imageHeight = window.screen.height - 177;
+    overFlow = 'auto';
     if (image.height < imageHeight) {
       imageHeight = image.height;
-      overFlow = "hidden";
+      overFlow = 'hidden';
     }
     setOpenSetMode(true);
   }, []);
 
   const styleSetSelect = {
-    outline: "none",
-    position: "absolute",
-    left: "50%",
-    top: "50%",
-    transform: "translate(-50%, -50%)",
+    outline: 'none',
+    position: 'absolute',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
     width: imageWidth + 20,
     height: imageHeight + 2,
-    bgcolor: "background.paper",
+    bgcolor: 'background.paper',
     p: 0.3,
   };
 
@@ -83,17 +74,14 @@ const Messages = (props: {
     for (let i = 0; i < props.messages.length; i++) {
       let itsme = false;
       let pict = false;
-      if (
-        props.messages[i].user.name.trim().toLowerCase() ===
-        props.name.trim().toLowerCase()
-      )
+      if (props.messages[i].user.name.trim().toLowerCase() === props.name.trim().toLowerCase())
         itsme = true;
-      let coler = "black";
-      if (!itsme && props.messages[i].user.name === "ChatAdmin") coler = "blue";
+      let coler = 'black';
+      if (!itsme && props.messages[i].user.name === 'ChatAdmin') coler = 'blue';
       let dlina = MesssgeLength(props.messages[i].message, 13.5) + 14;
       let mass: string[] = [props.messages[i].message];
       if (props.messages[i].message.length > 50) {
-        if (props.messages[i].message.slice(0, 11) === "data:image/") {
+        if (props.messages[i].message.slice(0, 11) === 'data:image/') {
           pict = true;
           Ch();
         } else {
@@ -107,19 +95,16 @@ const Messages = (props: {
       }
 
       const styleUserUser = {
-        fontSize: "11.5px",
+        fontSize: '11.5px',
         color: coler,
-        paddingLeft: "9px",
+        paddingLeft: '9px',
       };
 
       let dat =
-        new Date(props.messages[i].date).toLocaleDateString() !==
-        new Date().toLocaleDateString()
+        new Date(props.messages[i].date).toLocaleDateString() !== new Date().toLocaleDateString()
           ? new Date(props.messages[i].date).toLocaleDateString()
-          : "";
-      let tim = new Date(props.messages[i].date)
-        .toLocaleTimeString()
-        .slice(0, -3);
+          : '';
+      let tim = new Date(props.messages[i].date).toLocaleTimeString().slice(0, -3);
 
       const MassMessages = () => {
         let resSt: any = [];
@@ -165,13 +150,13 @@ const Messages = (props: {
             width: dlina,
             border: 2,
             height: ht,
-            fontSize: "13.5px",
-            background: "#93E5EE", //зелёный
-            borderColor: "#93E5EE",
-            color: "black",
+            fontSize: '13.5px',
+            background: '#93E5EE', //зелёный
+            borderColor: '#93E5EE',
+            color: 'black',
             marginTop: mt,
-            padding: "3px 0px 0 6px",
-            marginLeft: "auto",
+            padding: '3px 0px 0 6px',
+            marginLeft: 'auto',
             marginRight: 0.4,
             marginBottom: mb,
             boxShadow: bs,
@@ -185,12 +170,12 @@ const Messages = (props: {
             width: dlina,
             border: 2,
             height: ht,
-            fontSize: "13.5px",
-            background: "#fafac3", // жёлтый
-            borderColor: "#fafac3",
+            fontSize: '13.5px',
+            background: '#fafac3', // жёлтый
+            borderColor: '#fafac3',
             color: coler,
             marginTop: mt,
-            padding: "2px 0px 0 6px",
+            padding: '2px 0px 0 6px',
             marginBottom: mb,
             boxShadow: bs,
             borderTopLeftRadius: btlr,
@@ -201,15 +186,13 @@ const Messages = (props: {
 
           resSt.push(
             <Grid key={j} item xs={12} sx={{ border: 0 }}>
-              {!pict && (
-                <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>
-              )}
+              {!pict && <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>}
               {pict && (
                 <Box sx={!itsme ? styleUserPict : styleMePict}>
                   <img
                     src={props.messages[i].message}
                     //src={propsMessages[i]}
-                    style={{ float: itsme ? "right" : "left" }}
+                    style={{ float: itsme ? 'right' : 'left' }}
                     alt="PICT"
                     width="77%"
                     //onLoad={resizeImg(this, 200, 100)}
@@ -217,7 +200,7 @@ const Messages = (props: {
                   />
                 </Box>
               )}
-            </Grid>
+            </Grid>,
           );
         }
         return resSt;
@@ -241,50 +224,14 @@ const Messages = (props: {
             )}
           </Grid>
           {MassMessages()}
-        </Grid>
+        </Grid>,
       );
     }
     return resStr;
   }, [props.messages, props.name, handleClickPict]);
-  //const [trigger, setTrigger] = React.useState(false);
-  React.useMemo(() => {
-    console.log("MeMo");
-    // propsMessages = [];
-    // for (let i = 0; i < props.messages.length; i++) {
-    //   const resizeBase64Img = (
-    //     base64: any,
-    //     newWidth: number,
-    //     newHeight: number
-    //   ) => {
-    //     return new Promise((resolve, reject) => {
-    //       let canvas = document.createElement("canvas");
-    //       canvas.style.width = newWidth.toString() + "px";
-    //       canvas.style.height = newHeight.toString() + "px";
-    //       let context = canvas.getContext("2d");
-    //       let img = document.createElement("img");
-    //       img.src = base64;
-    //       img.onload = function () {
-    //         context &&
-    //           context.scale(newWidth / img.width, newHeight / img.height);
-    //         context && context.drawImage(img, 0, 0);
-    //         resolve(canvas.toDataURL());
-    //         console.log("222222:", img);
-    //         propsMessages.push(img.src);
-    //         console.log("111111", propsMessages);
-    //       };
-    //     });
-    //   };
-    //   if (props.messages[i].message.slice(0, 11) === "data:image/")
-    //     resizeBase64Img(props.messages[i].message, 100, 200);
 
-    //   if (props.messages[i].message.slice(0, 11) !== "data:image/")
-    //     propsMessages.push(props.messages[i].message);
-    // }
-    // setTimeout(() => {
-    //   console.log("333:", propsMessages, props.messages);
-    //   StrMessages();
-    //   setTrigger(!trigger);
-    // }, 100);
+  React.useMemo(() => {
+    console.log('MeMo');
     StrMessages();
   }, [StrMessages]);
 
@@ -306,6 +253,7 @@ const Messages = (props: {
 };
 
 export default Messages;
+
 //https://russianblogs.com/article/3283799248/
 // let eleFile = document.querySelector("#file");
 
@@ -385,18 +333,16 @@ export default Messages;
 // React compress image component
 
 // async function handleImageUpload(event: any) {
-
 //   const imageFile = event.target.files[0];
 
 //   const options = {
 //     maxSizeMB: 1,
-//     maxWidthOrHeight: 1920
-//   }
+//     maxWidthOrHeight: 1920,
+//   };
 //   try {
 //     const compressedFile = await imageCompression(imageFile, options);
-//     console.log(compressedFile.size/1024/1024);
+//     console.log(compressedFile.size / 1024 / 1024);
 //   } catch (error) {
 //     console.log(error);
 //   }
-
 // }
