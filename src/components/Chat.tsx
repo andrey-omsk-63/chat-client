@@ -1,36 +1,37 @@
-import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-//import imageCompression from "browser-image-compression";
-import "b64-to-blob";
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import imageCompression from 'browser-image-compression';
+import 'b64-to-blob';
 
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 
-import Messages from "./Messages";
-import ChatErrorMessage from "./ChatErrorMessage";
+import Messages from './Messages';
+import ChatErrorMessage from './ChatErrorMessage';
 
-import { isNumeric, Pipip, UsersSist } from "./ChatServiceFunctions";
-import { ChatServisKnop, HeaderChel } from "./ChatServiceFunctions";
-import { MakeSpisUsers, InputerMessage } from "./ChatServiceFunctions";
-import { DebugRigtPartChat, HeaderSist } from "./ChatServiceFunctions";
-import { SendMessage, SendSocketSendMessage } from "./ChatServiceFunctions";
-import { SendSocketMarkAsRead, ChatEmojiPicker } from "./ChatServiceFunctions";
-import { MakeOldDate, SendSocketHistory } from "./ChatServiceFunctions";
+import { isNumeric, Pipip, UsersSist } from './ChatServiceFunctions';
+import { ChatServisKnop, HeaderChel } from './ChatServiceFunctions';
+import { MakeSpisUsers, InputerMessage } from './ChatServiceFunctions';
+import { DebugRigtPartChat, HeaderSist } from './ChatServiceFunctions';
+import { SendMessage, SendSocketSendMessage } from './ChatServiceFunctions';
+import { SendSocketMarkAsRead, ChatEmojiPicker } from './ChatServiceFunctions';
+import { MakeOldDate, SendSocketHistory } from './ChatServiceFunctions';
 
-import { styleChat01, styleChat02, styleChat05 } from "./ComponentsStyle";
-import { styleChat03, styleChat04, styleChat16 } from "./ComponentsStyle";
+import { styleChat01, styleChat02, styleChat05 } from './ComponentsStyle';
+import { styleChat03, styleChat04, styleChat16 } from './ComponentsStyle';
 
-import { dataArchive } from "./../otladkaArchive";
-import { dataHistory } from "./../otladkaHistory";
-import { dataUsers } from "./../otladkaUsers";
+import { dataArchive } from './../otladkaArchive';
+import { dataHistory } from './../otladkaHistory';
+import { dataUsers } from './../otladkaUsers';
 
 let usersRooms: any = [];
 let flagOpenDebug = true;
-let oldName = "oldName";
-let oldRoom = "oldRoom";
-let nameKomu = "Global";
+let oldName = 'oldName';
+let oldRoom = 'oldRoom';
+let nameKomu = 'Global';
 let archive: any = [];
+let archiveMess: any = [];
 let archiveTemp: any = [];
 let sistUsers: any = [];
 let maxPosition = 0;
@@ -41,15 +42,15 @@ let chDays = 1;
 let maxDays = 33;
 let metka = false;
 let turnOn = true;
-let soobErr = "";
+let soobErr = '';
 //let item: any = null;
 
 const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   let socket = props.Socket;
-  const [params, setParams] = React.useState({ name: "", room: "" } as any);
+  const [params, setParams] = React.useState({ name: '', room: '' } as any);
   const [state, setState] = React.useState<Array<any>>([]);
   const [stateBasket, setStateBasket] = React.useState<Array<any>>([]);
-  const [message, setMessage] = React.useState("");
+  const [message, setMessage] = React.useState('');
   const [isOpen, setOpen] = React.useState(false);
   const [users, setUsers] = React.useState<number | any>(-5);
   const [scrollPosition, setScrollPosition] = React.useState(0);
@@ -60,7 +61,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const divRef: any = React.useRef(null);
   const scRef: any = React.useRef(null);
   const WS = props.ws;
-  const debug = WS.url.slice(0, 21) === "wss://localhost:3000/" ? true : false;
+  const debug = WS.url.slice(0, 21) === 'wss://localhost:3000/' ? true : false;
 
   const Scrooler = () => {
     setTimeout(() => {
@@ -116,13 +117,13 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             };
             if (!archive[i].read) {
               archive[i].read = true;
-              if (archive[i].to !== "Global" && archive[i].from !== "Global")
+              if (archive[i].to !== 'Global' && archive[i].from !== 'Global')
                 SendSocketMarkAsRead(
                   WS,
                   archive[i].from,
                   archive[i].to,
                   archive[i].message,
-                  archive[i].time
+                  archive[i].time,
                 );
             }
             setState((_state) => [..._state, maskSoob]);
@@ -133,7 +134,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         scrool && Scrooler();
       }
     },
-    [WS]
+    [WS],
   );
 
   const BeginWorkInRoom = React.useCallback(
@@ -142,7 +143,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       setStateBasket([]);
       PostingArchive(room, mode, scrool);
     },
-    [PostingArchive]
+    [PostingArchive],
   );
 
   const BeginWork = React.useCallback(
@@ -162,9 +163,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           }
         }
       }
-      !mode && BeginWorkInRoom("Global", 0, true);
+      !mode && BeginWorkInRoom('Global', 0, true);
     },
-    [BeginWorkInRoom]
+    [BeginWorkInRoom],
   );
 
   const DelRec = (time: string) => {
@@ -173,17 +174,17 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       if (archive[i].time !== time) {
         archiveRab.push(archive[i]);
       } else {
-        console.log("Запрос на удаление:", archive[i]);
+        console.log('Запрос на удаление:', archive[i]);
       }
     }
     archive = JSON.parse(JSON.stringify(archiveRab));
-    let mode = params.room === "Global" ? 0 : 1;
+    let mode = params.room === 'Global' ? 0 : 1;
     BeginWorkInRoom(params.room, mode, false);
   };
 
   const SendReguest = React.useCallback(() => {
     if (chDays < maxDays) {
-      console.log("ЗАПРОС на чтение архива №", chDays);
+      console.log('ЗАПРОС на чтение архива №', chDays);
       if (!debug) {
         let datOt = MakeOldDate(dStart, chDays + 1);
         let datDo = MakeOldDate(dStart, chDays);
@@ -200,7 +201,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         }
         archive = JSON.parse(JSON.stringify(archiveTemp));
         tempPosition = JSON.parse(JSON.stringify(maxPosition));
-        BeginWorkInRoom("Global", 0, true);
+        BeginWorkInRoom('Global', 0, true);
       }
       chDays++;
     }
@@ -209,16 +210,16 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   //=== инициализация ======================================
   if (flagOpenDebug) {
     if (debug) {
-      console.log("РЕЖИМ ОТЛАДКИ!!!", dataArchive);
+      console.log('РЕЖИМ ОТЛАДКИ!!!', dataArchive);
       setTimeout(() => {
         BeginWork(dataArchive.archive, 0);
         sistUsers = MakeSpisUsers(dataUsers.users)[0];
       }, 100);
       Scrooler();
     } else {
-      setParams({ name: props.nik, room: "Global" });
+      setParams({ name: props.nik, room: 'Global' });
       oldName = props.nik;
-      oldRoom = "Global";
+      oldRoom = 'Global';
     }
     flagOpenDebug = false;
   }
@@ -227,9 +228,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     (data: any) => {
       let toRead = true;
       let komu = data.to;
-      if (komu !== "Global") {
-        let id1 = "00";
-        let id2 = "00";
+      if (komu !== 'Global') {
+        let id1 = '00';
+        let id2 = '00';
         for (let i = 0; i < sistUsers.length; i++) {
           if (sistUsers[i].user === komu) id1 = sistUsers[i].id; // кому
           if (sistUsers[i].user === data.from) id2 = sistUsers[i].id; // от кого
@@ -242,7 +243,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         toRead = false;
         turnOn && Pipip(); // уведомление
       } else {
-        if (data.to === props.nik && data.from !== "Global")
+        if (data.to === props.nik && data.from !== 'Global')
           SendSocketMarkAsRead(WS, data.from, data.to, data.message, data.time);
       }
       // let compressedFile: any = null;
@@ -274,14 +275,13 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           to: komu,
         };
         oldRoom === komu && setState((_state) => [..._state, maska]);
-        oldRoom !== komu &&
-          setStateBasket((_stateBasket) => [..._stateBasket, maska]);
+        oldRoom !== komu && setStateBasket((_stateBasket) => [..._stateBasket, maska]);
         setTrigger(!trigger);
         if (isNumeric(Number(oldRoom))) Scrooler();
         if (data.from === oldName) {
           Scrooler();
         } else {
-          if (komu === data.to && data.to === "Global") {
+          if (komu === data.to && data.to === 'Global') {
             if (maxPosition - scRef.current.scrollTop < 300) {
               Scrooler();
             } else {
@@ -292,30 +292,30 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         }
       }, 100);
     },
-    [WS, trigger, props.nik]
+    [WS, trigger, props.nik],
   );
 
   React.useEffect(() => {
     WS.onopen = function (event: any) {
-      console.log("WS.current.onopen:", event);
+      console.log('WS.current.onopen:', event);
     };
     WS.onclose = function (event: any) {
-      console.log("WS.current.onclose:", event);
+      console.log('WS.current.onclose:', event);
     };
     WS.onerror = function (event: any) {
-      console.log("WS.current.onerror:", event);
+      console.log('WS.current.onerror:', event);
     };
     WS.onmessage = function (event: any) {
       let allData = JSON.parse(event.data);
       let data = allData.data;
-      console.log("пришло:", scrollPosition, allData.type, data);
+      console.log('пришло:', scrollPosition, allData.type, data);
       switch (allData.type) {
-        case "users":
+        case 'users':
           let aa = MakeSpisUsers(data.users);
           sistUsers = aa[0];
           setUsers(aa[1]);
           break;
-        case "archive":
+        case 'archive':
           dStart = data.archive.timeStart;
           if (!data.archive.messages) {
             SendReguest();
@@ -326,7 +326,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             }, 600);
           }
           break;
-        case "history":
+        case 'history':
           if (!data.history.messages) {
             SendReguest();
           } else {
@@ -337,21 +337,21 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             }
             archive = JSON.parse(JSON.stringify(archiveTemp));
             tempPosition = JSON.parse(JSON.stringify(maxPosition));
-            BeginWorkInRoom("Global", 0, true);
+            BeginWorkInRoom('Global', 0, true);
             setTimeout(() => {
               if (!scRef.current.scrollTop) SendReguest();
             }, 600);
           }
           break;
-        case "message":
+        case 'message':
           MessageProcess(data);
           break;
-        case "status":
+        case 'status':
           for (let i = 0; i < sistUsers.length; i++) {
             if (sistUsers[i].user === data.user) {
               sistUsers[i].status = data.status;
-              if (sistUsers[i].status === "online") setUsers(users + 1);
-              if (sistUsers[i].status === "offline") setUsers(users - 1);
+              if (sistUsers[i].status === 'online') setUsers(users + 1);
+              if (sistUsers[i].status === 'offline') setUsers(users - 1);
             }
           }
           setTrigger(!trigger);
@@ -376,7 +376,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     if (debug) {
       const searchParams: any = Object.fromEntries(new URLSearchParams(search));
       setParams(searchParams);
-      if (oldName !== "oldName" && oldRoom !== "oldRoom") {
+      if (oldName !== 'oldName' && oldRoom !== 'oldRoom') {
         if (oldName !== searchParams.name || oldRoom !== searchParams.room) {
           PostingArchive(searchParams.room, 0, true);
           oldName = searchParams.name;
@@ -386,45 +386,51 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         oldName = searchParams.name;
         oldRoom = searchParams.room;
       }
-      socket.emit("join", searchParams);
+      socket.emit('join', searchParams);
       return () => socket.off();
     }
   }, [socket, search, PostingArchive, debug]);
 
-  //---------------------------
-  // function b64toBlob(b64Data: any, contentType: any, sliceSize: any) {
-  //   contentType = contentType || '';
-  //   sliceSize = sliceSize || 512;
-
-  //   var byteCharacters = atob(b64Data);
-  //   var byteArrays = [];
-
-  //   for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
-  //     var slice = byteCharacters.slice(offset, offset + sliceSize);
-
-  //     var byteNumbers = new Array(slice.length);
-  //     for (var i = 0; i < slice.length; i++) {
-  //       byteNumbers[i] = slice.charCodeAt(i);
-  //     }
-  
-  //     var byteArray = new Uint8Array(byteNumbers);
-  
-  //     byteArrays.push(byteArray);
-  //   }
-  
-  //   var blob = new Blob(byteArrays, {type: contentType});
-  //   return blob;
-  // };
-  //---------------------------
   React.useEffect(() => {
     if (debug) {
-      socket.on("message", (event: any) => {
-        console.log('EVENT',event)
+      socket.on('message', (event: any) => {
+        console.log('EVENT', event);
+        const StateEntry = (MESS: any) => {
+          let eventData = event.data;
+          eventData.message = MESS;
+          let mask = {
+            from: event.data.user.name,
+            to: roomTo,
+            message: MESS,
+            time: event.data.date,
+            read: toTo,
+          };
+          archive.push(mask);
+          setTimeout(() => {
+            event.data.to === oldRoom && setState((_state) => [..._state, eventData]);
+            event.data.to !== oldRoom &&
+              setStateBasket((_stateBasket) => [..._stateBasket, eventData]);
+          }, 100);
+          if (isNumeric(Number(oldRoom))) Scrooler();
+          if (event.data.user.name === oldName) {
+            Scrooler();
+          } else {
+            if (event.data.to === oldRoom && oldRoom === 'Global') {
+              if (maxPosition - scRef.current.scrollTop < 300) {
+                Scrooler();
+              } else {
+                metka = true;
+                turnOn && Pipip();
+              }
+            }
+          }
+        };
+
         let toTo = true;
         if (event.data.to !== oldRoom) {
           toTo = false;
           turnOn && Pipip(); // уведомление
-          if (event.data.to === "Global") metka = true;
+          if (event.data.to === 'Global') metka = true;
         }
         let roomTo = event.data.to;
         if (isNumeric(event.data.to)) {
@@ -432,64 +438,52 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           if (roomTo === event.data.user.name)
             roomTo = sistUsers[Number(event.data.to.slice(2, 4)) - 1].user;
         }
-        // if (event.data.message.slice(0, 11) === "data:image/") {
-          //   let poz = event.data.message.indexOf(",");
-        //   let sblob = event.data.message.slice(poz+1);
-        //   let b64toBlob = require('b64-to-blob');
-        //   let contentType = 'image/png';
-        //   let blob : any = b64toBlob(sblob, contentType)
-        //   let blobUrl: any = URL.createObjectURL(blob);
-        //   console.log(":::",blob,blobUrl);
-        //   let reader: any = new FileReader();
-        //   let compressedFile: any = null;
-        //   const handleImageUpload = async () => {
-        //     let options = {
-        //       maxSizeMB: 1,
-        //       maxWidthOrHeight: 333,
-        //       useWebWorker: true,
-        //     };
-        //     try {
-        //       compressedFile = await imageCompression(blob, options);
-        //       reader.readAsDataURL(compressedFile);
-        //     } catch (error) {
-        //       console.log(error);
-        //     }
-        //   };
-        //   handleImageUpload();
-        //   setTimeout(() => {
-        //     console.log("CompressedFile:", compressedFile,reader.result);
-        //   }, 900);
-        // }
-        let mask = {
-          from: event.data.user.name,
-          to: roomTo,
-          message: event.data.message,
-          time: event.data.date,
-          read: toTo,
-        };
-        archive.push(mask);
-        setTimeout(() => {
-          event.data.to === oldRoom &&
-            setState((_state) => [..._state, event.data]);
-          event.data.to !== oldRoom &&
-            setStateBasket((_stateBasket) => [..._stateBasket, event.data]);
-        }, 100);
-        if (isNumeric(Number(oldRoom))) Scrooler();
-        if (event.data.user.name === oldName) {
-          Scrooler();
-        } else {
-          if (event.data.to === oldRoom && oldRoom === "Global") {
-            if (maxPosition - scRef.current.scrollTop < 300) {
-              Scrooler();
-            } else {
-              metka = true;
-              turnOn && Pipip();
+        if (event.data.message.slice(0, 11) === 'data:image/') {
+          let poz = event.data.message.indexOf(',');
+          let sblob = event.data.message.slice(poz + 1);
+          let b64toBlob = require('b64-to-blob');
+          let contentType = 'image/png';
+          //console.log('0CompressedFile:', sblob);
+          let blob: any = b64toBlob(sblob, contentType);
+          let reader: any = new FileReader();
+          let compressedFile: any = null;
+          const handleImageUpload = async () => {
+            let options = {
+              maxSizeMB: 1,
+              maxWidthOrHeight: 333,
+              useWebWorker: true,
+            };
+            try {
+              compressedFile = await imageCompression(blob, options);
+              reader.readAsDataURL(compressedFile);
+              console.log('1CompressedFile:', compressedFile, reader.result);
+            } catch (error) {
+              console.log(error);
             }
-          }
+          };
+          handleImageUpload();
+          const handleMake = () => {
+            if (reader.result !== null) {
+              console.log('2CompressedFile:', compressedFile, reader.result);
+              StateEntry(reader.result);
+              let mask = {
+                message: event.data.message,
+                time: event.data.date,
+              };
+              archiveMess.push(mask);
+            } else {
+              setTimeout(() => {
+                handleMake();
+              }, 100);
+            }
+          };
+          handleMake();
+        } else {
+          StateEntry(event.data.message); //текстовое сообщение
         }
       });
 
-      socket.on("room", (event: any) => {
+      socket.on('room', (event: any) => {
         setUsers(event.data.users.length);
         usersRooms = event.data.users;
       });
@@ -497,8 +491,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   }, [socket, debug]);
   //========================================================
   const leftRoom = () => {
-    if (params.room !== "Global") {
-      nameKomu = "Global";
+    if (params.room !== 'Global') {
+      nameKomu = 'Global';
       let newParams = params;
       newParams.room = nameKomu;
       setParams(newParams);
@@ -515,14 +509,14 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         afterRoomPosition = 0;
       }, 400);
       if (debug) {
-        socket.emit("join", params);
+        socket.emit('join', params);
         return () => socket.off();
       }
     } else {
       if (debug) {
-        socket.emit("leftRoom", { params });
+        socket.emit('leftRoom', { params });
         flagOpenDebug = true;
-        navigate("/");
+        navigate('/');
       } else {
         window.close();
       }
@@ -532,11 +526,11 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const ClickKnop = (mode: number) => {
     afterRoomPosition = JSON.parse(JSON.stringify(scrollPosition));
     if (maxPosition === afterRoomPosition) afterRoomPosition = -1;
-    if (debug) socket.emit("leftRoom", { params });
+    if (debug) socket.emit('leftRoom', { params });
     let newParams = params;
     let id1 = sistUsers[mode].id; // кому
     nameKomu = sistUsers[mode].user;
-    let id2 = "00";
+    let id2 = '00';
     for (let i = 0; i < sistUsers.length; i++) {
       if (sistUsers[i].user === params.name) id2 = sistUsers[i].id; // от кого
     }
@@ -548,7 +542,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     oldName = newParams.name; // от кого
     oldRoom = roomer;
     if (debug) {
-      socket.emit("join", params);
+      socket.emit('join', params);
       return () => socket.off();
     }
   };
@@ -560,28 +554,25 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const handleSubmit = () => {
     if (!message) return;
     let date = new Date().toISOString();
-    debug && socket.emit("sendMessage", { message, params, date });
+    debug && socket.emit('sendMessage', { message, params, date });
     !debug && SendSocketSendMessage(WS, message, params.name, nameKomu);
-    setMessage("");
+    setMessage('');
   };
 
   const TopPartChat = () => {
-    let chel = "человек";
+    let chel = 'человек';
     if (users !== 12 && users !== 13 && users !== 14)
-      if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += "а";
-    let nameRoom = params.room !== "Global" ? "в комнате" : "в чате";
-    let redKnop =
-      params.room !== "Global" ? "Покинуть комнату" : "Выйти из чата";
-    let roomName = "Групповой чат";
-    if (nameKomu !== "Global") roomName = nameKomu + "/" + params.name;
+      if (users % 10 === 2 || users % 10 === 3 || users % 10 === 4) chel += 'а';
+    let nameRoom = params.room !== 'Global' ? 'в комнате' : 'в чате';
+    let redKnop = params.room !== 'Global' ? 'Покинуть комнату' : 'Выйти из чата';
+    let roomName = 'Групповой чат';
+    if (nameKomu !== 'Global') roomName = nameKomu + '/' + params.name;
 
     return (
       <Box sx={styleChat02}>
         <Box sx={styleChat03}>{roomName}</Box>
         {debug && <>{HeaderChel(users, chel, nameRoom)}</>}
-        {!debug && params.room === "Global" && (
-          <>{HeaderChel(users, chel, nameRoom)}</>
-        )}
+        {!debug && params.room === 'Global' && <>{HeaderChel(users, chel, nameRoom)}</>}
         <Button sx={styleChat04} variant="contained" onClick={leftRoom}>
           {redKnop}
         </Button>
@@ -592,17 +583,15 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const handleClipBoard = React.useCallback(
     (evt: any) => {
       const clipboardItems: any = evt.clipboardData.items; // Получить данные буфера обмена
-      console.log("%%%:", clipboardItems);
-      const items: any = [].slice
-        .call(clipboardItems)
-        .filter(function (item: any) {
-          return item.type.indexOf("image") !== -1; // Фильтровать только элементы изображения
-        });
+      console.log('%%%:', clipboardItems);
+      const items: any = [].slice.call(clipboardItems).filter(function (item: any) {
+        return item.type.indexOf('image') !== -1; // Фильтровать только элементы изображения
+      });
       if (!items.length) return;
       const item = items[0];
-      console.log("ITEM:", item);
+      console.log('ITEM:', item);
       const blob: any = item.getAsFile(); // Получить блок изображения
-      console.log("1BLOB:", blob);
+      console.log('1BLOB:', blob);
       // let compressedFile: any = null;
       // const handleImageUpload = async () => {
       //   let options = {
@@ -625,25 +614,22 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
 
         if (reader.result) {
           if (pict.length > 2000000) {
-            soobErr = "Размер картинки превышает лимит в 2Мбайта";
+            soobErr = 'Размер картинки превышает лимит в 2Мбайта';
             setOpenSetErr(true);
           } else {
-            let message = debug
-              ? reader.result.slice(0, 999000)
-              : reader.result;
-            debug && socket.emit("sendMessage", { message, params, date });
+            let message = debug ? reader.result.slice(0, 999000) : reader.result;
+            debug && socket.emit('sendMessage', { message, params, date });
             !debug && SendSocketSendMessage(WS, message, params.name, nameKomu);
           }
         }
       }, 100);
-
     },
-    [WS, debug, params, socket]
+    [WS, debug, params, socket],
   );
 
   React.useEffect(() => {
-    document.addEventListener("paste", handleClipBoard);
-    return () => document.removeEventListener("paste", handleClipBoard);
+    document.addEventListener('paste', handleClipBoard);
+    return () => document.removeEventListener('paste', handleClipBoard);
   }, [handleClipBoard]);
 
   const BootomPartChat = () => {
@@ -661,22 +647,19 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       const handleScroll = () => {
         const position = scRef.current.scrollTop;
         setScrollPosition(position);
-        if (position > maxPosition && params.room === "Global")
-          maxPosition = position;
+        if (position > maxPosition && params.room === 'Global') maxPosition = position;
         if (maxPosition === position && !afterRoomPosition) metka = false;
         if (tempPosition) {
           let poz = maxPosition - tempPosition;
           scRef.current.scrollTo(0, poz - 69); // встать на Якорь
           tempPosition = 0;
         }
-        if (!position && params.room === "Global" && chDays < maxDays)
-          SendReguest();
+        if (!position && params.room === 'Global' && chDays < maxDays) SendReguest();
       };
 
-      scRef.current.addEventListener("scroll", handleScroll, { passive: true });
+      scRef.current.addEventListener('scroll', handleScroll, { passive: true });
       return () => {
-        scRef.current &&
-          scRef.current.removeEventListener("scroll", handleScroll);
+        scRef.current && scRef.current.removeEventListener('scroll', handleScroll);
       };
     });
 
@@ -686,14 +669,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       <>
         {TopPartChat()}
         <Box sx={styleChat05}>
-          <Box ref={scRef} sx={{ overflowX: "auto", height: "86vh" }}>
+          <Box ref={scRef} sx={{ overflowX: 'auto', height: '86vh' }}>
             {state.length !== 0 && (
-              <Messages
-                messages={state}
-                name={pn}
-                basket={stateBasket}
-                funcDel={DelRec}
-              />
+              <Messages messages={state} name={pn} basket={stateBasket} funcDel={DelRec} />
             )}
             <div ref={divRef} />
           </Box>
@@ -720,25 +698,15 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           {LeftPartChat()}
         </Grid>
         <Grid item xs sx={styleChat01}>
-          <Box sx={{ background: "#CCDCEC" }}>
+          <Box sx={{ background: '#CCDCEC' }}>
             {debug && DebugRigtPartChat(params.room, usersRooms)}
             {HeaderSist()}
             {UsersSist(sistUsers, archive, params.name, nameKomu, ClickKnop)}
-            {!debug && <Grid container sx={{ height: "14vh" }}></Grid>}
-            {ChatServisKnop(
-              metka,
-              turnOn,
-              scRef,
-              params.room,
-              maxPosition,
-              GoToBottom,
-              TurnOn
-            )}
+            {!debug && <Grid container sx={{ height: '14vh' }}></Grid>}
+            {ChatServisKnop(metka, turnOn, scRef, params.room, maxPosition, GoToBottom, TurnOn)}
           </Box>
         </Grid>
-        {openSetErr && (
-          <ChatErrorMessage setOpen={setOpenSetErr} sErr={soobErr} />
-        )}
+        {openSetErr && <ChatErrorMessage setOpen={setOpenSetErr} sErr={soobErr} />}
       </>
     </Grid>
   );

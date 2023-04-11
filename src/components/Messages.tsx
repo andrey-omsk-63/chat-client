@@ -188,7 +188,7 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
                 <Box sx={!itsme ? styleUserPict : styleMePict}>
                   <img
                     src={props.messages[i].message}
-                     style={{ float: itsme ? 'right' : 'left' }}
+                    style={{ float: itsme ? 'right' : 'left' }}
                     alt="PICT"
                     width="77%"
                     onClick={() => handleClickPict(props.messages[i].message)}
@@ -227,6 +227,7 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
 
   React.useMemo(() => {
     console.log('MeMo');
+    console.log('Пришло:', props.messages);
     StrMessages();
   }, [StrMessages]);
 

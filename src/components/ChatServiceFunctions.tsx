@@ -49,18 +49,16 @@ export const MakeSpisUsers = (mass: any) => {
   return [sistUsers, onLine];
 };
 
-
-
 export const InputerMessage = (message: string, handleChange: any, handleSubmit: any) => {
   const handleKey = (event: any) => {
     event.key === 'Enter' && handleSubmit();
   };
-  
+
   return (
     <Box sx={styleChatInp01}>
       <TextField
         size="small"
-        onKeyPress={handleKey} 
+        onKeyPress={handleKey}
         placeholder="👇️Что вы хотите сказать?"
         InputProps={{
           disableUnderline: true,
@@ -331,7 +329,7 @@ export const SendSocketMarkAsRead = (
     } else {
       setTimeout(() => {
         handleSendOpen();
-      }, 1000);
+      }, 100);
     }
   };
   handleSendOpen();
@@ -395,3 +393,22 @@ export const Splitter = (str: string, l: number) => {
 // document.body.appendChild(image);
 // image.width
 // image.height
+//---------------------------
+// function b64toBlob(b64Data: any, contentType: any, sliceSize: any) {
+//   contentType = contentType || '';
+//   sliceSize = sliceSize || 512;
+//   var byteCharacters = atob(b64Data);
+//   var byteArrays = [];
+//   for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+//     var slice = byteCharacters.slice(offset, offset + sliceSize);
+//     var byteNumbers = new Array(slice.length);
+//     for (var i = 0; i < slice.length; i++) {
+//       byteNumbers[i] = slice.charCodeAt(i);
+//     }
+//     var byteArray = new Uint8Array(byteNumbers);
+//     byteArrays.push(byteArray);
+//   }
+//   var blob = new Blob(byteArrays, {type: contentType});
+//   return blob;
+// };
+//---------------------------
