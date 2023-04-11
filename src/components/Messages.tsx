@@ -16,8 +16,6 @@ let picture: any = null;
 let imageWidth = 0;
 let imageHeight = 0;
 let overFlow = 'auto';
-//let propsMessages: any = [];
-
 let ch = 0;
 
 const Messages = (props: { messages: any; name: string; basket: any; funcDel: Function }) => {
@@ -64,7 +62,6 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
 
   const styleModalOverflow = {
     overflowY: overFlow, //hidden auto
-    //overflowY: 'auto',
     width: imageWidth,
     height: imageHeight - 2,
   };
@@ -191,11 +188,9 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
                 <Box sx={!itsme ? styleUserPict : styleMePict}>
                   <img
                     src={props.messages[i].message}
-                    //src={propsMessages[i]}
-                    style={{ float: itsme ? 'right' : 'left' }}
+                     style={{ float: itsme ? 'right' : 'left' }}
                     alt="PICT"
                     width="77%"
-                    //onLoad={resizeImg(this, 200, 100)}
                     onClick={() => handleClickPict(props.messages[i].message)}
                   />
                 </Box>
