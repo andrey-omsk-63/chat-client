@@ -181,6 +181,8 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
             borderBottomRightRadius: bbrr,
           };
 
+          //console.log('2Пришло:', props.messages[i].message);
+
           resSt.push(
             <Grid key={j} item xs={12} sx={{ border: 0 }}>
               {!pict && <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>}

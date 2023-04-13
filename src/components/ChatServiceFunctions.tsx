@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Buffer } from 'buffer';
 
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -15,6 +16,33 @@ import { styleChatBut01, styleChatBut02 } from './ComponentsStyle';
 
 //=== Chat =========================================
 export const isNumeric = (n: number) => !isNaN(n);
+
+export const b64toBlob = (b64Data: any, contentType: any, sliceSize: number) => {
+  contentType = contentType || '';
+  sliceSize = sliceSize || 512;
+  //console.log('7:',b64Data)
+  let byteCharacters1 = Buffer.from(b64Data, 'base64')
+  let byteCharacters2 = byteCharacters1.toString('base64')
+  //let byteCharacters = atob(b64Data);
+  let byteCharacters = atob(byteCharacters2);
+  //console.log('0:',byteCharacters)
+  //console.log('1:',byteCharacters1)
+  //console.log('2:',byteCharacters2)
+
+  let byteArrays = [];
+  for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    let slice = byteCharacters.slice(offset, offset + sliceSize);
+    let byteNumbers = new Array(slice.length);
+    for (let i = 0; i < slice.length; i++) {
+      byteNumbers[i] = slice.charCodeAt(i);
+    }
+    let byteArray = new Uint8Array(byteNumbers);
+    byteArrays.push(byteArray);
+  }
+  let blob = new Blob(byteArrays, {type: contentType});
+  console.log('3:',blob)
+  return blob;
+};
 
 export const Pipip = () => {
   function beep() {
