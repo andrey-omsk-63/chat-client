@@ -19,7 +19,7 @@ let overFlow = 'auto';
 let ch = 0;
 
 const Messages = (props: { messages: any; name: string; basket: any; funcDel: Function }) => {
-  //console.log('Пришло:', props.messages);
+  console.log('1Пришло:', props.messages);
   let FuncDel = props.funcDel;
   const Ch = () => {
     ch++;
@@ -231,7 +231,7 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
     console.log('MeMo');
     // let aa = props.messages.length
     // let aaa = props.messages[aa-1].message
-    // console.log('Пришло:', props.messages,aaa.length, aaa);
+    console.log('2Пришло:', props.messages);
     StrMessages();
   }, [StrMessages]);
 
