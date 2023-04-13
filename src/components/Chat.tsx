@@ -82,61 +82,24 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     }
   }, []);
 
-  const PostingArchive = React.useCallback(
-    (room: string, mode: number, scrool: boolean) => {
-      let room1 = !mode ? room : sistUsers[Number(room.slice(0, 2)) - 1].user;
-      let room2 = !mode ? room : sistUsers[Number(room.slice(2, 4)) - 1].user;
-      if (archive) {
-        for (let i = 0; i < archive.length; i++) {
-          let iffer = archive[i].to === room;
-          if (mode)
-            iffer =
-              (archive[i].from === room1 || archive[i].from === room2) &&
-              (archive[i].to === room2 || archive[i].to === room1);
-          if (iffer) {
-           
-            let maskSoob = {
-              user: { name: archive[i].from },
-              message: archive[i].message,
-              date: archive[i].time,
-            };
-            if (!archive[i].read) {
-              archive[i].read = true;
-              if (archive[i].to !== "Global" && archive[i].from !== "Global")
-                SendSocketMarkAsRead(
-                  WS,
-                  archive[i].from,
-                  archive[i].to,
-                  archive[i].message,
-                  archive[i].time
-                );
-            }
-            setState((_state) => [..._state, maskSoob]);
-            setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
-            //}, 500);
-          }
-        }
-        scrool && Scrooler();
-      }
-    },
-    [WS]
-  );
-
-
   // const PostingArchive = React.useCallback(
   //   (room: string, mode: number, scrool: boolean) => {
   //     let room1 = !mode ? room : sistUsers[Number(room.slice(0, 2)) - 1].user;
   //     let room2 = !mode ? room : sistUsers[Number(room.slice(2, 4)) - 1].user;
   //     if (archive) {
   //       for (let i = 0; i < archive.length; i++) {
-  //         const StateEntry = (MESS: any) => {
+  //         let iffer = archive[i].to === room;
+  //         if (mode)
+  //           iffer =
+  //             (archive[i].from === room1 || archive[i].from === room2) &&
+  //             (archive[i].to === room2 || archive[i].to === room1);
+  //         if (iffer) {
+
   //           let maskSoob = {
   //             user: { name: archive[i].from },
-  //             message: MESS,
+  //             message: archive[i].message,
   //             date: archive[i].time,
   //           };
-  //           setState((_state) => [..._state, maskSoob]);
-  //           setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
   //           if (!archive[i].read) {
   //             archive[i].read = true;
   //             if (archive[i].to !== "Global" && archive[i].from !== "Global")
@@ -148,39 +111,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   //                 archive[i].time
   //               );
   //           }
-  //         };
-  //         //============
-  //         let iffer = archive[i].to === room;
-  //         if (mode)
-  //           iffer =
-  //             (archive[i].from === room1 || archive[i].from === room2) &&
-  //             (archive[i].to === room2 || archive[i].to === room1);
-  //         if (iffer) {
-  //           if (archive[i].message.slice(0, 11) === "data:image/") {
-  //             blob = MakeNewBlob(archive[i].message);
-  //             reader = new FileReader();
-  //             compressedFile = null;
-  //             handleImageUpload();
-  //             const handleMake = () => {
-  //               if (reader.result !== null) {
-  //                 let mess =
-  //                   reader.result < 200 ? archive[i].message : reader.result; // если длина спрессованной картинки < 200байт - косячная картинка
-  //                 StateEntry(mess);
-  //                 let mask = {
-  //                   message: archive[i].message,
-  //                   time: archive[i].time,
-  //                 };
-  //                 archiveMess.push(mask);
-  //               } else {
-  //                 setTimeout(() => {
-  //                   handleMake();
-  //                 }, 100);
-  //               }
-  //             };
-  //             handleMake();
-  //           } else {
-  //             StateEntry(archive[i].message); //текстовое сообщение
-  //           }
+  //           setState((_state) => [..._state, maskSoob]);
+  //           setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
+  //           //}, 500);
   //         }
   //       }
   //       scrool && Scrooler();
@@ -188,6 +121,154 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   //   },
   //   [WS]
   // );
+
+  const AAA = (room: string, mode: number, scrool: boolean) => {
+    let room1 = !mode ? room : sistUsers[Number(room.slice(0, 2)) - 1].user;
+    let room2 = !mode ? room : sistUsers[Number(room.slice(2, 4)) - 1].user;
+    if (archive) {
+      let i = 0;
+      for (; i < archive.length;) {
+      //while (i < archive.length) {
+        const StateEntry = (MESS: any) => {
+          let maskSoob = {
+            user: { name: archive[i].from },
+            message: MESS,
+            date: archive[i].time,
+          };
+          setState((_state) => [..._state, maskSoob]);
+          setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
+          if (!archive[i].read) {
+            archive[i].read = true;
+            if (archive[i].to !== "Global" && archive[i].from !== "Global")
+              SendSocketMarkAsRead(
+                WS,
+                archive[i].from,
+                archive[i].to,
+                archive[i].message,
+                archive[i].time
+              );
+          }
+        };
+        //============
+        let iffer = archive[i].to === room;
+        if (mode)
+          iffer =
+            (archive[i].from === room1 || archive[i].from === room2) &&
+            (archive[i].to === room2 || archive[i].to === room1);
+        if (iffer) {
+          if (archive[i].message.slice(0, 11) === "data:image/") {
+            console.log('Blob',i)
+            blob = MakeNewBlob(archive[i].message);
+            reader = new FileReader();
+            compressedFile = null;
+            handleImageUpload();
+            const handleMake = () => {
+              if (reader.result !== null) {
+                let mess =
+                  reader.result.length < 200
+                    ? archive[i].message
+                    : reader.result; // если длина спрессованной картинки < 200байт - косячная картинка
+                StateEntry(mess);
+                let mask = {
+                  message: archive[i].message,
+                  time: archive[i].time,
+                };
+                archiveMess.push(mask);
+                i++;
+                console.log('Pict',i)
+              } else {
+                setTimeout(() => {
+                  handleMake();
+                }, 100);
+              }
+            };
+            handleMake();
+          } else {
+            StateEntry(archive[i].message); //текстовое сообщение
+            i++;
+            console.log('No Pict',i)
+          }
+        }
+      }
+      scrool && Scrooler();
+    }
+  }
+
+  const PostingArchive = React.useCallback(
+    (room: string, mode: number, scrool: boolean) => {
+      AAA(room, mode, scrool)
+      // let room1 = !mode ? room : sistUsers[Number(room.slice(0, 2)) - 1].user;
+      // let room2 = !mode ? room : sistUsers[Number(room.slice(2, 4)) - 1].user;
+      // if (archive) {
+      //   let i = 0;
+      //   for (; i < archive.length;) {
+      //   //while (i < archive.length) {
+      //     const StateEntry = (MESS: any) => {
+      //       let maskSoob = {
+      //         user: { name: archive[i].from },
+      //         message: MESS,
+      //         date: archive[i].time,
+      //       };
+      //       setState((_state) => [..._state, maskSoob]);
+      //       setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
+      //       if (!archive[i].read) {
+      //         archive[i].read = true;
+      //         if (archive[i].to !== "Global" && archive[i].from !== "Global")
+      //           SendSocketMarkAsRead(
+      //             WS,
+      //             archive[i].from,
+      //             archive[i].to,
+      //             archive[i].message,
+      //             archive[i].time
+      //           );
+      //       }
+      //     };
+      //     //============
+      //     let iffer = archive[i].to === room;
+      //     if (mode)
+      //       iffer =
+      //         (archive[i].from === room1 || archive[i].from === room2) &&
+      //         (archive[i].to === room2 || archive[i].to === room1);
+      //     if (iffer) {
+      //       if (archive[i].message.slice(0, 11) === "data:image/") {
+      //         console.log('Blob',i)
+      //         blob = MakeNewBlob(archive[i].message);
+      //         reader = new FileReader();
+      //         compressedFile = null;
+      //         handleImageUpload();
+      //         const handleMake = () => {
+      //           if (reader.result !== null) {
+      //             let mess =
+      //               reader.result.length < 200
+      //                 ? archive[i].message
+      //                 : reader.result; // если длина спрессованной картинки < 200байт - косячная картинка
+      //             StateEntry(mess);
+      //             let mask = {
+      //               message: archive[i].message,
+      //               time: archive[i].time,
+      //             };
+      //             archiveMess.push(mask);
+      //             i++;
+      //             console.log('Pict',i)
+      //           } else {
+      //             setTimeout(() => {
+      //               handleMake();
+      //             }, 100);
+      //           }
+      //         };
+      //         handleMake();
+      //       } else {
+      //         StateEntry(archive[i].message); //текстовое сообщение
+      //         i++;
+      //         console.log('No Pict',i)
+      //       }
+      //     }
+      //   }
+      //   scrool && Scrooler();
+      // }
+    },
+    [WS]
+  );
 
   const BeginWorkInRoom = React.useCallback(
     (room: string, mode: number, scrool: boolean) => {
@@ -432,7 +513,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     SendReguest,
   ]);
 
-  
   //=== РЕЖИМ ОТЛАДКИ ======================================
   React.useEffect(() => {
     if (debug) {
@@ -508,7 +588,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           if (event.data.to === "Global") metka = true;
         }
         if (event.data.message.slice(0, 11) === "data:image/") {
-          blob = MakeNewBlob(event.data.message);  // картинка
+          blob = MakeNewBlob(event.data.message); // картинка
           reader = new FileReader();
           compressedFile = null;
           handleImageUpload();
