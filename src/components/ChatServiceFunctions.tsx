@@ -20,7 +20,7 @@ export const isNumeric = (n: number) => !isNaN(n);
 export const b64toBlob = (b64Data: any, contentType: any, sliceSize: number) => {
   contentType = contentType || '';
   sliceSize = sliceSize || 512;
-  //console.log('7:',b64Data)
+
   let byteCharacters1 = Buffer.from(b64Data, 'base64')
   let byteCharacters2 = byteCharacters1.toString('base64')
   //let byteCharacters = atob(b64Data);
@@ -28,7 +28,6 @@ export const b64toBlob = (b64Data: any, contentType: any, sliceSize: number) => 
   //console.log('0:',byteCharacters)
   //console.log('1:',byteCharacters1)
   //console.log('2:',byteCharacters2)
-
   let byteArrays = [];
   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
     let slice = byteCharacters.slice(offset, offset + sliceSize);
@@ -41,6 +40,14 @@ export const b64toBlob = (b64Data: any, contentType: any, sliceSize: number) => 
   }
   let blob = new Blob(byteArrays, {type: contentType});
   console.log('3:',blob)
+  return blob;
+};
+
+export const MakeNewBlob = (MESS: string) => {
+  let poz = MESS.indexOf(",");
+  let sblob = MESS.slice(poz + 1);
+  let contentType = "image/png";
+  let blob: any = b64toBlob(sblob, contentType, 512);
   return blob;
 };
 

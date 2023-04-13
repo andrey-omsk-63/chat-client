@@ -229,7 +229,9 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
 
   React.useMemo(() => {
     console.log('MeMo');
-    console.log('Пришло:', props.messages);
+    // let aa = props.messages.length
+    // let aaa = props.messages[aa-1].message
+    // console.log('Пришло:', props.messages,aaa.length, aaa);
     StrMessages();
   }, [StrMessages]);
 
