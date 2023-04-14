@@ -19,7 +19,7 @@ let overFlow = 'auto';
 let ch = 0;
 
 const Messages = (props: { messages: any; name: string; basket: any; funcDel: Function }) => {
-  console.log('1Пришло:', props.messages);
+  //console.log('1Пришло:', props.messages);
   let FuncDel = props.funcDel;
   const Ch = () => {
     ch++;
