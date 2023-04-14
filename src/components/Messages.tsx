@@ -16,15 +16,21 @@ let picture: any = null;
 let imageWidth = 0;
 let imageHeight = 0;
 let overFlow = 'auto';
-let ch = 0;
+//let ch = 0;
 
-const Messages = (props: { messages: any; name: string; basket: any; funcDel: Function }) => {
-  //console.log('1Пришло:', props.messages);
+const Messages = (props: {
+  messages: any;
+  name: string;
+  basket: any;
+  PICT: any;
+  funcDel: Function;
+}) => {
+  //console.log('1Пришло:', props.messages, props.PICT);
   let FuncDel = props.funcDel;
-  const Ch = () => {
-    ch++;
-    console.log('Ch:', ch);
-  };
+  // const Ch = () => {
+  //   ch++;
+  //   //console.log('Ch:', ch);
+  // };
 
   const [openSetMode, setOpenSetMode] = React.useState(false);
 
@@ -32,20 +38,28 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
     setOpenSetMode(false);
   };
 
-  const handleClickPict = React.useCallback((pict: any) => {
-    picture = pict;
+  const handleClickPict = React.useCallback((idx: number) => {
+    let tim = props.messages[idx].date;
+    for (let i = 0; i < props.PICT.length; i++) {
+      //console.log('111', props.PICT[i].time, tim);
+      if (props.PICT[i].time === tim) picture = props.PICT[i].message;
+    }
+
     let image = new Image();
     image.src = picture;
-    imageWidth = window.screen.width - 169;
-    //let proporsia = image.width / imageWidth;
-    if (image.width < imageWidth) imageWidth = image.width;
-    imageHeight = window.screen.height - 177;
-    overFlow = 'auto';
-    if (image.height < imageHeight) {
-      imageHeight = image.height;
-      overFlow = 'hidden';
-    }
-    setOpenSetMode(true);
+    setTimeout(() => {
+      console.log('!!!', idx, image.width, image.height);
+      imageWidth = window.screen.width - 169;
+      //let proporsia = image.width / imageWidth;
+      if (image.width < imageWidth) imageWidth = image.width;
+      imageHeight = window.screen.height - 177;
+      overFlow = 'auto';
+      if (image.height < imageHeight) {
+        imageHeight = image.height;
+        overFlow = 'hidden';
+      }
+      setOpenSetMode(true);
+    }, 100);
   }, []);
 
   const styleSetSelect = {
@@ -80,7 +94,7 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
       if (props.messages[i].message.length > 50) {
         if (props.messages[i].message.slice(0, 11) === 'data:image/') {
           pict = true;
-          Ch();
+          //Ch();
         } else {
           mass = Splitter(props.messages[i].message, 69);
           dlina = 0;
@@ -193,7 +207,7 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
                     style={{ float: itsme ? 'right' : 'left' }}
                     alt="PICT"
                     width="77%"
-                    onClick={() => handleClickPict(props.messages[i].message)}
+                    onClick={() => handleClickPict(i)}
                   />
                 </Box>
               )}
@@ -231,7 +245,7 @@ const Messages = (props: { messages: any; name: string; basket: any; funcDel: Fu
     console.log('MeMo');
     // let aa = props.messages.length
     // let aaa = props.messages[aa-1].message
-    console.log('2Пришло:', props.messages);
+    //console.log('2Пришло:', props.messages, props.PICT);
     StrMessages();
   }, [StrMessages]);
 
