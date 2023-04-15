@@ -38,29 +38,30 @@ const Messages = (props: {
     setOpenSetMode(false);
   };
 
-  const handleClickPict = React.useCallback((idx: number) => {
-    let tim = props.messages[idx].date;
-    for (let i = 0; i < props.PICT.length; i++) {
-      //console.log('111', props.PICT[i].time, tim);
-      if (props.PICT[i].time === tim) picture = props.PICT[i].message;
-    }
+  const handleClickPict = React.useCallback(
+    (idx: number) => {
+      let tim = props.messages[idx].date;
+      for (let i = 0; i < props.PICT.length; i++)
+        if (props.PICT[i].time === tim) picture = props.PICT[i].message;
 
-    let image = new Image();
-    image.src = picture;
-    setTimeout(() => {
-      console.log('!!!', idx, image.width, image.height);
-      imageWidth = window.screen.width - 169;
-      //let proporsia = image.width / imageWidth;
-      if (image.width < imageWidth) imageWidth = image.width;
-      imageHeight = window.screen.height - 177;
-      overFlow = 'auto';
-      if (image.height < imageHeight) {
-        imageHeight = image.height;
-        overFlow = 'hidden';
-      }
-      setOpenSetMode(true);
-    }, 100);
-  }, []);
+      let image = new Image();
+      image.src = picture;
+      setTimeout(() => {
+        console.log('!!!', idx, image.width, image.height);
+        imageWidth = window.screen.width - 169;
+        //let proporsia = image.width / imageWidth;
+        if (image.width < imageWidth) imageWidth = image.width;
+        imageHeight = window.screen.height - 177;
+        overFlow = 'auto';
+        if (image.height < imageHeight) {
+          imageHeight = image.height;
+          overFlow = 'hidden';
+        }
+        setOpenSetMode(true);
+      }, 200);
+    },
+    [props.messages, props.PICT],
+  );
 
   const styleSetSelect = {
     outline: 'none',
@@ -243,8 +244,6 @@ const Messages = (props: {
 
   React.useMemo(() => {
     console.log('MeMo');
-    // let aa = props.messages.length
-    // let aaa = props.messages[aa-1].message
     //console.log('2Пришло:', props.messages, props.PICT);
     StrMessages();
   }, [StrMessages]);

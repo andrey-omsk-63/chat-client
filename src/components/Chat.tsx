@@ -174,21 +174,14 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
               archivePict.push(mask);
               MakeArchiveMess(arch.messages[i]); // незапрессованные картинки
             }
-            //======
             mode && archiveTemp.push(JSON.parse(JSON.stringify(mask)));
             !mode && archive.push(JSON.parse(JSON.stringify(mask)));
           }
-          //console.log('arch.messages', arch.messages, 'archive:', archive);
-          //console.log('archiveTemp', archiveTemp);
-          //======
           if (archivePict.length) {
             pipa = false;
-            //console.log('archivePict:', archivePict, archive.length, archiveTemp.length);
             let massPict: any = [];
             for (let i = 0; i < archivePict.length; i++) {
               const asynchronousProcess = async (arg0: () => void) => {
-                //console.log('archiveTemp333:', archiveTemp);
-                //let archiveTempp = JSON.parse(JSON.stringify(archiveTemp));
                 let options = {
                   maxSizeMB: 1,
                   maxWidthOrHeight: 320,
@@ -201,7 +194,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
                 reader.readAsDataURL(compressedFile);
 
                 const handleMake = () => {
-                  //console.log('888888', archiveTemp);
                   if (reader.result !== null) {
                     let mess = reader.result.length < 200 ? items : reader.result; // если длина спрессованной картинки < 200байт - косячная картинка
                     let mask = {
@@ -209,26 +201,20 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
                       time: archivePict[i].time,
                     };
                     massPict.push(mask);
-                    //console.log('999999', massPict, archiveTemp);
                     if (massPict.length === archivePict.length) {
                       let leng = mode ? archiveTemp.length : archive.length;
                       console.log('Всё!!!', leng, massPict);
                       for (let j = 0; j < massPict.length; j++) {
                         for (let i = 0; i < leng; i++) {
                           if (mode) {
-                            if (archiveTemp[i].time === massPict[j].time) {
+                            if (archiveTemp[i].time === massPict[j].time)
                               archiveTemp[i].message = massPict[j].message;
-                              //console.log('Замена в archiveTemp', j, i);
-                            }
                           } else {
-                            if (archive[i].time === massPict[j].time) {
+                            if (archive[i].time === massPict[j].time)
                               archive[i].message = massPict[j].message;
-                              //console.log('Замена в archive', j, i);
-                            }
                           }
                         }
                       }
-                      //console.log('archive', archive);
                       pipa = true;
                     }
                   } else {
@@ -237,20 +223,16 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
                     }, 100);
                   }
                 };
-                //console.log('archiveTemp555:', archiveTemp);
                 handleMake();
-                //console.log('massPict:', i, massPict);
               };
 
               (function (cntr) {
-                //console.log('7777777!!!');
                 asynchronousProcess(function () {
                   console.log('cntr', cntr);
                 });
               })(i);
             }
           }
-          //======
         }
       }
       console.log('PIPA', pipa);
@@ -259,7 +241,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         if (pipa) {
           !mode && BeginWorkInRoom('Global', 0, true);
           popa = true;
-          console.log('0Popa', popa);
         } else {
           setTimeout(() => {
             PipMake();
@@ -301,9 +282,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           console.log('00ARSH.messages', dataArchive.archive.messages);
           BeginWork(dataArchive.archive, 1);
         }
-        //console.log('??????', popa, archiveTemp);
         const EndMake = () => {
-          //console.log('******', mode, pipa);
           if (popa) {
             for (let i = 0; i < archive.length; i++) {
               archiveTemp.push(archive[i]);
@@ -368,6 +347,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         } else {
           if (komu === data.to && data.to === 'Global') ScroolOrPip();
         }
+        return mask;
       };
       //============
       let toRead = true;
@@ -452,6 +432,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           } else {
             archiveTemp = [];
             BeginWork(data.history, 1);
+            //==========================================================
             for (let i = 0; i < archive.length; i++) {
               archiveTemp.push(archive[i]);
             }
@@ -515,8 +496,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   React.useEffect(() => {
     if (debug) {
       socket.on('message', (event: any) => {
+        console.log('&&&', event.data);
         const StateEntry = (MESS: any) => {
-          let eventData = event.data;
+          let eventData = JSON.parse(JSON.stringify(event.data));
           eventData.message = MESS;
           let roomTo = event.data.to;
           if (isNumeric(event.data.to)) {
@@ -532,7 +514,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             read: toTo,
           };
           archive.push(mask);
-          //setTimeout(() => {
           event.data.to === oldRoom && setState((_state) => [..._state, eventData]);
           event.data.to !== oldRoom &&
             setStateBasket((_stateBasket) => [..._stateBasket, eventData]);
@@ -542,6 +523,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           } else {
             if (event.data.to === oldRoom && oldRoom === 'Global') ScroolOrPip();
           }
+          return mask;
         };
         //============
         let toTo = true;
@@ -559,7 +541,12 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             if (reader.result !== null) {
               let mess = reader.result < 200 ? event.data.message : reader.result; // если длина спрессованной картинки < 200байт - косячная картинка
               StateEntry(mess);
-              MakeArchiveMess(event.data); // незапрессованные картинки
+              let mask = {
+                message: event.data.message,
+                time: event.data.date,
+              };
+              archiveMess.push(mask); // незапрессованные картинки
+              console.log('archiveMess:', archiveMess);
             } else {
               setTimeout(() => {
                 handleMake();
