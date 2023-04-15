@@ -43,11 +43,10 @@ const Messages = (props: {
       let tim = props.messages[idx].date;
       for (let i = 0; i < props.PICT.length; i++)
         if (props.PICT[i].time === tim) picture = props.PICT[i].message;
-
       let image = new Image();
       image.src = picture;
       setTimeout(() => {
-        console.log('!!!', idx, image.width, image.height);
+        //console.log('!!!', idx, image.width, image.height);
         imageWidth = window.screen.width - 169;
         //let proporsia = image.width / imageWidth;
         if (image.width < imageWidth) imageWidth = image.width;
@@ -196,8 +195,6 @@ const Messages = (props: {
             borderBottomRightRadius: bbrr,
           };
 
-          //console.log('2Пришло:', props.messages[i].message);
-
           resSt.push(
             <Grid key={j} item xs={12} sx={{ border: 0 }}>
               {!pict && <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>}
@@ -266,96 +263,3 @@ const Messages = (props: {
 };
 
 export default Messages;
-
-//https://russianblogs.com/article/3283799248/
-// let eleFile = document.querySelector("#file");
-
-// // Некоторые элементы и объекты, необходимые для сжатия изображений
-// let reader = new FileReader();
-// let img = new Image();
-
-// // выбранный файловый объект
-// let file: any = null;
-
-// // Холст, необходимый для увеличения изображения
-// let canvas = document.createElement("canvas");
-// let context = canvas.getContext("2d");
-
-// // После загрузки изображения адреса base64
-// img.onload = function () {
-//   // Исходный размер изображения
-//   let originWidth = img.width;
-//   let originHeight = img.height;
-//   // Максимальный предел размера
-//   var maxWidth = 400,
-//     maxHeight = 400;
-//   // целевой размер
-//   var targetWidth = originWidth,
-//     targetHeight = originHeight;
-//   // Размер изображения превышает предел 400x400
-//   if (originWidth > maxWidth || originHeight > maxHeight) {
-//     if (originWidth / originHeight > maxWidth / maxHeight) {
-//       // шире, ограничиваем размер по ширине
-//       targetWidth = maxWidth;
-//       targetHeight = Math.round(maxWidth * (originHeight / originWidth));
-//     } else {
-//       targetHeight = maxHeight;
-//       targetWidth = Math.round(maxHeight * (originWidth / originHeight));
-//     }
-//   }
-
-//   // Масштаб изображения на холсте
-//   canvas.width = targetWidth;
-//   canvas.height = targetHeight;
-//   // Очищаем холст
-//   context && context.clearRect(0, 0, targetWidth, targetHeight);
-//   // Сжатие изображения
-//   context && context.drawImage(img, 0, 0, targetWidth, targetHeight);
-//   // конвертируем холст в большой двоичный объект и загружаем
-//   canvas.toBlob(function (blob) {
-//     // Загрузка изображения ajax
-//     var xhr = new XMLHttpRequest();
-//     // Файл загружен успешно
-//     xhr.onreadystatechange = function () {
-//       if (xhr.status == 200) {
-//         // xhr.responseText - возвращаемые данные
-//       }
-//     };
-//     // Начинаем загрузку
-//     xhr.open("POST", "upload.php", true);
-//     xhr.send(blob);
-//   }, file.type || "image/png");
-// };
-
-// // Файл base64, чтобы узнать исходный размер картинки
-// reader.onload = function (e: any) {
-//   img.src = e.target.result;
-// };
-// eleFile && eleFile.addEventListener("change", function (event: any) {
-//   file = event.target.files[0];
-//   // Выбранный файл представляет собой картинку
-//   if (file.type.indexOf("image") == 0) {
-//     reader.readAsDataURL(file);
-//   }
-// });
-//===========================================================
-// react js сжатие графического файла
-//https://www-abstractapi-com.translate.goog/guides/how-to-compress-an-image-in-react?_x_tr_sl=auto&_x_tr_tl=ru&_x_tr_hl=ru
-//npm install --save browser-image-compression
-//import imageCompression from 'browser-image-compression';
-// React compress image component
-
-// async function handleImageUpload(event: any) {
-//   const imageFile = event.target.files[0];
-
-//   const options = {
-//     maxSizeMB: 1,
-//     maxWidthOrHeight: 1920,
-//   };
-//   try {
-//     const compressedFile = await imageCompression(imageFile, options);
-//     console.log(compressedFile.size / 1024 / 1024);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }

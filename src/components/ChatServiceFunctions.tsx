@@ -17,12 +17,18 @@ import { styleChatBut01, styleChatBut02 } from './ComponentsStyle';
 //=== Chat =========================================
 export const isNumeric = (n: number) => !isNaN(n);
 
+export const Scrooler = (divRef: any) => {
+  setTimeout(() => {
+    // 👇️ scroll to bottom every time messages change
+    divRef.current && divRef.current.scrollIntoView();
+  }, 150);
+};
+
 export const b64toBlob = (b64Data: any, contentType: any, sliceSize: number) => {
   contentType = contentType || '';
   sliceSize = sliceSize || 512;
-
-  let byteCharacters1 = Buffer.from(b64Data, 'base64')
-  let byteCharacters2 = byteCharacters1.toString('base64')
+  let byteCharacters1 = Buffer.from(b64Data, 'base64');
+  let byteCharacters2 = byteCharacters1.toString('base64');
   //let byteCharacters = atob(b64Data);
   let byteCharacters = atob(byteCharacters2);
   //console.log('0:',byteCharacters)
@@ -38,15 +44,15 @@ export const b64toBlob = (b64Data: any, contentType: any, sliceSize: number) => 
     let byteArray = new Uint8Array(byteNumbers);
     byteArrays.push(byteArray);
   }
-  let blob = new Blob(byteArrays, {type: contentType});
-  console.log('3:',blob)
+  let blob = new Blob(byteArrays, { type: contentType });
+  console.log('3:', blob);
   return blob;
 };
 
 export const MakeNewBlob = (MESS: string) => {
-  let poz = MESS.indexOf(",");
+  let poz = MESS.indexOf(',');
   let sblob = MESS.slice(poz + 1);
-  let contentType = "image/png";
+  let contentType = 'image/png';
   let blob: any = b64toBlob(sblob, contentType, 512);
   return blob;
 };
