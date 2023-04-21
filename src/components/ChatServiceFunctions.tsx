@@ -26,7 +26,7 @@ export const Scrooler = (divRef: any) => {
 
 export const b64toBlob = (b64Data: any, contentType: any, sliceSize: number) => {
   contentType = contentType || '';
-  sliceSize = sliceSize || 512;
+  sliceSize = sliceSize || 256;
   let byteCharacters1 = Buffer.from(b64Data, 'base64');
   let byteCharacters2 = byteCharacters1.toString('base64');
   //let byteCharacters = atob(b64Data);
@@ -53,7 +53,7 @@ export const MakeNewBlob = (MESS: string) => {
   let poz = MESS.indexOf(',');
   let sblob = MESS.slice(poz + 1);
   let contentType = 'image/png';
-  let blob: any = b64toBlob(sblob, contentType, 512);
+  let blob: any = b64toBlob(sblob, contentType, 256);
   return blob;
 };
 
@@ -332,7 +332,7 @@ export const SendSocketDeleteMessage = (
   nameKomu: string,
   timeMewss: any,
 ) => {
-  console.log("SendSocketDeleteMessage:", otKogo, nameKomu);
+  console.log('SendSocketDeleteMessage:', otKogo, nameKomu);
   const handleSendOpen = () => {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(
