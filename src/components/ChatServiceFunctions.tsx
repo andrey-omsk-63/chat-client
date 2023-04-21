@@ -325,6 +325,34 @@ export const SendSocketSendMessage = (
   handleSendOpen();
 };
 
+export const SendSocketDeleteMessage = (
+  ws: WebSocket,
+  message: any,
+  otKogo: string,
+  nameKomu: string,
+  timeMewss: any,
+) => {
+  console.log("SendSocketDeleteMessage:", otKogo, nameKomu);
+  const handleSendOpen = () => {
+    if (ws.readyState === WebSocket.OPEN) {
+      ws.send(
+        JSON.stringify({
+          type: 'delete',
+          from: otKogo,
+          message: message,
+          time: timeMewss,
+          to: nameKomu,
+        }),
+      );
+    } else {
+      setTimeout(() => {
+        handleSendOpen();
+      }, 1000);
+    }
+  };
+  handleSendOpen();
+};
+
 export const SendSocketHistory = (ws: WebSocket, dStart: string, dEnd: string) => {
   console.log('SendHistory:', dStart, dEnd);
   const handleSendOpen = () => {

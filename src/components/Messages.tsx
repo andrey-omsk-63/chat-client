@@ -46,7 +46,6 @@ const Messages = (props: {
       let image = new Image();
       image.src = picture;
       setTimeout(() => {
-        //console.log('!!!', idx, image.width, image.height);
         imageWidth = window.screen.width - 169;
         //let proporsia = image.width / imageWidth;
         if (image.width < imageWidth) imageWidth = image.width;
