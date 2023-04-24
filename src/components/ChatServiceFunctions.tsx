@@ -382,7 +382,7 @@ export const SendSocketMarkAsRead = (
   mess: string,
   timeMess: string,
 ) => {
-  console.log('SendMarkAsRead:', otKogo, nameKomu, mess, timeMess);
+  console.log('SendMarkAsRead:', otKogo, nameKomu, timeMess);
   const handleSendOpen = () => {
     if (ws.readyState === WebSocket.OPEN) {
       ws.send(

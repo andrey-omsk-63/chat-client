@@ -209,6 +209,12 @@ export const styleChatBut02 = {
   borderRadius: 3,
   boxShadow: 2,
 };
+
+export const styleBackdrop = {
+  color: "#fff",
+  marginLeft: window.innerWidth - 698 + "px",
+  zIndex: (theme: any) => theme.zIndex.drawer + 1,
+};
 //=== Messages ===========================================
 export const styleMess01 = {
   width: '100%',
@@ -240,7 +246,7 @@ export const styleMePict = {
 };
 
 export const styleUserPict = {
-  //border: 1,
+  border: 0,
   padding: '0 0px 3px 0',
   width: '77%',
   height: '100%',
@@ -258,27 +264,9 @@ export const styleModalEnd = {
 };
 
 export const styleDelete = {
-  fontSize: 10,
+  fontSize: 7,
   height: '21px',
   maxWidth: '2%',
   minWidth: '2%',
 };
-
-// export const styleSetSelect = {
-//   position: 'absolute',
-//   left: '50%',
-//   top: '50%',
-//   transform: 'translate(-50%, -50%)',
-//   width: window.screen.width - 169,
-//   height: window.screen.height - 169,
-//   bgcolor: 'background.paper',
-//   p: 0.5,
-// };
-
-// export const styleModalOverflow = {
-//   overflowX: 'auto',
-//   //overflowY: 'auto',
-//   width: window.screen.width - 190,
-//   height: window.screen.height - 177,
-// };
 //========================================================
