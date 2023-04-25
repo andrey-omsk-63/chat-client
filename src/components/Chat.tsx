@@ -165,11 +165,11 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const BeginWork = React.useCallback(
     (arch: any, mode: number) => {
       pipa = true;
+      archiveTemp = [];
       if (arch) {
         if (arch.messages) {
           setOpenLoader(true);
           let archivePict: any = [];
-          archiveTemp = [];
           for (let i = 0; i < arch.messages.length; i++) {
             let mask = {
               from: arch.messages[i].from,
@@ -265,7 +265,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       if (archive[i].time !== time) {
         archiveRab.push(archive[i]);
       } else {
-        console.log("Запрос на удаление:", archive[i]);
         SendSocketDeleteMessage(
           WS,
           archive[i].message,
@@ -302,7 +301,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           tempPosition = JSON.parse(JSON.stringify(maxPosition));
           BeginWorkInRoom("Global", 0, true);
           console.log("ОТРАБОТАЛ EndMake");
-          // setOpenLoader(false);
         };
         EndMake(EndMakeSendReguest);
       }
@@ -383,7 +381,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     },
     [WS, trigger, props.nik, ScroolOrPip]
   );
-
+  //ЗАПРОС на чтение архива
   React.useEffect(() => {
     WS.onopen = function (event: any) {
       console.log("WS.current.onopen:", event);
@@ -411,9 +409,12 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           } else {
             BeginWork(data.archive, 0);
             const EndMakArchive = () => {
-              if (!scRef.current.scrollTop) SendReguest();
-              console.log("ОТРАБОТАЛ EndMake_messages");
-              //setOpenLoader(false);
+              BeginWorkInRoom("Global", 0, true);
+              setTimeout(() => {
+                Scrooler(divRef);
+                if (!scRef.current.scrollTop) SendReguest();
+                console.log("ОТРАБОТАЛ EndMake_messages");
+              }, 600);
             };
             EndMake(EndMakArchive);
           }
@@ -428,13 +429,13 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
               for (let i = 0; i < archive.length; i++)
                 archiveTemp.push(archive[i]);
               archive = JSON.parse(JSON.stringify(archiveTemp));
+              archiveTemp = [];
               tempPosition = JSON.parse(JSON.stringify(maxPosition));
               BeginWorkInRoom("Global", 0, true);
               setTimeout(() => {
                 if (!scRef.current.scrollTop) SendReguest();
               }, 600);
               console.log("ОТРАБОТАЛ EndMake_history");
-              //setOpenLoader(false);
             };
             EndMake(EndMakeHistory);
           }
@@ -454,13 +455,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           break;
         case "delete":
           let archiveRab: any = [];
-          console.log("data_delete:", data.time, data);
           for (let i = 0; i < archive.length; i++) {
-            if (archive[i].time !== data.time) {
-              archiveRab.push(archive[i]);
-            } else {
-              console.log("Удаление сообщения:", archive[i]);
-            }
+            if (archive[i].time !== data.time) archiveRab.push(archive[i]);
           }
           archive = JSON.parse(JSON.stringify(archiveRab));
           BeginWorkInRoom(params.room, params.room === "Global" ? 0 : 1, false);
@@ -468,7 +464,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     };
   }, [
     WS,
-    PostingArchive,
     BeginWorkInRoom,
     BeginWork,
     trigger,
@@ -785,7 +780,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const Dinama = () => {
     return (
       <Backdrop sx={styleBackdrop} open={openLoader} onClick={handleClose}>
-        <CircularProgress color="inherit" size={256} />
+        <CircularProgress color="inherit" size={121} />
       </Backdrop>
     );
   };
