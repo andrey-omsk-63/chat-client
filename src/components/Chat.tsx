@@ -73,6 +73,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const debug = WS.url.slice(0, 21) === "wss://localhost:3000/" ? true : false;
 
   const ScroolOrPip = React.useCallback(() => {
+    //console.log('POZITION:',maxPosition, scRef.current.scrollTop)
     if (maxPosition - scRef.current.scrollTop < 300) {
       Scrooler(divRef);
     } else {
@@ -147,6 +148,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
           }
         }
+        //console.log('SCROOL:',scrool)
         scrool && Scrooler(divRef);
       }
     },
