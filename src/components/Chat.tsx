@@ -83,6 +83,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   }, []);
 
   const EndMake = React.useCallback((func: Function) => {
+    //console.log("@@@@@@", popa);
     if (popa) {
       func();
       popa = false;
@@ -168,10 +169,12 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     (arch: any, mode: number) => {
       pipa = true;
       archiveTemp = [];
+      let archivePict: any = [];
       if (arch) {
         if (arch.messages) {
           setOpenLoader(true);
-          let archivePict: any = [];
+          //let archivePict: any = [];
+          console.log('###arch.messages:',arch.messages)
           for (let i = 0; i < arch.messages.length; i++) {
             let mask = {
               from: arch.messages[i].from,
@@ -213,7 +216,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
                     massPict.push(mask);
                     if (massPict.length === archivePict.length) {
                       let leng = mode ? archiveTemp.length : archive.length;
-                      console.log("Всё!!!", leng, massPict);
+                      console.log("Всё!!!", leng, mask.time, massPict);
                       for (let j = 0; j < massPict.length; j++) {
                         for (let i = 0; i < leng; i++) {
                           if (mode) {
@@ -422,9 +425,10 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           }
           break;
         case "history":
-          if (!data.history.messages) {
+          if (!data.history.messages && chDays < maxDays) {
             SendReguest();
           } else {
+            console.log("###data.history", data.history.messages[0].time);
             archiveTemp = [];
             BeginWork(data.history, 1);
             const EndMakeHistory = () => {
@@ -435,9 +439,9 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
               tempPosition = JSON.parse(JSON.stringify(maxPosition));
               BeginWorkInRoom("Global", 0, true);
               setTimeout(() => {
-                if (!scRef.current.scrollTop) SendReguest();
+                if (!scRef.current.scrollTop && chDays < maxDays) SendReguest();
+                console.log("ОТРАБОТАЛ EndMake_history");
               }, 600);
-              console.log("ОТРАБОТАЛ EndMake_history");
             };
             EndMake(EndMakeHistory);
           }
