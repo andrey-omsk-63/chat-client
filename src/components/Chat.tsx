@@ -73,7 +73,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const debug = WS.url.slice(0, 21) === "wss://localhost:3000/" ? true : false;
 
   const ScroolOrPip = React.useCallback(() => {
-    //console.log('POZITION:',maxPosition, scRef.current.scrollTop)
     if (maxPosition - scRef.current.scrollTop < 300) {
       Scrooler(divRef);
     } else {
@@ -136,20 +135,14 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             };
             if (!archive[i].read) {
               archive[i].read = true;
+              let q = archive[i];
               if (archive[i].to !== "Global" && archive[i].from !== "Global")
-                SendSocketMarkAsRead(
-                  WS,
-                  archive[i].from,
-                  archive[i].to,
-                  archive[i].message,
-                  archive[i].time
-                );
+                SendSocketMarkAsRead(WS, q.from, q.to, q.message, q.time);
             }
             setState((_state) => [..._state, maskSoob]);
             setStateBasket((_stateBasket) => [..._stateBasket, maskSoob]);
           }
         }
-        //console.log('SCROOL:',scrool)
         scrool && Scrooler(divRef);
       }
     },
@@ -247,7 +240,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             }
           }
           const PipMake = () => {
-            console.log("******", mode, pipa);
+            console.log("******", mode, pipa, popa);
             if (pipa) {
               !mode && BeginWorkInRoom("Global", 0, true);
               popa = true;
@@ -267,16 +260,11 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const DelRec = (time: string) => {
     let archiveRab: any = [];
     for (let i = 0; i < archive.length; i++) {
+      let q = archive[i];
       if (archive[i].time !== time) {
         archiveRab.push(archive[i]);
       } else {
-        SendSocketDeleteMessage(
-          WS,
-          archive[i].message,
-          archive[i].from,
-          archive[i].to,
-          archive[i].time
-        );
+        SendSocketDeleteMessage(WS, q.message, q.from, q.to, q.time);
       }
     }
     if (debug) {
@@ -425,10 +413,10 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           }
           break;
         case "history":
-          if (!data.history.messages && chDays < maxDays) {
-            SendReguest();
+          if (!data.history.messages) {
+            if (chDays < maxDays) SendReguest();
           } else {
-            console.log("###data.history", data.history.messages[0].time);
+            //console.log("###data.history", data.history.messages[0].time);
             archiveTemp = [];
             BeginWork(data.history, 1);
             const EndMakeHistory = () => {
