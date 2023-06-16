@@ -167,7 +167,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         if (arch.messages) {
           setOpenLoader(true);
           //let archivePict: any = [];
-          console.log('###arch.messages:',arch.messages)
+          //console.log('###arch.messages:',arch.messages)
           for (let i = 0; i < arch.messages.length; i++) {
             let mask = {
               from: arch.messages[i].from,
@@ -599,6 +599,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const ClickKnop = (mode: number) => {
     afterRoomPosition = JSON.parse(JSON.stringify(scrollPosition));
     if (maxPosition === afterRoomPosition) afterRoomPosition = -1;
+    if (!afterRoomPosition && maxPosition) afterRoomPosition = 1; // конец Чата
     if (debug) socket.emit("leftRoom", { params });
     let newParams = params;
     let id1 = sistUsers[mode].id; // кому
