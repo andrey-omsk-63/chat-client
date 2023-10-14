@@ -18,9 +18,9 @@ const ChatErrorMessage = (props: { sErr: string; setOpen: any }) => {
     transform: 'translate(-50%, -50%)',
     width: 380,
     bgcolor: 'background.paper',
-    border: '3px solid #000',
+    border: '1px solid #000',
     borderColor: 'red',
-    borderRadius: 2,
+    borderRadius: 1,
     boxShadow: 24,
     p: 1.5,
   };
@@ -42,7 +42,7 @@ const ChatErrorMessage = (props: { sErr: string; setOpen: any }) => {
   };
 
   return (
-    <Modal open={openSet} onClose={handleClose} hideBackdrop>
+    <Modal open={openSet} onClose={handleClose} hideBackdrop={false}>
       <Box sx={styleSetInf}>
         <Button sx={styleModalEnd} onClick={handleClose}>
           <b>&#10006;</b>

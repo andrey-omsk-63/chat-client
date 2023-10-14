@@ -61,12 +61,13 @@ export const styleChat02 = {
   color: 'blue',
   //background: '#D3D3D3',
   //background: '#E5E5E5',
-  background: '#CCDCEC',
+  //background: '#CCDCEC', // серо-голубой
+  background: '#F1F5FB', // светло серый
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
   padding: '0 20px',
-  borderTopLeftRadius: 9,
+  borderTopLeftRadius: 4,
 };
 
 export const styleChat021 = {
@@ -97,18 +98,21 @@ export const styleChat04 = {
   color: '#fff',
   padding: '4px',
   cursor: 'pointer',
+  boxShadow: 5,
   textTransform: 'unset !important',
 };
 
 export const styleChat041 = {
   fontSize: 12.5,
-  background: '#B3CBE3',
+  //background: '#B3CBE3', // голубой
+  bgcolor: "#E6F5D6", // светло салатовый
   marginTop: -0.5,
   color: 'blue',
   padding: '6px',
   border: 1,
-  borderRadius: 3,
-  boxShadow: 2,
+  borderColor: "#d4d4d4", // серый
+  borderRadius: 2,
+  boxShadow: 5,
   textTransform: 'unset !important',
 };
 
@@ -130,11 +134,12 @@ export const styleChat16 = {
   alignItems: 'center',
   //background: '#D3D3D3',
   //background: '#E5E5E5',
-  background: '#CCDCEC',
+  //background: '#CCDCEC', // серо-голубой
+  background: '#F1F5FB', // светло серый
   justifyContent: 'space-between',
   height: '7vh',
   padding: '0 0 0 10px',
-  borderBottomLeftRadius: 9,
+  borderBottomLeftRadius: 4,
 };
 
 export const styleChat06 = {
@@ -192,10 +197,12 @@ export const styleChatInp04 = {
 };
 
 export const styleChatBut01 = {
-  minWidth: 20,
-  maxWidth: 20,
+  minWidth: 16,
+  maxWidth: 16,
+  minHeight: 14,
+  maxHeight: 14,
   marginTop: -0.5,
-  //border: 1,
+  boxShadow: 5,
 };
 
 export const styleChatBut02 = {
@@ -204,10 +211,25 @@ export const styleChatBut02 = {
   maxWidth: 70,
   marginTop: -0.5,
   textTransform: 'unset !important',
-  background: '#B3CBE3',
+  //background: '#B3CBE3', // голубой
+  bgcolor: "#E6F5D6", // светло салатовый
   border: 1,
-  borderRadius: 3,
-  boxShadow: 2,
+  borderColor: "#d4d4d4", // серый
+  borderRadius: 2,
+  boxShadow: 5,
+};
+
+export const styleChatBut021 = {
+  fontSize: 16,
+  minWidth: 70,
+  maxWidth: 70,
+  marginTop: -0.5,
+  textTransform: 'unset !important',
+  bgcolor: "#BAE186", // салатовый
+  border: 1,
+  borderColor: "#93D145", // тёмно салатовый
+  borderRadius: 2,
+  boxShadow: 5,
 };
 
 export const styleBackdrop = {

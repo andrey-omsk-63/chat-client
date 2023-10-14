@@ -649,7 +649,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         {!debug && params.room === "Global" && (
           <>{HeaderChel(users, chel, nameRoom)}</>
         )}
-        <Button sx={styleChat04} variant="contained" onClick={leftRoom}>
+        <Button sx={styleChat04} onClick={leftRoom}>
           {redKnop}
         </Button>
       </Box>
@@ -806,7 +806,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           {LeftPartChat()}
         </Grid>
         <Grid item xs sx={styleChat01}>
-          <Box sx={{ background: "#CCDCEC" }}>
+          <Box sx={{ background: "#F1F5FB" }}>
             {debug && DebugRigtPartChat(params.room, usersRooms)}
             {HeaderSist()}
             {UsersSist(sistUsers, archive, params.name, nameKomu, ClickKnop)}
