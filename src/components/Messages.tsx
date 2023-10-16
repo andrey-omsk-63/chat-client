@@ -1,21 +1,21 @@
-import React from 'react';
+import React from "react";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
 
-import { MesssgeLength, Splitter } from './ChatServiceFunctions';
+import { MesssgeLength, Splitter } from "./ChatServiceFunctions";
 
-import { styleMess01, styleMeUser } from './ComponentsStyle';
-import { styleMePict, styleUserPict } from './ComponentsStyle';
-import { styleModalEnd, styleDelete } from './ComponentsStyle';
+import { styleMess01, styleMeUser } from "./ComponentsStyle";
+import { styleMePict, styleUserPict } from "./ComponentsStyle";
+import { styleModalEnd, styleDelete } from "./ComponentsStyle";
 
 let resStr: any = [];
 let picture: any = null;
 let imageWidth = 0;
 let imageHeight = 0;
-let overFlow = 'auto';
+let overFlow = "auto";
 //let ch = 0;
 
 const Messages = (props: {
@@ -50,26 +50,26 @@ const Messages = (props: {
         //let proporsia = image.width / imageWidth;
         if (image.width < imageWidth) imageWidth = image.width;
         imageHeight = window.screen.height - 177;
-        overFlow = 'auto';
+        overFlow = "auto";
         if (image.height < imageHeight) {
           imageHeight = image.height;
-          overFlow = 'hidden';
+          overFlow = "hidden";
         }
         setOpenSetMode(true);
       }, 200);
     },
-    [props.messages, props.PICT],
+    [props.messages, props.PICT]
   );
 
   const styleSetSelect = {
-    outline: 'none',
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
+    outline: "none",
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
     width: imageWidth + 20,
     height: imageHeight + 2,
-    bgcolor: 'background.paper',
+    bgcolor: "background.paper",
     p: 0.3,
   };
 
@@ -84,14 +84,17 @@ const Messages = (props: {
     for (let i = 0; i < props.messages.length; i++) {
       let itsme = false;
       let pict = false;
-      if (props.messages[i].user.name.trim().toLowerCase() === props.name.trim().toLowerCase())
+      if (
+        props.messages[i].user.name.trim().toLowerCase() ===
+        props.name.trim().toLowerCase()
+      )
         itsme = true;
-      let coler = 'black';
-      if (!itsme && props.messages[i].user.name === 'ChatAdmin') coler = 'blue';
+      let coler = "black";
+      if (!itsme && props.messages[i].user.name === "ChatAdmin") coler = "blue";
       let dlina = MesssgeLength(props.messages[i].message, 13.5) + 14;
       let mass: string[] = [props.messages[i].message];
       if (props.messages[i].message.length > 50) {
-        if (props.messages[i].message.slice(0, 11) === 'data:image/') {
+        if (props.messages[i].message.slice(0, 11) === "data:image/") {
           pict = true;
           //Ch();
         } else {
@@ -105,38 +108,42 @@ const Messages = (props: {
       }
 
       const styleUserUser = {
-        fontSize: '11.5px',
+        fontSize: "11.5px",
         color: coler,
-        paddingLeft: '9px',
+        paddingLeft: "9px",
       };
 
       let dat =
-        new Date(props.messages[i].date).toLocaleDateString() !== new Date().toLocaleDateString()
+        new Date(props.messages[i].date).toLocaleDateString() !==
+        new Date().toLocaleDateString()
           ? new Date(props.messages[i].date).toLocaleDateString()
-          : '';
-      let tim = new Date(props.messages[i].date).toLocaleTimeString().slice(0, -3);
+          : "";
+      let tim = new Date(props.messages[i].date)
+        .toLocaleTimeString()
+        .slice(0, -3);
 
       const MassMessages = () => {
         let resSt: any = [];
         for (let j = 0; j < mass.length; j++) {
           let mb = 1;
           let mt = 0.3;
-          let bs = 2;
+          //let bs = 4;
+          let bs = "2px 4px 4px 1px #8BA27D";
           let ht = 27;
-          let btlr = 9;
-          let btrr = 9;
-          let bblr = 9;
-          let bbrr = 9;
+          let btlr = 6;
+          let btrr = 6;
+          let bblr = 6;
+          let bbrr = 6;
           if (mass.length > 1 && j < mass.length - 1) mb = 0;
           if (j === 0 && mass.length > 1) {
-            bs = 0;
+            //bs = 0;
           } else {
             btlr = 0;
             btrr = 0;
           }
           if (j > 0 && j < mass.length - 1) {
             mt = 0;
-            bs = 0;
+            //bs = 0;
           }
           if (j === mass.length - 1 && mass.length > 1) {
             mt = 0;
@@ -147,10 +154,10 @@ const Messages = (props: {
             if (mass.length > 1) ht = 21;
           }
           if (mass.length === 1) {
-            bblr = 9;
-            bbrr = 9;
-            btlr = 9;
-            btrr = 9;
+            bblr = 6;
+            bbrr = 6;
+            btlr = 6;
+            btrr = 6;
           }
 
           if (!itsme) btlr = 0;
@@ -160,14 +167,14 @@ const Messages = (props: {
             width: dlina,
             border: 2,
             height: ht,
-            fontSize: '13.5px',
-            background: '#93E5EE', //зелёный
-            borderColor: '#93E5EE',
-            color: 'black',
+            fontSize: "13.5px",
+            background: "#93E5EE", //зелёный
+            borderColor: "#93E5EE",
+            color: "black",
             marginTop: mt,
-            padding: '3px 0px 0 6px',
-            marginLeft: 'auto',
-            marginRight: 0.4,
+            padding: "3px 0px 0 6px",
+            marginLeft: "auto",
+            marginRight: 1,
             marginBottom: mb,
             boxShadow: bs,
             borderTopLeftRadius: btlr,
@@ -180,12 +187,13 @@ const Messages = (props: {
             width: dlina,
             border: 2,
             height: ht,
-            fontSize: '13.5px',
-            background: '#fafac3', // жёлтый
-            borderColor: '#fafac3',
+            fontSize: "13.5px",
+            background: "#fafac3", // жёлтый
+            borderColor: "#fafac3",
             color: coler,
             marginTop: mt,
-            padding: '2px 0px 0 6px',
+            marginLeft: 0.5,
+            padding: "2px 0px 0 6px",
             marginBottom: mb,
             boxShadow: bs,
             borderTopLeftRadius: btlr,
@@ -196,19 +204,25 @@ const Messages = (props: {
 
           resSt.push(
             <Grid key={j} item xs={12} sx={{ border: 0 }}>
-              {!pict && <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>}
+              {!pict && (
+                <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>
+              )}
               {pict && (
                 <Box sx={!itsme ? styleUserPict : styleMePict}>
                   <img
                     src={props.messages[i].message}
-                    style={{ float: itsme ? 'right' : 'left' }}
+                    style={{
+                      //paddingRight: 0,
+                      boxShadow: "0px 2px 8px 3px #8BA27D",
+                      float: itsme ? "right" : "left",
+                    }}
                     alt="PICT"
-                    width="77%"
+                    //width="77%"
                     onClick={() => handleClickPict(i)}
                   />
                 </Box>
               )}
-            </Grid>,
+            </Grid>
           );
         }
         return resSt;
@@ -232,14 +246,14 @@ const Messages = (props: {
             )}
           </Grid>
           {MassMessages()}
-        </Grid>,
+        </Grid>
       );
     }
     return resStr;
   }, [props.messages, props.name, handleClickPict]);
 
   React.useMemo(() => {
-    console.log('MeMo');
+    console.log("MeMo");
     //console.log('2Пришло:', props.messages, props.PICT);
     StrMessages();
   }, [StrMessages]);
