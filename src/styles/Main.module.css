@@ -53,3 +53,28 @@
   font-weight: 700;
   color: #fff;
 }
+
+.block {
+  border: 1px solid green;
+  border-radius: 10px;
+  padding: 20px;
+  position: relative;
+  background: green;
+  color: #fff;
+  box-shadow: 0 0 7px #000; /* Добавляем тень для блока */
+ }
+ .block::after, .block::before {
+  content: '';
+  position: absolute;
+  background: green;
+  left: 20px; bottom: -11px;
+  width: 20px; height: 20px;
+  box-shadow: 0 0 7px #000; /* Добавляем тень для уголка */
+  z-index: -1; /* Прячем за основным блоком */
+  transform: rotate(45deg); /* Поворачиваем на 45º */
+  -webkit-transform: rotate(45deg);
+ }
+ .block::before {
+  z-index: 1; /* Накладываем поверх, чтобы скрыть следы тени */
+  box-shadow: none; /* Прячем тень */
+ }

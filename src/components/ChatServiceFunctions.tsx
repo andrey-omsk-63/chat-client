@@ -274,8 +274,7 @@ export const ChatServisKnop = (
 ) => {
   let pointt = metka ? "●" : " ";
   let sound = turnOn ? "🔇 Выкл" : "🔊 Вкл";
-  let illum = turnOn ? styleChatBut021 : styleChatBut02;
-  //let soundCondit = turnOn ? 'Звук включён' : 'Звук выключен';
+  let illum = !turnOn ? styleChatBut021 : styleChatBut02;
   let poz = scRef.current ? scRef.current.scrollTop : 0;
   return (
     <Grid container sx={{ border: 0, height: "9.5vh" }}>
@@ -293,7 +292,6 @@ export const ChatServisKnop = (
         <Button sx={illum} onClick={() => TurnOn()}>
           {sound}
         </Button>
-        {/* <Box sx={{ fontSize: 10.5, color: 'blue', marginTop: 0.5 }}>{soundCondit}</Box> */}
       </Grid>
     </Grid>
   );

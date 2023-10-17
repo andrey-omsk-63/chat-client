@@ -714,7 +714,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         if (maxPosition === position && !afterRoomPosition) metka = false;
         if (tempPosition) {
           let poz = maxPosition - tempPosition;
-          scRef.current.scrollTo(0, poz - 69); // встать на Якорь
+          scRef.current.scrollTo(0, poz - 69); // встать на 'Якорь'
           tempPosition = 0;
         }
         if (!position && params.room === "Global" && chDays < maxDays)

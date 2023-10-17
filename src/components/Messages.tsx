@@ -7,9 +7,9 @@ import Modal from "@mui/material/Modal";
 
 import { MesssgeLength, Splitter } from "./ChatServiceFunctions";
 
-import { styleMess01, styleMeUser } from "./ComponentsStyle";
-import { styleMePict, styleUserPict } from "./ComponentsStyle";
-import { styleModalEnd, styleDelete } from "./ComponentsStyle";
+import { styleMess01, styleMeUser, styleMeSay } from "./ComponentsStyle";
+import { styleMePict, styleUserPict, styleUserSay } from "./ComponentsStyle";
+import { styleDelete } from "./ComponentsStyle";
 
 let resStr: any = [];
 let picture: any = null;
@@ -126,7 +126,8 @@ const Messages = (props: {
         let resSt: any = [];
         for (let j = 0; j < mass.length; j++) {
           let mb = 1;
-          let mt = 0.3;
+          //let mt = 0.3;
+          let mt = -2.15;
           //let bs = 4;
           let bs = "2px 4px 4px 1px #8BA27D";
           let ht = 27;
@@ -168,7 +169,7 @@ const Messages = (props: {
             border: 2,
             height: ht,
             fontSize: "13.5px",
-            background: "#93E5EE", //зелёный
+            background: "#93E5EE", //голубой
             borderColor: "#93E5EE",
             color: "black",
             marginTop: mt,
@@ -192,7 +193,7 @@ const Messages = (props: {
             borderColor: "#fafac3",
             color: coler,
             marginTop: mt,
-            marginLeft: 0.5,
+            marginLeft: 1,
             padding: "2px 0px 0 6px",
             marginBottom: mb,
             boxShadow: bs,
@@ -205,19 +206,20 @@ const Messages = (props: {
           resSt.push(
             <Grid key={j} item xs={12} sx={{ border: 0 }}>
               {!pict && (
-                <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>
+                <>
+                  {!j && <Box sx={!itsme ? styleUserSay : styleMeSay}>▼</Box>}
+                  <Box sx={!itsme ? styleUserText : styleMeText}>{mass[j]}</Box>
+                </>
               )}
               {pict && (
                 <Box sx={!itsme ? styleUserPict : styleMePict}>
                   <img
                     src={props.messages[i].message}
                     style={{
-                      //paddingRight: 0,
                       boxShadow: "0px 2px 8px 3px #8BA27D",
                       float: itsme ? "right" : "left",
                     }}
                     alt="PICT"
-                    //width="77%"
                     onClick={() => handleClickPict(i)}
                   />
                 </Box>
@@ -257,6 +259,21 @@ const Messages = (props: {
     //console.log('2Пришло:', props.messages, props.PICT);
     StrMessages();
   }, [StrMessages]);
+
+  let sdvig = "-0px";
+  if (imageWidth > 1000) sdvig = "-5px";
+  if (imageWidth > 1400) sdvig = "-9px";
+
+  const styleModalEnd = {
+    position: "absolute",
+    top: "0%",
+    left: "auto",
+    right: sdvig,
+    height: "21px",
+    maxWidth: "2%",
+    minWidth: "2%",
+    color: "black",
+  };
 
   return (
     <>

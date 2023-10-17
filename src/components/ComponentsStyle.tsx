@@ -216,7 +216,7 @@ export const styleChatBut02 = {
   border: 1,
   borderColor: "#d4d4d4", // серый
   borderRadius: 2,
-  boxShadow: 5,
+  boxShadow: 4,
 };
 
 export const styleChatBut021 = {
@@ -229,7 +229,7 @@ export const styleChatBut021 = {
   border: 1,
   borderColor: "#93D145", // тёмно салатовый
   borderRadius: 2,
-  boxShadow: 5,
+  boxShadow: 9,
 };
 
 export const styleBackdrop = {
@@ -287,5 +287,16 @@ export const styleDelete = {
   height: "21px",
   maxWidth: "2%",
   minWidth: "2%",
+};
+
+export const styleMeSay = {
+  fontSize: 18,
+  textAlign: "right",
+  color: "#93E5EE",
+};
+
+export const styleUserSay = {
+  fontSize: 18,
+  color: "#fafac3",
 };
 //========================================================
