@@ -216,7 +216,7 @@ const Messages = (props: {
                   <img
                     src={props.messages[i].message}
                     style={{
-                      boxShadow: "0px 2px 8px 3px #8BA27D",
+                      boxShadow: "4px 4px 10px 2px #8BA27D",
                       float: itsme ? "right" : "left",
                     }}
                     alt="PICT"

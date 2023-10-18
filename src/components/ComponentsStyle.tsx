@@ -259,16 +259,19 @@ export const styleMeUser = {
 };
 
 export const styleMePict = {
-  padding: "3px 3px 3px 6px",
+  padding: "3px 3px 6px 6px",
   marginLeft: "auto",
   marginRight: 0.4,
+  //marginTop: 0.5,
   //width: '77%',
   height: "100%",
 };
 
 export const styleUserPict = {
-  padding: "0px 0px 3px 3px",
+  //padding: "0px 0px 3px 3px",
+  padding: "6px 3px 0 6px",
   height: "100%",
+  marginBottom: 13.5,
 };
 
 export const styleModalEnd = {
