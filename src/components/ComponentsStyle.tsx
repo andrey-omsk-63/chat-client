@@ -256,14 +256,13 @@ export const styleMeUser = {
   color: "black",
   paddingRight: "9px",
   textAlign: "right",
+  textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
 };
 
 export const styleMePict = {
   padding: "3px 3px 6px 6px",
   marginLeft: "auto",
   marginRight: 0.4,
-  //marginTop: 0.5,
-  //width: '77%',
   height: "100%",
 };
 

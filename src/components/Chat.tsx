@@ -61,7 +61,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   const [stateBasket, setStateBasket] = React.useState<Array<any>>([]);
   const [message, setMessage] = React.useState("");
   const [isOpen, setOpen] = React.useState(false);
-  const [users, setUsers] = React.useState<number | any>(-5);
+  const [users, setUsers] = React.useState<number | any>(1);
   const [scrollPosition, setScrollPosition] = React.useState(0);
   const [trigger, setTrigger] = React.useState(false);
   const [openSetErr, setOpenSetErr] = React.useState(false);

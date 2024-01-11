@@ -27,10 +27,6 @@ const Messages = (props: {
 }) => {
   //console.log('1Пришло:', props.messages, props.PICT);
   let FuncDel = props.funcDel;
-  // const Ch = () => {
-  //   ch++;
-  //   //console.log('Ch:', ch);
-  // };
 
   const [openSetMode, setOpenSetMode] = React.useState(false);
 
@@ -47,7 +43,6 @@ const Messages = (props: {
       image.src = picture;
       setTimeout(() => {
         imageWidth = window.screen.width - 169;
-        //let proporsia = image.width / imageWidth;
         if (image.width < imageWidth) imageWidth = image.width;
         imageHeight = window.screen.height - 177;
         overFlow = "auto";
@@ -96,7 +91,6 @@ const Messages = (props: {
       if (props.messages[i].message.length > 50) {
         if (props.messages[i].message.slice(0, 11) === "data:image/") {
           pict = true;
-          //Ch();
         } else {
           mass = Splitter(props.messages[i].message, 69);
           dlina = 0;
@@ -111,6 +105,7 @@ const Messages = (props: {
         fontSize: "11.5px",
         color: coler,
         paddingLeft: "9px",
+        textShadow: "1px 1px 2px rgba(0,0,0,0.3)",
       };
 
       let dat =
@@ -126,9 +121,7 @@ const Messages = (props: {
         let resSt: any = [];
         for (let j = 0; j < mass.length; j++) {
           let mb = 1;
-          //let mt = 0.3;
           let mt = -2.15;
-          //let bs = 4;
           let bs = "2px 4px 4px 1px #8BA27D";
           let ht = 27;
           let btlr = 6;
@@ -142,10 +135,7 @@ const Messages = (props: {
             btlr = 0;
             btrr = 0;
           }
-          if (j > 0 && j < mass.length - 1) {
-            mt = 0;
-            //bs = 0;
-          }
+          if (j > 0 && j < mass.length - 1) mt = 0;
           if (j === mass.length - 1 && mass.length > 1) {
             mt = 0;
             ht = 27;
@@ -160,7 +150,6 @@ const Messages = (props: {
             btlr = 6;
             btrr = 6;
           }
-
           if (!itsme) btlr = 0;
           if (itsme) btrr = 0;
 
