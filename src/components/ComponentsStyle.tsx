@@ -59,8 +59,6 @@ export const styleChat02 = {
   width: "100%",
   height: "7vh",
   color: "blue",
-  //background: '#D3D3D3',
-  //background: '#E5E5E5',
   //background: '#CCDCEC', // серо-голубой
   background: "#F1F5FB", // светло серый
   display: "flex",
@@ -91,9 +89,8 @@ export const styleChat03 = {
 
 export const styleChat04 = {
   fontSize: 11,
-  background: "#FF99CC",
-  border: 1,
-  borderColor: "#FF77BB",
+  background: "#FF99CC", // светло-розовый
+  border: "1px solid #FF77BB", // розовый
   borderRadius: 2,
   color: "#fff",
   padding: "4px",
@@ -104,13 +101,11 @@ export const styleChat04 = {
 
 export const styleChat041 = {
   fontSize: 12.5,
-  //background: '#B3CBE3', // голубой
   bgcolor: "#E6F5D6", // светло салатовый
   marginTop: -0.5,
   color: "blue",
   padding: "6px",
-  border: 1,
-  borderColor: "#d4d4d4", // серый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 2,
   boxShadow: 5,
   textTransform: "unset !important",
@@ -120,7 +115,6 @@ export const styleChat05 = {
   fontSize: 11,
   flexGrow: 1,
   width: "100%",
-  //background: '#E5E5E5',
   background: "linear-gradient(125deg, #DCE0AB 30%,#97BB92 52%, #D2D8B7 85%)",
   paddingLeft: "12px",
   paddingRight: "12px",
@@ -132,8 +126,6 @@ export const styleChat16 = {
   width: "100%",
   display: "flex",
   alignItems: "center",
-  //background: '#D3D3D3',
-  //background: '#E5E5E5',
   //background: '#CCDCEC', // серо-голубой
   background: "#F1F5FB", // светло серый
   justifyContent: "space-between",
@@ -211,10 +203,8 @@ export const styleChatBut02 = {
   maxWidth: 70,
   marginTop: -0.5,
   textTransform: "unset !important",
-  //background: '#B3CBE3', // голубой
   bgcolor: "#E6F5D6", // светло салатовый
-  border: 1,
-  borderColor: "#d4d4d4", // серый
+  border: "1px solid #d4d4d4", // серый
   borderRadius: 2,
   boxShadow: 4,
 };
@@ -226,8 +216,7 @@ export const styleChatBut021 = {
   marginTop: -0.5,
   textTransform: "unset !important",
   bgcolor: "#BAE186", // салатовый
-  border: 1,
-  borderColor: "#93D145", // тёмно салатовый
+  border: '1px solid #93D145', // тёмно салатовый
   borderRadius: 2,
   boxShadow: 9,
 };
@@ -267,7 +256,6 @@ export const styleMePict = {
 };
 
 export const styleUserPict = {
-  //padding: "0px 0px 3px 3px",
   padding: "6px 3px 0 6px",
   height: "100%",
   marginBottom: 13.5,

@@ -31,7 +31,6 @@ const App = () => (
   <div className="container">
     {!debug && <Chat ws={WS} Socket={socket} nik={nikName} />}
     {debug && <AppRoutes ws={WS} Socket={socket} />}
-    {/* <AppRoutes /> */}
   </div>
 );
 

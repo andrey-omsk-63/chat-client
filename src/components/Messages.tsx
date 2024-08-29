@@ -25,7 +25,6 @@ const Messages = (props: {
   PICT: any;
   funcDel: Function;
 }) => {
-  //console.log('1Пришло:', props.messages, props.PICT);
   let FuncDel = props.funcDel;
 
   const [openSetMode, setOpenSetMode] = React.useState(false);

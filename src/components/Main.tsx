@@ -1,25 +1,25 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 
-import { styleMainBox02, styleMainBox03 } from './ComponentsStyle';
-import { styleMainBox04, styleMainBox05 } from './ComponentsStyle';
-import { styleMainBox06 } from './ComponentsStyle';
+import { styleMainBox02, styleMainBox03 } from "./ComponentsStyle";
+import { styleMainBox04, styleMainBox05 } from "./ComponentsStyle";
+import { styleMainBox06 } from "./ComponentsStyle";
 
-import styles from '../styles/Main.module.css';
+import styles from "../styles/Main.module.css";
 
 const FIELDS = {
-  NAME: 'name',
-  ROOM: 'room',
+  NAME: "name",
+  ROOM: "room",
 };
 
 const Main = () => {
   const { NAME, ROOM } = FIELDS;
 
-  const [values, setValues] = React.useState({ [NAME]: '', [ROOM]: 'Global' });
+  const [values, setValues] = React.useState({ [NAME]: "", [ROOM]: "Global" });
 
   const handleChange = (event: any) => {
     setValues({ ...values, [event.target.name]: event.target.value });
@@ -27,12 +27,12 @@ const Main = () => {
 
   const handleClick = (e: any) => {
     const isDisabled = Object.values(values).some((v) => !v);
-    console.log('isDisabled:', isDisabled,values);
+    console.log("isDisabled:", isDisabled, values);
     if (isDisabled) e.preventDefault();
   };
 
   return (
-    <Box sx={{ border: 0, width: '100%', height: '100vh' }}>
+    <Box sx={{ border: 0, width: "100%", height: "100vh" }}>
       <Box sx={styleMainBox02}>
         <Box sx={styleMainBox03}>
           <b>Присоединиться</b>
@@ -65,7 +65,11 @@ const Main = () => {
           </Box>
 
           <Link to={`/chat?name=${values[NAME]}&room=${values[ROOM]}`}>
-            <Button sx={styleMainBox06} variant="contained" onClick={handleClick}>
+            <Button
+              sx={styleMainBox06}
+              variant="contained"
+              onClick={handleClick}
+            >
               Войти
             </Button>
           </Link>

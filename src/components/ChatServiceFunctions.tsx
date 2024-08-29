@@ -83,13 +83,12 @@ export const MakeSpisUsers = (mass: any) => {
   for (let i = 0; i < mass.length; i++) {
     let idd = (i + 1).toString();
     if (i + 1 < 10) idd = "0" + idd;
-    let mask = {
+    if (mass[i].status === "online") onLine++;
+    sistUsers.push({
       user: mass[i].user,
       id: idd,
       status: mass[i].status,
-    };
-    if (mass[i].status === "online") onLine++;
-    sistUsers.push(mask);
+    });
   }
   return [sistUsers, onLine];
 };
@@ -211,9 +210,8 @@ export const UsersSist = (
           archive[j].to !== "Global" &&
           archive[j].to === paramsName &&
           !archive[j].read
-        ) {
+        )
           point = "●";
-        }
       }
     }
 
@@ -420,7 +418,7 @@ export const SendSocketMarkAsRead = (
     } else {
       setTimeout(() => {
         handleSendOpen();
-      }, 100);
+      }, 1000);
     }
   };
   handleSendOpen();

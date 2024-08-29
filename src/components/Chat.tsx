@@ -82,7 +82,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   }, []);
 
   const EndMake = React.useCallback((func: Function) => {
-    //console.log("@@@@@@", popa);
     if (popa) {
       func();
       popa = false;
@@ -95,21 +94,19 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
   }, []);
 
   const MakeArchiveMess = (data: any) => {
-    let mask = {
+    archiveMess.push({
       message: data.message,
       time: data.time,
-    };
-    archiveMess.push(mask);
+    });
   };
 
   const handleImageUpload = async () => {
-    let options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 320,
-      useWebWorker: true,
-    };
     try {
-      compressedFile = await imageCompression(blob, options);
+      compressedFile = await imageCompression(blob, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 320,
+        useWebWorker: true,
+      });
       reader.readAsDataURL(compressedFile);
     } catch (error) {
       console.log(error);
@@ -166,8 +163,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       if (arch) {
         if (arch.messages) {
           setOpenLoader(true);
-          //let archivePict: any = [];
-          //console.log('###arch.messages:',arch.messages)
           for (let i = 0; i < arch.messages.length; i++) {
             let mask = {
               from: arch.messages[i].from,
@@ -209,16 +204,14 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
                     massPict.push(mask);
                     if (massPict.length === archivePict.length) {
                       let leng = mode ? archiveTemp.length : archive.length;
-                      console.log("Всё!!!", leng, mask.time, massPict);
+                      console.log("Всё!!!", leng, mask.time, massPict); // ============
                       for (let j = 0; j < massPict.length; j++) {
                         for (let i = 0; i < leng; i++) {
                           if (mode) {
                             if (archiveTemp[i].time === massPict[j].time)
                               archiveTemp[i].message = massPict[j].message;
-                          } else {
-                            if (archive[i].time === massPict[j].time)
-                              archive[i].message = massPict[j].message;
-                          }
+                          } else if (archive[i].time === massPict[j].time)
+                            archive[i].message = massPict[j].message;
                         }
                       }
                       pipa = true;
@@ -263,9 +256,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       let q = archive[i];
       if (archive[i].time !== time) {
         archiveRab.push(archive[i]);
-      } else {
-        SendSocketDeleteMessage(WS, q.message, q.from, q.to, q.time);
-      }
+      } else SendSocketDeleteMessage(WS, q.message, q.from, q.to, q.time);
     }
     if (debug) {
       archive = JSON.parse(JSON.stringify(archiveRab));
@@ -285,9 +276,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         archiveTemp = [];
         if (chDays === 1 || chDays === 3 || chDays === 5 || chDays === 7) {
           BeginWork(dataHistory.history, 1);
-        } else {
-          BeginWork(dataArchive.archive, 1);
-        }
+        } else BeginWork(dataArchive.archive, 1);
+
         const EndMakeSendReguest = () => {
           for (let i = 0; i < archive.length; i++) archiveTemp.push(archive[i]);
           archive = JSON.parse(JSON.stringify(archiveTemp));
@@ -326,9 +316,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         if (isNumeric(Number(oldRoom))) Scrooler(divRef);
         if (data.from === oldName) {
           Scrooler(divRef);
-        } else {
-          if (komu === data.to && data.to === "Global") ScroolOrPip();
-        }
+        } else if (komu === data.to && data.to === "Global") ScroolOrPip();
         return mask;
       };
       let toRead = true;
@@ -346,10 +334,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
       if (komu !== oldRoom) {
         toRead = false;
         turnOn && Pipip(); // уведомление
-      } else {
-        if (data.to === props.nik && data.from !== "Global")
-          SendSocketMarkAsRead(WS, data.from, data.to, data.message, data.time);
-      }
+      } else if (data.to === props.nik && data.from !== "Global")
+        SendSocketMarkAsRead(WS, data.from, data.to, data.message, data.time);
       if (data.message.slice(0, 11) === "data:image/") {
         blob = MakeNewBlob(data.message);
         reader = new FileReader();
@@ -368,9 +354,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           }
         };
         handleMake();
-      } else {
-        StateEntry(data.message); //текстовое сообщение
-      }
+      } else StateEntry(data.message); //текстовое сообщение
     },
     [WS, trigger, props.nik, ScroolOrPip]
   );
@@ -416,7 +400,6 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           if (!data.history.messages) {
             if (chDays < maxDays) SendReguest();
           } else {
-            //console.log("###data.history", data.history.messages[0].time);
             archiveTemp = [];
             BeginWork(data.history, 1);
             const EndMakeHistory = () => {
@@ -449,9 +432,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           break;
         case "delete":
           let archiveRab: any = [];
-          for (let i = 0; i < archive.length; i++) {
+          for (let i = 0; i < archive.length; i++)
             if (archive[i].time !== data.time) archiveRab.push(archive[i]);
-          }
           archive = JSON.parse(JSON.stringify(archiveRab));
           BeginWorkInRoom(params.room, params.room === "Global" ? 0 : 1, false);
       }
@@ -516,10 +498,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
           if (isNumeric(Number(oldRoom))) Scrooler(divRef);
           if (event.data.user.name === oldName) {
             Scrooler(divRef);
-          } else {
-            if (event.data.to === oldRoom && oldRoom === "Global")
-              ScroolOrPip();
-          }
+          } else if (event.data.to === oldRoom && oldRoom === "Global")
+            ScroolOrPip();
           return mask;
         };
         let toTo = true;
@@ -538,11 +518,10 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
               let mess =
                 reader.result < 200 ? event.data.message : reader.result; // если длина спрессованной картинки < 200байт - косячная картинка
               StateEntry(mess);
-              let mask = {
+              archiveMess.push({
                 message: event.data.message,
                 time: event.data.date,
-              };
-              archiveMess.push(mask); // незапрессованные картинки
+              }); // незапрессованные картинки
               console.log("archiveMess:", archiveMess);
             } else {
               setTimeout(() => {
@@ -551,9 +530,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
             }
           };
           handleMake();
-        } else {
-          StateEntry(event.data.message); //текстовое сообщение
-        }
+        } else StateEntry(event.data.message); //текстовое сообщение
       });
       //============
       socket.on("room", (event: any) => {
@@ -590,9 +567,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
         socket.emit("leftRoom", { params });
         flagOpenDebug = true;
         navigate("/");
-      } else {
-        window.close();
-      }
+      } else window.close();
     }
   };
 
@@ -605,9 +580,8 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     let id1 = sistUsers[mode].id; // кому
     nameKomu = sistUsers[mode].user;
     let id2 = "00";
-    for (let i = 0; i < sistUsers.length; i++) {
+    for (let i = 0; i < sistUsers.length; i++)
       if (sistUsers[i].user === params.name) id2 = sistUsers[i].id; // от кого
-    }
     let roomer = Number(id2) < Number(id1) ? id2 + id1 : id1 + id2;
     newParams.room = roomer;
     setParams(newParams);
@@ -768,7 +742,7 @@ const Chat = (props: { ws: WebSocket; Socket: any; nik: any }) => {
     React.useEffect(() => {
       setTimeout(() => {
         setOpenLoader(false);
-      }, 100);
+      }, 1000);
     }, []);
   };
 
